@@ -711,6 +711,23 @@ public class CPInstancePersistenceTest {
 	}
 
 	@Test
+	public void testUpdateERC()
+		throws Exception {
+		CPInstance newCPInstance = addCPInstance();
+
+		newCPInstance.resetOriginalValues();
+
+		String testERC = "testERC";
+
+		newCPInstance.setExternalReferenceCode(testERC);
+
+		_persistence.update(newCPInstance);
+
+		CPInstance updatedCPInstance = _persistence.findByPrimaryKey(newCPInstance.getPrimaryKey());
+
+		Assert.assertEquals(testERC, updatedCPInstance.getExternalReferenceCode());
+	}
+	@Test
 	public void testResetOriginalValuesWithDynamicQueryLoadFromDatabase()
 		throws Exception {
 
