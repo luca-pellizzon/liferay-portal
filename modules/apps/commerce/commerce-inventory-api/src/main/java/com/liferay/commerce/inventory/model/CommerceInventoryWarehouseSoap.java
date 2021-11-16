@@ -45,20 +45,20 @@ public class CommerceInventoryWarehouseSoap implements Serializable {
 		soapModel.setUserName(model.getUserName());
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
-		soapModel.setName(model.getName());
-		soapModel.setDescription(model.getDescription());
 		soapModel.setActive(model.isActive());
-		soapModel.setStreet1(model.getStreet1());
-		soapModel.setStreet2(model.getStreet2());
-		soapModel.setStreet3(model.getStreet3());
 		soapModel.setCity(model.getCity());
-		soapModel.setZip(model.getZip());
 		soapModel.setCommerceRegionCode(model.getCommerceRegionCode());
 		soapModel.setCountryTwoLettersISOCode(
 			model.getCountryTwoLettersISOCode());
+		soapModel.setDescription(model.getDescription());
 		soapModel.setLatitude(model.getLatitude());
 		soapModel.setLongitude(model.getLongitude());
+		soapModel.setName(model.getName());
 		soapModel.setType(model.getType());
+		soapModel.setStreet1(model.getStreet1());
+		soapModel.setStreet2(model.getStreet2());
+		soapModel.setStreet3(model.getStreet3());
+		soapModel.setZip(model.getZip());
 
 		return soapModel;
 	}
@@ -188,22 +188,6 @@ public class CommerceInventoryWarehouseSoap implements Serializable {
 		_modifiedDate = modifiedDate;
 	}
 
-	public String getName() {
-		return _name;
-	}
-
-	public void setName(String name) {
-		_name = name;
-	}
-
-	public String getDescription() {
-		return _description;
-	}
-
-	public void setDescription(String description) {
-		_description = description;
-	}
-
 	public boolean getActive() {
 		return _active;
 	}
@@ -214,6 +198,70 @@ public class CommerceInventoryWarehouseSoap implements Serializable {
 
 	public void setActive(boolean active) {
 		_active = active;
+	}
+
+	public String getCity() {
+		return _city;
+	}
+
+	public void setCity(String city) {
+		_city = city;
+	}
+
+	public String getCommerceRegionCode() {
+		return _commerceRegionCode;
+	}
+
+	public void setCommerceRegionCode(String commerceRegionCode) {
+		_commerceRegionCode = commerceRegionCode;
+	}
+
+	public String getCountryTwoLettersISOCode() {
+		return _countryTwoLettersISOCode;
+	}
+
+	public void setCountryTwoLettersISOCode(String countryTwoLettersISOCode) {
+		_countryTwoLettersISOCode = countryTwoLettersISOCode;
+	}
+
+	public String getDescription() {
+		return _description;
+	}
+
+	public void setDescription(String description) {
+		_description = description;
+	}
+
+	public double getLatitude() {
+		return _latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		_latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return _longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		_longitude = longitude;
+	}
+
+	public String getName() {
+		return _name;
+	}
+
+	public void setName(String name) {
+		_name = name;
+	}
+
+	public String getType() {
+		return _type;
+	}
+
+	public void setType(String type) {
+		_type = type;
 	}
 
 	public String getStreet1() {
@@ -240,60 +288,12 @@ public class CommerceInventoryWarehouseSoap implements Serializable {
 		_street3 = street3;
 	}
 
-	public String getCity() {
-		return _city;
-	}
-
-	public void setCity(String city) {
-		_city = city;
-	}
-
 	public String getZip() {
 		return _zip;
 	}
 
 	public void setZip(String zip) {
 		_zip = zip;
-	}
-
-	public String getCommerceRegionCode() {
-		return _commerceRegionCode;
-	}
-
-	public void setCommerceRegionCode(String commerceRegionCode) {
-		_commerceRegionCode = commerceRegionCode;
-	}
-
-	public String getCountryTwoLettersISOCode() {
-		return _countryTwoLettersISOCode;
-	}
-
-	public void setCountryTwoLettersISOCode(String countryTwoLettersISOCode) {
-		_countryTwoLettersISOCode = countryTwoLettersISOCode;
-	}
-
-	public double getLatitude() {
-		return _latitude;
-	}
-
-	public void setLatitude(double latitude) {
-		_latitude = latitude;
-	}
-
-	public double getLongitude() {
-		return _longitude;
-	}
-
-	public void setLongitude(double longitude) {
-		_longitude = longitude;
-	}
-
-	public String getType() {
-		return _type;
-	}
-
-	public void setType(String type) {
-		_type = type;
 	}
 
 	private long _mvccVersion;
@@ -304,18 +304,18 @@ public class CommerceInventoryWarehouseSoap implements Serializable {
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
-	private String _name;
-	private String _description;
 	private boolean _active;
+	private String _city;
+	private String _commerceRegionCode;
+	private String _countryTwoLettersISOCode;
+	private String _description;
+	private double _latitude;
+	private double _longitude;
+	private String _name;
+	private String _type;
 	private String _street1;
 	private String _street2;
 	private String _street3;
-	private String _city;
 	private String _zip;
-	private String _commerceRegionCode;
-	private String _countryTwoLettersISOCode;
-	private double _latitude;
-	private double _longitude;
-	private String _type;
 
 }

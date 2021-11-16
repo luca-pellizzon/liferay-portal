@@ -148,22 +148,9 @@ public class CommerceInventoryWarehousePersistenceTest {
 		newCommerceInventoryWarehouse.setModifiedDate(
 			RandomTestUtil.nextDate());
 
-		newCommerceInventoryWarehouse.setName(RandomTestUtil.randomString());
-
-		newCommerceInventoryWarehouse.setDescription(
-			RandomTestUtil.randomString());
-
 		newCommerceInventoryWarehouse.setActive(RandomTestUtil.randomBoolean());
 
-		newCommerceInventoryWarehouse.setStreet1(RandomTestUtil.randomString());
-
-		newCommerceInventoryWarehouse.setStreet2(RandomTestUtil.randomString());
-
-		newCommerceInventoryWarehouse.setStreet3(RandomTestUtil.randomString());
-
 		newCommerceInventoryWarehouse.setCity(RandomTestUtil.randomString());
-
-		newCommerceInventoryWarehouse.setZip(RandomTestUtil.randomString());
 
 		newCommerceInventoryWarehouse.setCommerceRegionCode(
 			RandomTestUtil.randomString());
@@ -171,11 +158,24 @@ public class CommerceInventoryWarehousePersistenceTest {
 		newCommerceInventoryWarehouse.setCountryTwoLettersISOCode(
 			RandomTestUtil.randomString());
 
+		newCommerceInventoryWarehouse.setDescription(
+			RandomTestUtil.randomString());
+
 		newCommerceInventoryWarehouse.setLatitude(RandomTestUtil.nextDouble());
 
 		newCommerceInventoryWarehouse.setLongitude(RandomTestUtil.nextDouble());
 
+		newCommerceInventoryWarehouse.setName(RandomTestUtil.randomString());
+
 		newCommerceInventoryWarehouse.setType(RandomTestUtil.randomString());
+
+		newCommerceInventoryWarehouse.setStreet1(RandomTestUtil.randomString());
+
+		newCommerceInventoryWarehouse.setStreet2(RandomTestUtil.randomString());
+
+		newCommerceInventoryWarehouse.setStreet3(RandomTestUtil.randomString());
+
+		newCommerceInventoryWarehouse.setZip(RandomTestUtil.randomString());
 
 		_commerceInventoryWarehouses.add(
 			_persistence.update(newCommerceInventoryWarehouse));
@@ -214,14 +214,32 @@ public class CommerceInventoryWarehousePersistenceTest {
 			Time.getShortTimestamp(
 				newCommerceInventoryWarehouse.getModifiedDate()));
 		Assert.assertEquals(
-			existingCommerceInventoryWarehouse.getName(),
-			newCommerceInventoryWarehouse.getName());
+			existingCommerceInventoryWarehouse.isActive(),
+			newCommerceInventoryWarehouse.isActive());
+		Assert.assertEquals(
+			existingCommerceInventoryWarehouse.getCity(),
+			newCommerceInventoryWarehouse.getCity());
+		Assert.assertEquals(
+			existingCommerceInventoryWarehouse.getCommerceRegionCode(),
+			newCommerceInventoryWarehouse.getCommerceRegionCode());
+		Assert.assertEquals(
+			existingCommerceInventoryWarehouse.getCountryTwoLettersISOCode(),
+			newCommerceInventoryWarehouse.getCountryTwoLettersISOCode());
 		Assert.assertEquals(
 			existingCommerceInventoryWarehouse.getDescription(),
 			newCommerceInventoryWarehouse.getDescription());
+		AssertUtils.assertEquals(
+			existingCommerceInventoryWarehouse.getLatitude(),
+			newCommerceInventoryWarehouse.getLatitude());
+		AssertUtils.assertEquals(
+			existingCommerceInventoryWarehouse.getLongitude(),
+			newCommerceInventoryWarehouse.getLongitude());
 		Assert.assertEquals(
-			existingCommerceInventoryWarehouse.isActive(),
-			newCommerceInventoryWarehouse.isActive());
+			existingCommerceInventoryWarehouse.getName(),
+			newCommerceInventoryWarehouse.getName());
+		Assert.assertEquals(
+			existingCommerceInventoryWarehouse.getType(),
+			newCommerceInventoryWarehouse.getType());
 		Assert.assertEquals(
 			existingCommerceInventoryWarehouse.getStreet1(),
 			newCommerceInventoryWarehouse.getStreet1());
@@ -232,26 +250,8 @@ public class CommerceInventoryWarehousePersistenceTest {
 			existingCommerceInventoryWarehouse.getStreet3(),
 			newCommerceInventoryWarehouse.getStreet3());
 		Assert.assertEquals(
-			existingCommerceInventoryWarehouse.getCity(),
-			newCommerceInventoryWarehouse.getCity());
-		Assert.assertEquals(
 			existingCommerceInventoryWarehouse.getZip(),
 			newCommerceInventoryWarehouse.getZip());
-		Assert.assertEquals(
-			existingCommerceInventoryWarehouse.getCommerceRegionCode(),
-			newCommerceInventoryWarehouse.getCommerceRegionCode());
-		Assert.assertEquals(
-			existingCommerceInventoryWarehouse.getCountryTwoLettersISOCode(),
-			newCommerceInventoryWarehouse.getCountryTwoLettersISOCode());
-		AssertUtils.assertEquals(
-			existingCommerceInventoryWarehouse.getLatitude(),
-			newCommerceInventoryWarehouse.getLatitude());
-		AssertUtils.assertEquals(
-			existingCommerceInventoryWarehouse.getLongitude(),
-			newCommerceInventoryWarehouse.getLongitude());
-		Assert.assertEquals(
-			existingCommerceInventoryWarehouse.getType(),
-			newCommerceInventoryWarehouse.getType());
 	}
 
 	@Test
@@ -331,10 +331,10 @@ public class CommerceInventoryWarehousePersistenceTest {
 			"CIWarehouse", "mvccVersion", true, "externalReferenceCode", true,
 			"commerceInventoryWarehouseId", true, "companyId", true, "userId",
 			true, "userName", true, "createDate", true, "modifiedDate", true,
-			"name", true, "description", true, "active", true, "street1", true,
-			"street2", true, "street3", true, "city", true, "zip", true,
-			"commerceRegionCode", true, "countryTwoLettersISOCode", true,
-			"latitude", true, "longitude", true, "type", true);
+			"active", true, "city", true, "commerceRegionCode", true,
+			"countryTwoLettersISOCode", true, "description", true, "latitude",
+			true, "longitude", true, "name", true, "type", true, "street1",
+			true, "street2", true, "street3", true, "zip", true);
 	}
 
 	@Test
@@ -675,22 +675,9 @@ public class CommerceInventoryWarehousePersistenceTest {
 
 		commerceInventoryWarehouse.setModifiedDate(RandomTestUtil.nextDate());
 
-		commerceInventoryWarehouse.setName(RandomTestUtil.randomString());
-
-		commerceInventoryWarehouse.setDescription(
-			RandomTestUtil.randomString());
-
 		commerceInventoryWarehouse.setActive(RandomTestUtil.randomBoolean());
 
-		commerceInventoryWarehouse.setStreet1(RandomTestUtil.randomString());
-
-		commerceInventoryWarehouse.setStreet2(RandomTestUtil.randomString());
-
-		commerceInventoryWarehouse.setStreet3(RandomTestUtil.randomString());
-
 		commerceInventoryWarehouse.setCity(RandomTestUtil.randomString());
-
-		commerceInventoryWarehouse.setZip(RandomTestUtil.randomString());
 
 		commerceInventoryWarehouse.setCommerceRegionCode(
 			RandomTestUtil.randomString());
@@ -698,11 +685,24 @@ public class CommerceInventoryWarehousePersistenceTest {
 		commerceInventoryWarehouse.setCountryTwoLettersISOCode(
 			RandomTestUtil.randomString());
 
+		commerceInventoryWarehouse.setDescription(
+			RandomTestUtil.randomString());
+
 		commerceInventoryWarehouse.setLatitude(RandomTestUtil.nextDouble());
 
 		commerceInventoryWarehouse.setLongitude(RandomTestUtil.nextDouble());
 
+		commerceInventoryWarehouse.setName(RandomTestUtil.randomString());
+
 		commerceInventoryWarehouse.setType(RandomTestUtil.randomString());
+
+		commerceInventoryWarehouse.setStreet1(RandomTestUtil.randomString());
+
+		commerceInventoryWarehouse.setStreet2(RandomTestUtil.randomString());
+
+		commerceInventoryWarehouse.setStreet3(RandomTestUtil.randomString());
+
+		commerceInventoryWarehouse.setZip(RandomTestUtil.randomString());
 
 		_commerceInventoryWarehouses.add(
 			_persistence.update(commerceInventoryWarehouse));
