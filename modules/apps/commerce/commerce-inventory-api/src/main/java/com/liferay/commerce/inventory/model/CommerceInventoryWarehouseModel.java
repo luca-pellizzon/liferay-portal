@@ -15,12 +15,16 @@
 package com.liferay.commerce.inventory.model;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.model.AuditedModel;
 import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.LocalizedModel;
 import com.liferay.portal.kernel.model.MVCCModel;
 import com.liferay.portal.kernel.model.ShardedModel;
 
 import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -37,8 +41,8 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public interface CommerceInventoryWarehouseModel
-	extends AuditedModel, BaseModel<CommerceInventoryWarehouse>, MVCCModel,
-			ShardedModel {
+	extends AuditedModel, BaseModel<CommerceInventoryWarehouse>, LocalizedModel,
+			MVCCModel, ShardedModel {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -204,36 +208,6 @@ public interface CommerceInventoryWarehouseModel
 	public void setModifiedDate(Date modifiedDate);
 
 	/**
-	 * Returns the name of this commerce inventory warehouse.
-	 *
-	 * @return the name of this commerce inventory warehouse
-	 */
-	@AutoEscape
-	public String getName();
-
-	/**
-	 * Sets the name of this commerce inventory warehouse.
-	 *
-	 * @param name the name of this commerce inventory warehouse
-	 */
-	public void setName(String name);
-
-	/**
-	 * Returns the description of this commerce inventory warehouse.
-	 *
-	 * @return the description of this commerce inventory warehouse
-	 */
-	@AutoEscape
-	public String getDescription();
-
-	/**
-	 * Sets the description of this commerce inventory warehouse.
-	 *
-	 * @param description the description of this commerce inventory warehouse
-	 */
-	public void setDescription(String description);
-
-	/**
 	 * Returns the active of this commerce inventory warehouse.
 	 *
 	 * @return the active of this commerce inventory warehouse
@@ -253,6 +227,294 @@ public interface CommerceInventoryWarehouseModel
 	 * @param active the active of this commerce inventory warehouse
 	 */
 	public void setActive(boolean active);
+
+	/**
+	 * Returns the city of this commerce inventory warehouse.
+	 *
+	 * @return the city of this commerce inventory warehouse
+	 */
+	@AutoEscape
+	public String getCity();
+
+	/**
+	 * Sets the city of this commerce inventory warehouse.
+	 *
+	 * @param city the city of this commerce inventory warehouse
+	 */
+	public void setCity(String city);
+
+	/**
+	 * Returns the commerce region code of this commerce inventory warehouse.
+	 *
+	 * @return the commerce region code of this commerce inventory warehouse
+	 */
+	@AutoEscape
+	public String getCommerceRegionCode();
+
+	/**
+	 * Sets the commerce region code of this commerce inventory warehouse.
+	 *
+	 * @param commerceRegionCode the commerce region code of this commerce inventory warehouse
+	 */
+	public void setCommerceRegionCode(String commerceRegionCode);
+
+	/**
+	 * Returns the country two letters iso code of this commerce inventory warehouse.
+	 *
+	 * @return the country two letters iso code of this commerce inventory warehouse
+	 */
+	@AutoEscape
+	public String getCountryTwoLettersISOCode();
+
+	/**
+	 * Sets the country two letters iso code of this commerce inventory warehouse.
+	 *
+	 * @param countryTwoLettersISOCode the country two letters iso code of this commerce inventory warehouse
+	 */
+	public void setCountryTwoLettersISOCode(String countryTwoLettersISOCode);
+
+	/**
+	 * Returns the description of this commerce inventory warehouse.
+	 *
+	 * @return the description of this commerce inventory warehouse
+	 */
+	public String getDescription();
+
+	/**
+	 * Returns the localized description of this commerce inventory warehouse in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized description of this commerce inventory warehouse
+	 */
+	@AutoEscape
+	public String getDescription(Locale locale);
+
+	/**
+	 * Returns the localized description of this commerce inventory warehouse in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized description of this commerce inventory warehouse. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
+	@AutoEscape
+	public String getDescription(Locale locale, boolean useDefault);
+
+	/**
+	 * Returns the localized description of this commerce inventory warehouse in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized description of this commerce inventory warehouse
+	 */
+	@AutoEscape
+	public String getDescription(String languageId);
+
+	/**
+	 * Returns the localized description of this commerce inventory warehouse in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized description of this commerce inventory warehouse
+	 */
+	@AutoEscape
+	public String getDescription(String languageId, boolean useDefault);
+
+	@AutoEscape
+	public String getDescriptionCurrentLanguageId();
+
+	@AutoEscape
+	public String getDescriptionCurrentValue();
+
+	/**
+	 * Returns a map of the locales and localized descriptions of this commerce inventory warehouse.
+	 *
+	 * @return the locales and localized descriptions of this commerce inventory warehouse
+	 */
+	public Map<Locale, String> getDescriptionMap();
+
+	/**
+	 * Sets the description of this commerce inventory warehouse.
+	 *
+	 * @param description the description of this commerce inventory warehouse
+	 */
+	public void setDescription(String description);
+
+	/**
+	 * Sets the localized description of this commerce inventory warehouse in the language.
+	 *
+	 * @param description the localized description of this commerce inventory warehouse
+	 * @param locale the locale of the language
+	 */
+	public void setDescription(String description, Locale locale);
+
+	/**
+	 * Sets the localized description of this commerce inventory warehouse in the language, and sets the default locale.
+	 *
+	 * @param description the localized description of this commerce inventory warehouse
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
+	public void setDescription(
+		String description, Locale locale, Locale defaultLocale);
+
+	public void setDescriptionCurrentLanguageId(String languageId);
+
+	/**
+	 * Sets the localized descriptions of this commerce inventory warehouse from the map of locales and localized descriptions.
+	 *
+	 * @param descriptionMap the locales and localized descriptions of this commerce inventory warehouse
+	 */
+	public void setDescriptionMap(Map<Locale, String> descriptionMap);
+
+	/**
+	 * Sets the localized descriptions of this commerce inventory warehouse from the map of locales and localized descriptions, and sets the default locale.
+	 *
+	 * @param descriptionMap the locales and localized descriptions of this commerce inventory warehouse
+	 * @param defaultLocale the default locale
+	 */
+	public void setDescriptionMap(
+		Map<Locale, String> descriptionMap, Locale defaultLocale);
+
+	/**
+	 * Returns the latitude of this commerce inventory warehouse.
+	 *
+	 * @return the latitude of this commerce inventory warehouse
+	 */
+	public double getLatitude();
+
+	/**
+	 * Sets the latitude of this commerce inventory warehouse.
+	 *
+	 * @param latitude the latitude of this commerce inventory warehouse
+	 */
+	public void setLatitude(double latitude);
+
+	/**
+	 * Returns the longitude of this commerce inventory warehouse.
+	 *
+	 * @return the longitude of this commerce inventory warehouse
+	 */
+	public double getLongitude();
+
+	/**
+	 * Sets the longitude of this commerce inventory warehouse.
+	 *
+	 * @param longitude the longitude of this commerce inventory warehouse
+	 */
+	public void setLongitude(double longitude);
+
+	/**
+	 * Returns the name of this commerce inventory warehouse.
+	 *
+	 * @return the name of this commerce inventory warehouse
+	 */
+	public String getName();
+
+	/**
+	 * Returns the localized name of this commerce inventory warehouse in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized name of this commerce inventory warehouse
+	 */
+	@AutoEscape
+	public String getName(Locale locale);
+
+	/**
+	 * Returns the localized name of this commerce inventory warehouse in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized name of this commerce inventory warehouse. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
+	@AutoEscape
+	public String getName(Locale locale, boolean useDefault);
+
+	/**
+	 * Returns the localized name of this commerce inventory warehouse in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized name of this commerce inventory warehouse
+	 */
+	@AutoEscape
+	public String getName(String languageId);
+
+	/**
+	 * Returns the localized name of this commerce inventory warehouse in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized name of this commerce inventory warehouse
+	 */
+	@AutoEscape
+	public String getName(String languageId, boolean useDefault);
+
+	@AutoEscape
+	public String getNameCurrentLanguageId();
+
+	@AutoEscape
+	public String getNameCurrentValue();
+
+	/**
+	 * Returns a map of the locales and localized names of this commerce inventory warehouse.
+	 *
+	 * @return the locales and localized names of this commerce inventory warehouse
+	 */
+	public Map<Locale, String> getNameMap();
+
+	/**
+	 * Sets the name of this commerce inventory warehouse.
+	 *
+	 * @param name the name of this commerce inventory warehouse
+	 */
+	public void setName(String name);
+
+	/**
+	 * Sets the localized name of this commerce inventory warehouse in the language.
+	 *
+	 * @param name the localized name of this commerce inventory warehouse
+	 * @param locale the locale of the language
+	 */
+	public void setName(String name, Locale locale);
+
+	/**
+	 * Sets the localized name of this commerce inventory warehouse in the language, and sets the default locale.
+	 *
+	 * @param name the localized name of this commerce inventory warehouse
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
+	public void setName(String name, Locale locale, Locale defaultLocale);
+
+	public void setNameCurrentLanguageId(String languageId);
+
+	/**
+	 * Sets the localized names of this commerce inventory warehouse from the map of locales and localized names.
+	 *
+	 * @param nameMap the locales and localized names of this commerce inventory warehouse
+	 */
+	public void setNameMap(Map<Locale, String> nameMap);
+
+	/**
+	 * Sets the localized names of this commerce inventory warehouse from the map of locales and localized names, and sets the default locale.
+	 *
+	 * @param nameMap the locales and localized names of this commerce inventory warehouse
+	 * @param defaultLocale the default locale
+	 */
+	public void setNameMap(Map<Locale, String> nameMap, Locale defaultLocale);
+
+	/**
+	 * Returns the type of this commerce inventory warehouse.
+	 *
+	 * @return the type of this commerce inventory warehouse
+	 */
+	@AutoEscape
+	public String getType();
+
+	/**
+	 * Sets the type of this commerce inventory warehouse.
+	 *
+	 * @param type the type of this commerce inventory warehouse
+	 */
+	public void setType(String type);
 
 	/**
 	 * Returns the street1 of this commerce inventory warehouse.
@@ -300,21 +562,6 @@ public interface CommerceInventoryWarehouseModel
 	public void setStreet3(String street3);
 
 	/**
-	 * Returns the city of this commerce inventory warehouse.
-	 *
-	 * @return the city of this commerce inventory warehouse
-	 */
-	@AutoEscape
-	public String getCity();
-
-	/**
-	 * Sets the city of this commerce inventory warehouse.
-	 *
-	 * @param city the city of this commerce inventory warehouse
-	 */
-	public void setCity(String city);
-
-	/**
 	 * Returns the zip of this commerce inventory warehouse.
 	 *
 	 * @return the zip of this commerce inventory warehouse
@@ -329,78 +576,18 @@ public interface CommerceInventoryWarehouseModel
 	 */
 	public void setZip(String zip);
 
-	/**
-	 * Returns the commerce region code of this commerce inventory warehouse.
-	 *
-	 * @return the commerce region code of this commerce inventory warehouse
-	 */
-	@AutoEscape
-	public String getCommerceRegionCode();
+	@Override
+	public String[] getAvailableLanguageIds();
 
-	/**
-	 * Sets the commerce region code of this commerce inventory warehouse.
-	 *
-	 * @param commerceRegionCode the commerce region code of this commerce inventory warehouse
-	 */
-	public void setCommerceRegionCode(String commerceRegionCode);
+	@Override
+	public String getDefaultLanguageId();
 
-	/**
-	 * Returns the country two letters iso code of this commerce inventory warehouse.
-	 *
-	 * @return the country two letters iso code of this commerce inventory warehouse
-	 */
-	@AutoEscape
-	public String getCountryTwoLettersISOCode();
+	@Override
+	public void prepareLocalizedFieldsForImport() throws LocaleException;
 
-	/**
-	 * Sets the country two letters iso code of this commerce inventory warehouse.
-	 *
-	 * @param countryTwoLettersISOCode the country two letters iso code of this commerce inventory warehouse
-	 */
-	public void setCountryTwoLettersISOCode(String countryTwoLettersISOCode);
-
-	/**
-	 * Returns the latitude of this commerce inventory warehouse.
-	 *
-	 * @return the latitude of this commerce inventory warehouse
-	 */
-	public double getLatitude();
-
-	/**
-	 * Sets the latitude of this commerce inventory warehouse.
-	 *
-	 * @param latitude the latitude of this commerce inventory warehouse
-	 */
-	public void setLatitude(double latitude);
-
-	/**
-	 * Returns the longitude of this commerce inventory warehouse.
-	 *
-	 * @return the longitude of this commerce inventory warehouse
-	 */
-	public double getLongitude();
-
-	/**
-	 * Sets the longitude of this commerce inventory warehouse.
-	 *
-	 * @param longitude the longitude of this commerce inventory warehouse
-	 */
-	public void setLongitude(double longitude);
-
-	/**
-	 * Returns the type of this commerce inventory warehouse.
-	 *
-	 * @return the type of this commerce inventory warehouse
-	 */
-	@AutoEscape
-	public String getType();
-
-	/**
-	 * Sets the type of this commerce inventory warehouse.
-	 *
-	 * @param type the type of this commerce inventory warehouse
-	 */
-	public void setType(String type);
+	@Override
+	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
+		throws LocaleException;
 
 	@Override
 	public CommerceInventoryWarehouse cloneWithOriginalValues();

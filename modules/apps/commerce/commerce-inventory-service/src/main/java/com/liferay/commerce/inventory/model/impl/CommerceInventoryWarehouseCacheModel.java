@@ -99,32 +99,32 @@ public class CommerceInventoryWarehouseCacheModel
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
-		sb.append(", name=");
-		sb.append(name);
-		sb.append(", description=");
-		sb.append(description);
 		sb.append(", active=");
 		sb.append(active);
+		sb.append(", city=");
+		sb.append(city);
+		sb.append(", commerceRegionCode=");
+		sb.append(commerceRegionCode);
+		sb.append(", countryTwoLettersISOCode=");
+		sb.append(countryTwoLettersISOCode);
+		sb.append(", description=");
+		sb.append(description);
+		sb.append(", latitude=");
+		sb.append(latitude);
+		sb.append(", longitude=");
+		sb.append(longitude);
+		sb.append(", name=");
+		sb.append(name);
+		sb.append(", type=");
+		sb.append(type);
 		sb.append(", street1=");
 		sb.append(street1);
 		sb.append(", street2=");
 		sb.append(street2);
 		sb.append(", street3=");
 		sb.append(street3);
-		sb.append(", city=");
-		sb.append(city);
 		sb.append(", zip=");
 		sb.append(zip);
-		sb.append(", commerceRegionCode=");
-		sb.append(commerceRegionCode);
-		sb.append(", countryTwoLettersISOCode=");
-		sb.append(countryTwoLettersISOCode);
-		sb.append(", latitude=");
-		sb.append(latitude);
-		sb.append(", longitude=");
-		sb.append(longitude);
-		sb.append(", type=");
-		sb.append(type);
 		sb.append("}");
 
 		return sb.toString();
@@ -172,11 +172,29 @@ public class CommerceInventoryWarehouseCacheModel
 				new Date(modifiedDate));
 		}
 
-		if (name == null) {
-			commerceInventoryWarehouseImpl.setName("");
+		commerceInventoryWarehouseImpl.setActive(active);
+
+		if (city == null) {
+			commerceInventoryWarehouseImpl.setCity("");
 		}
 		else {
-			commerceInventoryWarehouseImpl.setName(name);
+			commerceInventoryWarehouseImpl.setCity(city);
+		}
+
+		if (commerceRegionCode == null) {
+			commerceInventoryWarehouseImpl.setCommerceRegionCode("");
+		}
+		else {
+			commerceInventoryWarehouseImpl.setCommerceRegionCode(
+				commerceRegionCode);
+		}
+
+		if (countryTwoLettersISOCode == null) {
+			commerceInventoryWarehouseImpl.setCountryTwoLettersISOCode("");
+		}
+		else {
+			commerceInventoryWarehouseImpl.setCountryTwoLettersISOCode(
+				countryTwoLettersISOCode);
 		}
 
 		if (description == null) {
@@ -186,7 +204,22 @@ public class CommerceInventoryWarehouseCacheModel
 			commerceInventoryWarehouseImpl.setDescription(description);
 		}
 
-		commerceInventoryWarehouseImpl.setActive(active);
+		commerceInventoryWarehouseImpl.setLatitude(latitude);
+		commerceInventoryWarehouseImpl.setLongitude(longitude);
+
+		if (name == null) {
+			commerceInventoryWarehouseImpl.setName("");
+		}
+		else {
+			commerceInventoryWarehouseImpl.setName(name);
+		}
+
+		if (type == null) {
+			commerceInventoryWarehouseImpl.setType("");
+		}
+		else {
+			commerceInventoryWarehouseImpl.setType(type);
+		}
 
 		if (street1 == null) {
 			commerceInventoryWarehouseImpl.setStreet1("");
@@ -209,44 +242,11 @@ public class CommerceInventoryWarehouseCacheModel
 			commerceInventoryWarehouseImpl.setStreet3(street3);
 		}
 
-		if (city == null) {
-			commerceInventoryWarehouseImpl.setCity("");
-		}
-		else {
-			commerceInventoryWarehouseImpl.setCity(city);
-		}
-
 		if (zip == null) {
 			commerceInventoryWarehouseImpl.setZip("");
 		}
 		else {
 			commerceInventoryWarehouseImpl.setZip(zip);
-		}
-
-		if (commerceRegionCode == null) {
-			commerceInventoryWarehouseImpl.setCommerceRegionCode("");
-		}
-		else {
-			commerceInventoryWarehouseImpl.setCommerceRegionCode(
-				commerceRegionCode);
-		}
-
-		if (countryTwoLettersISOCode == null) {
-			commerceInventoryWarehouseImpl.setCountryTwoLettersISOCode("");
-		}
-		else {
-			commerceInventoryWarehouseImpl.setCountryTwoLettersISOCode(
-				countryTwoLettersISOCode);
-		}
-
-		commerceInventoryWarehouseImpl.setLatitude(latitude);
-		commerceInventoryWarehouseImpl.setLongitude(longitude);
-
-		if (type == null) {
-			commerceInventoryWarehouseImpl.setType("");
-		}
-		else {
-			commerceInventoryWarehouseImpl.setType(type);
 		}
 
 		commerceInventoryWarehouseImpl.resetOriginalValues();
@@ -267,22 +267,22 @@ public class CommerceInventoryWarehouseCacheModel
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
-		name = objectInput.readUTF();
-		description = objectInput.readUTF();
 
 		active = objectInput.readBoolean();
-		street1 = objectInput.readUTF();
-		street2 = objectInput.readUTF();
-		street3 = objectInput.readUTF();
 		city = objectInput.readUTF();
-		zip = objectInput.readUTF();
 		commerceRegionCode = objectInput.readUTF();
 		countryTwoLettersISOCode = objectInput.readUTF();
+		description = objectInput.readUTF();
 
 		latitude = objectInput.readDouble();
 
 		longitude = objectInput.readDouble();
+		name = objectInput.readUTF();
 		type = objectInput.readUTF();
+		street1 = objectInput.readUTF();
+		street2 = objectInput.readUTF();
+		street3 = objectInput.readUTF();
+		zip = objectInput.readUTF();
 	}
 
 	@Override
@@ -312,11 +312,27 @@ public class CommerceInventoryWarehouseCacheModel
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
 
-		if (name == null) {
+		objectOutput.writeBoolean(active);
+
+		if (city == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
-			objectOutput.writeUTF(name);
+			objectOutput.writeUTF(city);
+		}
+
+		if (commerceRegionCode == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(commerceRegionCode);
+		}
+
+		if (countryTwoLettersISOCode == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(countryTwoLettersISOCode);
 		}
 
 		if (description == null) {
@@ -326,7 +342,23 @@ public class CommerceInventoryWarehouseCacheModel
 			objectOutput.writeUTF(description);
 		}
 
-		objectOutput.writeBoolean(active);
+		objectOutput.writeDouble(latitude);
+
+		objectOutput.writeDouble(longitude);
+
+		if (name == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(name);
+		}
+
+		if (type == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(type);
+		}
 
 		if (street1 == null) {
 			objectOutput.writeUTF("");
@@ -349,43 +381,11 @@ public class CommerceInventoryWarehouseCacheModel
 			objectOutput.writeUTF(street3);
 		}
 
-		if (city == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(city);
-		}
-
 		if (zip == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(zip);
-		}
-
-		if (commerceRegionCode == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(commerceRegionCode);
-		}
-
-		if (countryTwoLettersISOCode == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(countryTwoLettersISOCode);
-		}
-
-		objectOutput.writeDouble(latitude);
-
-		objectOutput.writeDouble(longitude);
-
-		if (type == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(type);
 		}
 	}
 
@@ -397,18 +397,18 @@ public class CommerceInventoryWarehouseCacheModel
 	public String userName;
 	public long createDate;
 	public long modifiedDate;
-	public String name;
-	public String description;
 	public boolean active;
+	public String city;
+	public String commerceRegionCode;
+	public String countryTwoLettersISOCode;
+	public String description;
+	public double latitude;
+	public double longitude;
+	public String name;
+	public String type;
 	public String street1;
 	public String street2;
 	public String street3;
-	public String city;
 	public String zip;
-	public String commerceRegionCode;
-	public String countryTwoLettersISOCode;
-	public double latitude;
-	public double longitude;
-	public String type;
 
 }

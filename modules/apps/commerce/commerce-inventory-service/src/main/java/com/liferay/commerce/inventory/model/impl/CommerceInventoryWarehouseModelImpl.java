@@ -21,6 +21,7 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
+import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
@@ -30,8 +31,11 @@ import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
@@ -47,8 +51,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -80,13 +87,14 @@ public class CommerceInventoryWarehouseModelImpl
 		{"CIWarehouseId", Types.BIGINT}, {"companyId", Types.BIGINT},
 		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
-		{"name", Types.VARCHAR}, {"description", Types.VARCHAR},
-		{"active_", Types.BOOLEAN}, {"street1", Types.VARCHAR},
-		{"street2", Types.VARCHAR}, {"street3", Types.VARCHAR},
-		{"city", Types.VARCHAR}, {"zip", Types.VARCHAR},
+		{"active_", Types.BOOLEAN}, {"city", Types.VARCHAR},
 		{"commerceRegionCode", Types.VARCHAR},
-		{"countryTwoLettersISOCode", Types.VARCHAR}, {"latitude", Types.DOUBLE},
-		{"longitude", Types.DOUBLE}, {"type_", Types.VARCHAR}
+		{"countryTwoLettersISOCode", Types.VARCHAR},
+		{"description", Types.VARCHAR}, {"latitude", Types.DOUBLE},
+		{"longitude", Types.DOUBLE}, {"name", Types.VARCHAR},
+		{"type_", Types.VARCHAR}, {"street1", Types.VARCHAR},
+		{"street2", Types.VARCHAR}, {"street3", Types.VARCHAR},
+		{"zip", Types.VARCHAR}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -101,23 +109,23 @@ public class CommerceInventoryWarehouseModelImpl
 		TABLE_COLUMNS_MAP.put("userName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
-		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("active_", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("city", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("commerceRegionCode", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("countryTwoLettersISOCode", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("latitude", Types.DOUBLE);
+		TABLE_COLUMNS_MAP.put("longitude", Types.DOUBLE);
+		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("type_", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("street1", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("street2", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("street3", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("city", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("zip", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("commerceRegionCode", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("countryTwoLettersISOCode", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("latitude", Types.DOUBLE);
-		TABLE_COLUMNS_MAP.put("longitude", Types.DOUBLE);
-		TABLE_COLUMNS_MAP.put("type_", Types.VARCHAR);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table CIWarehouse (mvccVersion LONG default 0 not null,externalReferenceCode VARCHAR(75) null,CIWarehouseId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,name VARCHAR(75) null,description VARCHAR(75) null,active_ BOOLEAN,street1 VARCHAR(75) null,street2 VARCHAR(75) null,street3 VARCHAR(75) null,city VARCHAR(75) null,zip VARCHAR(75) null,commerceRegionCode VARCHAR(75) null,countryTwoLettersISOCode VARCHAR(75) null,latitude DOUBLE,longitude DOUBLE,type_ VARCHAR(75) null)";
+		"create table CIWarehouse (mvccVersion LONG default 0 not null,externalReferenceCode VARCHAR(75) null,CIWarehouseId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,active_ BOOLEAN,city VARCHAR(75) null,commerceRegionCode VARCHAR(75) null,countryTwoLettersISOCode VARCHAR(75) null,description STRING null,latitude DOUBLE,longitude DOUBLE,name STRING null,type_ VARCHAR(75) null,street1 VARCHAR(75) null,street2 VARCHAR(75) null,street3 VARCHAR(75) null,zip VARCHAR(75) null)";
 
 	public static final String TABLE_SQL_DROP = "drop table CIWarehouse";
 
@@ -207,20 +215,20 @@ public class CommerceInventoryWarehouseModelImpl
 		model.setUserName(soapModel.getUserName());
 		model.setCreateDate(soapModel.getCreateDate());
 		model.setModifiedDate(soapModel.getModifiedDate());
-		model.setName(soapModel.getName());
-		model.setDescription(soapModel.getDescription());
 		model.setActive(soapModel.isActive());
-		model.setStreet1(soapModel.getStreet1());
-		model.setStreet2(soapModel.getStreet2());
-		model.setStreet3(soapModel.getStreet3());
 		model.setCity(soapModel.getCity());
-		model.setZip(soapModel.getZip());
 		model.setCommerceRegionCode(soapModel.getCommerceRegionCode());
 		model.setCountryTwoLettersISOCode(
 			soapModel.getCountryTwoLettersISOCode());
+		model.setDescription(soapModel.getDescription());
 		model.setLatitude(soapModel.getLatitude());
 		model.setLongitude(soapModel.getLongitude());
+		model.setName(soapModel.getName());
 		model.setType(soapModel.getType());
+		model.setStreet1(soapModel.getStreet1());
+		model.setStreet2(soapModel.getStreet2());
+		model.setStreet3(soapModel.getStreet3());
+		model.setZip(soapModel.getZip());
 
 		return model;
 	}
@@ -437,11 +445,31 @@ public class CommerceInventoryWarehouseModelImpl
 			(BiConsumer<CommerceInventoryWarehouse, Date>)
 				CommerceInventoryWarehouse::setModifiedDate);
 		attributeGetterFunctions.put(
-			"name", CommerceInventoryWarehouse::getName);
+			"active", CommerceInventoryWarehouse::getActive);
 		attributeSetterBiConsumers.put(
-			"name",
+			"active",
+			(BiConsumer<CommerceInventoryWarehouse, Boolean>)
+				CommerceInventoryWarehouse::setActive);
+		attributeGetterFunctions.put(
+			"city", CommerceInventoryWarehouse::getCity);
+		attributeSetterBiConsumers.put(
+			"city",
 			(BiConsumer<CommerceInventoryWarehouse, String>)
-				CommerceInventoryWarehouse::setName);
+				CommerceInventoryWarehouse::setCity);
+		attributeGetterFunctions.put(
+			"commerceRegionCode",
+			CommerceInventoryWarehouse::getCommerceRegionCode);
+		attributeSetterBiConsumers.put(
+			"commerceRegionCode",
+			(BiConsumer<CommerceInventoryWarehouse, String>)
+				CommerceInventoryWarehouse::setCommerceRegionCode);
+		attributeGetterFunctions.put(
+			"countryTwoLettersISOCode",
+			CommerceInventoryWarehouse::getCountryTwoLettersISOCode);
+		attributeSetterBiConsumers.put(
+			"countryTwoLettersISOCode",
+			(BiConsumer<CommerceInventoryWarehouse, String>)
+				CommerceInventoryWarehouse::setCountryTwoLettersISOCode);
 		attributeGetterFunctions.put(
 			"description", CommerceInventoryWarehouse::getDescription);
 		attributeSetterBiConsumers.put(
@@ -449,11 +477,29 @@ public class CommerceInventoryWarehouseModelImpl
 			(BiConsumer<CommerceInventoryWarehouse, String>)
 				CommerceInventoryWarehouse::setDescription);
 		attributeGetterFunctions.put(
-			"active", CommerceInventoryWarehouse::getActive);
+			"latitude", CommerceInventoryWarehouse::getLatitude);
 		attributeSetterBiConsumers.put(
-			"active",
-			(BiConsumer<CommerceInventoryWarehouse, Boolean>)
-				CommerceInventoryWarehouse::setActive);
+			"latitude",
+			(BiConsumer<CommerceInventoryWarehouse, Double>)
+				CommerceInventoryWarehouse::setLatitude);
+		attributeGetterFunctions.put(
+			"longitude", CommerceInventoryWarehouse::getLongitude);
+		attributeSetterBiConsumers.put(
+			"longitude",
+			(BiConsumer<CommerceInventoryWarehouse, Double>)
+				CommerceInventoryWarehouse::setLongitude);
+		attributeGetterFunctions.put(
+			"name", CommerceInventoryWarehouse::getName);
+		attributeSetterBiConsumers.put(
+			"name",
+			(BiConsumer<CommerceInventoryWarehouse, String>)
+				CommerceInventoryWarehouse::setName);
+		attributeGetterFunctions.put(
+			"type", CommerceInventoryWarehouse::getType);
+		attributeSetterBiConsumers.put(
+			"type",
+			(BiConsumer<CommerceInventoryWarehouse, String>)
+				CommerceInventoryWarehouse::setType);
 		attributeGetterFunctions.put(
 			"street1", CommerceInventoryWarehouse::getStreet1);
 		attributeSetterBiConsumers.put(
@@ -472,49 +518,11 @@ public class CommerceInventoryWarehouseModelImpl
 			"street3",
 			(BiConsumer<CommerceInventoryWarehouse, String>)
 				CommerceInventoryWarehouse::setStreet3);
-		attributeGetterFunctions.put(
-			"city", CommerceInventoryWarehouse::getCity);
-		attributeSetterBiConsumers.put(
-			"city",
-			(BiConsumer<CommerceInventoryWarehouse, String>)
-				CommerceInventoryWarehouse::setCity);
 		attributeGetterFunctions.put("zip", CommerceInventoryWarehouse::getZip);
 		attributeSetterBiConsumers.put(
 			"zip",
 			(BiConsumer<CommerceInventoryWarehouse, String>)
 				CommerceInventoryWarehouse::setZip);
-		attributeGetterFunctions.put(
-			"commerceRegionCode",
-			CommerceInventoryWarehouse::getCommerceRegionCode);
-		attributeSetterBiConsumers.put(
-			"commerceRegionCode",
-			(BiConsumer<CommerceInventoryWarehouse, String>)
-				CommerceInventoryWarehouse::setCommerceRegionCode);
-		attributeGetterFunctions.put(
-			"countryTwoLettersISOCode",
-			CommerceInventoryWarehouse::getCountryTwoLettersISOCode);
-		attributeSetterBiConsumers.put(
-			"countryTwoLettersISOCode",
-			(BiConsumer<CommerceInventoryWarehouse, String>)
-				CommerceInventoryWarehouse::setCountryTwoLettersISOCode);
-		attributeGetterFunctions.put(
-			"latitude", CommerceInventoryWarehouse::getLatitude);
-		attributeSetterBiConsumers.put(
-			"latitude",
-			(BiConsumer<CommerceInventoryWarehouse, Double>)
-				CommerceInventoryWarehouse::setLatitude);
-		attributeGetterFunctions.put(
-			"longitude", CommerceInventoryWarehouse::getLongitude);
-		attributeSetterBiConsumers.put(
-			"longitude",
-			(BiConsumer<CommerceInventoryWarehouse, Double>)
-				CommerceInventoryWarehouse::setLongitude);
-		attributeGetterFunctions.put(
-			"type", CommerceInventoryWarehouse::getType);
-		attributeSetterBiConsumers.put(
-			"type",
-			(BiConsumer<CommerceInventoryWarehouse, String>)
-				CommerceInventoryWarehouse::setType);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -697,46 +705,6 @@ public class CommerceInventoryWarehouseModelImpl
 
 	@JSON
 	@Override
-	public String getName() {
-		if (_name == null) {
-			return "";
-		}
-		else {
-			return _name;
-		}
-	}
-
-	@Override
-	public void setName(String name) {
-		if (_columnOriginalValues == Collections.EMPTY_MAP) {
-			_setColumnOriginalValues();
-		}
-
-		_name = name;
-	}
-
-	@JSON
-	@Override
-	public String getDescription() {
-		if (_description == null) {
-			return "";
-		}
-		else {
-			return _description;
-		}
-	}
-
-	@Override
-	public void setDescription(String description) {
-		if (_columnOriginalValues == Collections.EMPTY_MAP) {
-			_setColumnOriginalValues();
-		}
-
-		_description = description;
-	}
-
-	@JSON
-	@Override
 	public boolean getActive() {
 		return _active;
 	}
@@ -764,6 +732,344 @@ public class CommerceInventoryWarehouseModelImpl
 	public boolean getOriginalActive() {
 		return GetterUtil.getBoolean(
 			this.<Boolean>getColumnOriginalValue("active_"));
+	}
+
+	@JSON
+	@Override
+	public String getCity() {
+		if (_city == null) {
+			return "";
+		}
+		else {
+			return _city;
+		}
+	}
+
+	@Override
+	public void setCity(String city) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_city = city;
+	}
+
+	@JSON
+	@Override
+	public String getCommerceRegionCode() {
+		if (_commerceRegionCode == null) {
+			return "";
+		}
+		else {
+			return _commerceRegionCode;
+		}
+	}
+
+	@Override
+	public void setCommerceRegionCode(String commerceRegionCode) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_commerceRegionCode = commerceRegionCode;
+	}
+
+	@JSON
+	@Override
+	public String getCountryTwoLettersISOCode() {
+		if (_countryTwoLettersISOCode == null) {
+			return "";
+		}
+		else {
+			return _countryTwoLettersISOCode;
+		}
+	}
+
+	@Override
+	public void setCountryTwoLettersISOCode(String countryTwoLettersISOCode) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_countryTwoLettersISOCode = countryTwoLettersISOCode;
+	}
+
+	/**
+	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
+	 *             #getColumnOriginalValue(String)}
+	 */
+	@Deprecated
+	public String getOriginalCountryTwoLettersISOCode() {
+		return getColumnOriginalValue("countryTwoLettersISOCode");
+	}
+
+	@JSON
+	@Override
+	public String getDescription() {
+		if (_description == null) {
+			return "";
+		}
+		else {
+			return _description;
+		}
+	}
+
+	@Override
+	public String getDescription(Locale locale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getDescription(languageId);
+	}
+
+	@Override
+	public String getDescription(Locale locale, boolean useDefault) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getDescription(languageId, useDefault);
+	}
+
+	@Override
+	public String getDescription(String languageId) {
+		return LocalizationUtil.getLocalization(getDescription(), languageId);
+	}
+
+	@Override
+	public String getDescription(String languageId, boolean useDefault) {
+		return LocalizationUtil.getLocalization(
+			getDescription(), languageId, useDefault);
+	}
+
+	@Override
+	public String getDescriptionCurrentLanguageId() {
+		return _descriptionCurrentLanguageId;
+	}
+
+	@JSON
+	@Override
+	public String getDescriptionCurrentValue() {
+		Locale locale = getLocale(_descriptionCurrentLanguageId);
+
+		return getDescription(locale);
+	}
+
+	@Override
+	public Map<Locale, String> getDescriptionMap() {
+		return LocalizationUtil.getLocalizationMap(getDescription());
+	}
+
+	@Override
+	public void setDescription(String description) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_description = description;
+	}
+
+	@Override
+	public void setDescription(String description, Locale locale) {
+		setDescription(description, locale, LocaleUtil.getDefault());
+	}
+
+	@Override
+	public void setDescription(
+		String description, Locale locale, Locale defaultLocale) {
+
+		String languageId = LocaleUtil.toLanguageId(locale);
+		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+		if (Validator.isNotNull(description)) {
+			setDescription(
+				LocalizationUtil.updateLocalization(
+					getDescription(), "Description", description, languageId,
+					defaultLanguageId));
+		}
+		else {
+			setDescription(
+				LocalizationUtil.removeLocalization(
+					getDescription(), "Description", languageId));
+		}
+	}
+
+	@Override
+	public void setDescriptionCurrentLanguageId(String languageId) {
+		_descriptionCurrentLanguageId = languageId;
+	}
+
+	@Override
+	public void setDescriptionMap(Map<Locale, String> descriptionMap) {
+		setDescriptionMap(descriptionMap, LocaleUtil.getDefault());
+	}
+
+	@Override
+	public void setDescriptionMap(
+		Map<Locale, String> descriptionMap, Locale defaultLocale) {
+
+		if (descriptionMap == null) {
+			return;
+		}
+
+		setDescription(
+			LocalizationUtil.updateLocalization(
+				descriptionMap, getDescription(), "Description",
+				LocaleUtil.toLanguageId(defaultLocale)));
+	}
+
+	@JSON
+	@Override
+	public double getLatitude() {
+		return _latitude;
+	}
+
+	@Override
+	public void setLatitude(double latitude) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_latitude = latitude;
+	}
+
+	@JSON
+	@Override
+	public double getLongitude() {
+		return _longitude;
+	}
+
+	@Override
+	public void setLongitude(double longitude) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_longitude = longitude;
+	}
+
+	@JSON
+	@Override
+	public String getName() {
+		if (_name == null) {
+			return "";
+		}
+		else {
+			return _name;
+		}
+	}
+
+	@Override
+	public String getName(Locale locale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getName(languageId);
+	}
+
+	@Override
+	public String getName(Locale locale, boolean useDefault) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getName(languageId, useDefault);
+	}
+
+	@Override
+	public String getName(String languageId) {
+		return LocalizationUtil.getLocalization(getName(), languageId);
+	}
+
+	@Override
+	public String getName(String languageId, boolean useDefault) {
+		return LocalizationUtil.getLocalization(
+			getName(), languageId, useDefault);
+	}
+
+	@Override
+	public String getNameCurrentLanguageId() {
+		return _nameCurrentLanguageId;
+	}
+
+	@JSON
+	@Override
+	public String getNameCurrentValue() {
+		Locale locale = getLocale(_nameCurrentLanguageId);
+
+		return getName(locale);
+	}
+
+	@Override
+	public Map<Locale, String> getNameMap() {
+		return LocalizationUtil.getLocalizationMap(getName());
+	}
+
+	@Override
+	public void setName(String name) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_name = name;
+	}
+
+	@Override
+	public void setName(String name, Locale locale) {
+		setName(name, locale, LocaleUtil.getDefault());
+	}
+
+	@Override
+	public void setName(String name, Locale locale, Locale defaultLocale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+		if (Validator.isNotNull(name)) {
+			setName(
+				LocalizationUtil.updateLocalization(
+					getName(), "Name", name, languageId, defaultLanguageId));
+		}
+		else {
+			setName(
+				LocalizationUtil.removeLocalization(
+					getName(), "Name", languageId));
+		}
+	}
+
+	@Override
+	public void setNameCurrentLanguageId(String languageId) {
+		_nameCurrentLanguageId = languageId;
+	}
+
+	@Override
+	public void setNameMap(Map<Locale, String> nameMap) {
+		setNameMap(nameMap, LocaleUtil.getDefault());
+	}
+
+	@Override
+	public void setNameMap(Map<Locale, String> nameMap, Locale defaultLocale) {
+		if (nameMap == null) {
+			return;
+		}
+
+		setName(
+			LocalizationUtil.updateLocalization(
+				nameMap, getName(), "Name",
+				LocaleUtil.toLanguageId(defaultLocale)));
+	}
+
+	@JSON
+	@Override
+	public String getType() {
+		if (_type == null) {
+			return "";
+		}
+		else {
+			return _type;
+		}
+	}
+
+	@Override
+	public void setType(String type) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_type = type;
 	}
 
 	@JSON
@@ -828,26 +1134,6 @@ public class CommerceInventoryWarehouseModelImpl
 
 	@JSON
 	@Override
-	public String getCity() {
-		if (_city == null) {
-			return "";
-		}
-		else {
-			return _city;
-		}
-	}
-
-	@Override
-	public void setCity(String city) {
-		if (_columnOriginalValues == Collections.EMPTY_MAP) {
-			_setColumnOriginalValues();
-		}
-
-		_city = city;
-	}
-
-	@JSON
-	@Override
 	public String getZip() {
 		if (_zip == null) {
 			return "";
@@ -864,105 +1150,6 @@ public class CommerceInventoryWarehouseModelImpl
 		}
 
 		_zip = zip;
-	}
-
-	@JSON
-	@Override
-	public String getCommerceRegionCode() {
-		if (_commerceRegionCode == null) {
-			return "";
-		}
-		else {
-			return _commerceRegionCode;
-		}
-	}
-
-	@Override
-	public void setCommerceRegionCode(String commerceRegionCode) {
-		if (_columnOriginalValues == Collections.EMPTY_MAP) {
-			_setColumnOriginalValues();
-		}
-
-		_commerceRegionCode = commerceRegionCode;
-	}
-
-	@JSON
-	@Override
-	public String getCountryTwoLettersISOCode() {
-		if (_countryTwoLettersISOCode == null) {
-			return "";
-		}
-		else {
-			return _countryTwoLettersISOCode;
-		}
-	}
-
-	@Override
-	public void setCountryTwoLettersISOCode(String countryTwoLettersISOCode) {
-		if (_columnOriginalValues == Collections.EMPTY_MAP) {
-			_setColumnOriginalValues();
-		}
-
-		_countryTwoLettersISOCode = countryTwoLettersISOCode;
-	}
-
-	/**
-	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
-	 *             #getColumnOriginalValue(String)}
-	 */
-	@Deprecated
-	public String getOriginalCountryTwoLettersISOCode() {
-		return getColumnOriginalValue("countryTwoLettersISOCode");
-	}
-
-	@JSON
-	@Override
-	public double getLatitude() {
-		return _latitude;
-	}
-
-	@Override
-	public void setLatitude(double latitude) {
-		if (_columnOriginalValues == Collections.EMPTY_MAP) {
-			_setColumnOriginalValues();
-		}
-
-		_latitude = latitude;
-	}
-
-	@JSON
-	@Override
-	public double getLongitude() {
-		return _longitude;
-	}
-
-	@Override
-	public void setLongitude(double longitude) {
-		if (_columnOriginalValues == Collections.EMPTY_MAP) {
-			_setColumnOriginalValues();
-		}
-
-		_longitude = longitude;
-	}
-
-	@JSON
-	@Override
-	public String getType() {
-		if (_type == null) {
-			return "";
-		}
-		else {
-			return _type;
-		}
-	}
-
-	@Override
-	public void setType(String type) {
-		if (_columnOriginalValues == Collections.EMPTY_MAP) {
-			_setColumnOriginalValues();
-		}
-
-		_type = type;
 	}
 
 	public long getColumnBitmask() {
@@ -1004,6 +1191,94 @@ public class CommerceInventoryWarehouseModelImpl
 	}
 
 	@Override
+	public String[] getAvailableLanguageIds() {
+		Set<String> availableLanguageIds = new TreeSet<String>();
+
+		Map<Locale, String> descriptionMap = getDescriptionMap();
+
+		for (Map.Entry<Locale, String> entry : descriptionMap.entrySet()) {
+			Locale locale = entry.getKey();
+			String value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
+			}
+		}
+
+		Map<Locale, String> nameMap = getNameMap();
+
+		for (Map.Entry<Locale, String> entry : nameMap.entrySet()) {
+			Locale locale = entry.getKey();
+			String value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
+			}
+		}
+
+		return availableLanguageIds.toArray(
+			new String[availableLanguageIds.size()]);
+	}
+
+	@Override
+	public String getDefaultLanguageId() {
+		String xml = getDescription();
+
+		if (xml == null) {
+			return "";
+		}
+
+		Locale defaultLocale = LocaleUtil.getDefault();
+
+		return LocalizationUtil.getDefaultLanguageId(xml, defaultLocale);
+	}
+
+	@Override
+	public void prepareLocalizedFieldsForImport() throws LocaleException {
+		Locale defaultLocale = LocaleUtil.fromLanguageId(
+			getDefaultLanguageId());
+
+		Locale[] availableLocales = LocaleUtil.fromLanguageIds(
+			getAvailableLanguageIds());
+
+		Locale defaultImportLocale = LocalizationUtil.getDefaultImportLocale(
+			CommerceInventoryWarehouse.class.getName(), getPrimaryKey(),
+			defaultLocale, availableLocales);
+
+		prepareLocalizedFieldsForImport(defaultImportLocale);
+	}
+
+	@Override
+	@SuppressWarnings("unused")
+	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
+		throws LocaleException {
+
+		Locale defaultLocale = LocaleUtil.getDefault();
+
+		String modelDefaultLanguageId = getDefaultLanguageId();
+
+		String description = getDescription(defaultLocale);
+
+		if (Validator.isNull(description)) {
+			setDescription(
+				getDescription(modelDefaultLanguageId), defaultLocale);
+		}
+		else {
+			setDescription(
+				getDescription(defaultLocale), defaultLocale, defaultLocale);
+		}
+
+		String name = getName(defaultLocale);
+
+		if (Validator.isNull(name)) {
+			setName(getName(modelDefaultLanguageId), defaultLocale);
+		}
+		else {
+			setName(getName(defaultLocale), defaultLocale, defaultLocale);
+		}
+	}
+
+	@Override
 	public CommerceInventoryWarehouse toEscapedModel() {
 		if (_escapedModel == null) {
 			Function<InvocationHandler, CommerceInventoryWarehouse>
@@ -1033,21 +1308,21 @@ public class CommerceInventoryWarehouseModelImpl
 		commerceInventoryWarehouseImpl.setUserName(getUserName());
 		commerceInventoryWarehouseImpl.setCreateDate(getCreateDate());
 		commerceInventoryWarehouseImpl.setModifiedDate(getModifiedDate());
-		commerceInventoryWarehouseImpl.setName(getName());
-		commerceInventoryWarehouseImpl.setDescription(getDescription());
 		commerceInventoryWarehouseImpl.setActive(isActive());
-		commerceInventoryWarehouseImpl.setStreet1(getStreet1());
-		commerceInventoryWarehouseImpl.setStreet2(getStreet2());
-		commerceInventoryWarehouseImpl.setStreet3(getStreet3());
 		commerceInventoryWarehouseImpl.setCity(getCity());
-		commerceInventoryWarehouseImpl.setZip(getZip());
 		commerceInventoryWarehouseImpl.setCommerceRegionCode(
 			getCommerceRegionCode());
 		commerceInventoryWarehouseImpl.setCountryTwoLettersISOCode(
 			getCountryTwoLettersISOCode());
+		commerceInventoryWarehouseImpl.setDescription(getDescription());
 		commerceInventoryWarehouseImpl.setLatitude(getLatitude());
 		commerceInventoryWarehouseImpl.setLongitude(getLongitude());
+		commerceInventoryWarehouseImpl.setName(getName());
 		commerceInventoryWarehouseImpl.setType(getType());
+		commerceInventoryWarehouseImpl.setStreet1(getStreet1());
+		commerceInventoryWarehouseImpl.setStreet2(getStreet2());
+		commerceInventoryWarehouseImpl.setStreet3(getStreet3());
+		commerceInventoryWarehouseImpl.setZip(getZip());
 
 		commerceInventoryWarehouseImpl.resetOriginalValues();
 
@@ -1075,32 +1350,32 @@ public class CommerceInventoryWarehouseModelImpl
 			this.<Date>getColumnOriginalValue("createDate"));
 		commerceInventoryWarehouseImpl.setModifiedDate(
 			this.<Date>getColumnOriginalValue("modifiedDate"));
-		commerceInventoryWarehouseImpl.setName(
-			this.<String>getColumnOriginalValue("name"));
-		commerceInventoryWarehouseImpl.setDescription(
-			this.<String>getColumnOriginalValue("description"));
 		commerceInventoryWarehouseImpl.setActive(
 			this.<Boolean>getColumnOriginalValue("active_"));
+		commerceInventoryWarehouseImpl.setCity(
+			this.<String>getColumnOriginalValue("city"));
+		commerceInventoryWarehouseImpl.setCommerceRegionCode(
+			this.<String>getColumnOriginalValue("commerceRegionCode"));
+		commerceInventoryWarehouseImpl.setCountryTwoLettersISOCode(
+			this.<String>getColumnOriginalValue("countryTwoLettersISOCode"));
+		commerceInventoryWarehouseImpl.setDescription(
+			this.<String>getColumnOriginalValue("description"));
+		commerceInventoryWarehouseImpl.setLatitude(
+			this.<Double>getColumnOriginalValue("latitude"));
+		commerceInventoryWarehouseImpl.setLongitude(
+			this.<Double>getColumnOriginalValue("longitude"));
+		commerceInventoryWarehouseImpl.setName(
+			this.<String>getColumnOriginalValue("name"));
+		commerceInventoryWarehouseImpl.setType(
+			this.<String>getColumnOriginalValue("type_"));
 		commerceInventoryWarehouseImpl.setStreet1(
 			this.<String>getColumnOriginalValue("street1"));
 		commerceInventoryWarehouseImpl.setStreet2(
 			this.<String>getColumnOriginalValue("street2"));
 		commerceInventoryWarehouseImpl.setStreet3(
 			this.<String>getColumnOriginalValue("street3"));
-		commerceInventoryWarehouseImpl.setCity(
-			this.<String>getColumnOriginalValue("city"));
 		commerceInventoryWarehouseImpl.setZip(
 			this.<String>getColumnOriginalValue("zip"));
-		commerceInventoryWarehouseImpl.setCommerceRegionCode(
-			this.<String>getColumnOriginalValue("commerceRegionCode"));
-		commerceInventoryWarehouseImpl.setCountryTwoLettersISOCode(
-			this.<String>getColumnOriginalValue("countryTwoLettersISOCode"));
-		commerceInventoryWarehouseImpl.setLatitude(
-			this.<Double>getColumnOriginalValue("latitude"));
-		commerceInventoryWarehouseImpl.setLongitude(
-			this.<Double>getColumnOriginalValue("longitude"));
-		commerceInventoryWarehouseImpl.setType(
-			this.<String>getColumnOriginalValue("type_"));
 
 		return commerceInventoryWarehouseImpl;
 	}
@@ -1230,47 +1505,7 @@ public class CommerceInventoryWarehouseModelImpl
 			commerceInventoryWarehouseCacheModel.modifiedDate = Long.MIN_VALUE;
 		}
 
-		commerceInventoryWarehouseCacheModel.name = getName();
-
-		String name = commerceInventoryWarehouseCacheModel.name;
-
-		if ((name != null) && (name.length() == 0)) {
-			commerceInventoryWarehouseCacheModel.name = null;
-		}
-
-		commerceInventoryWarehouseCacheModel.description = getDescription();
-
-		String description = commerceInventoryWarehouseCacheModel.description;
-
-		if ((description != null) && (description.length() == 0)) {
-			commerceInventoryWarehouseCacheModel.description = null;
-		}
-
 		commerceInventoryWarehouseCacheModel.active = isActive();
-
-		commerceInventoryWarehouseCacheModel.street1 = getStreet1();
-
-		String street1 = commerceInventoryWarehouseCacheModel.street1;
-
-		if ((street1 != null) && (street1.length() == 0)) {
-			commerceInventoryWarehouseCacheModel.street1 = null;
-		}
-
-		commerceInventoryWarehouseCacheModel.street2 = getStreet2();
-
-		String street2 = commerceInventoryWarehouseCacheModel.street2;
-
-		if ((street2 != null) && (street2.length() == 0)) {
-			commerceInventoryWarehouseCacheModel.street2 = null;
-		}
-
-		commerceInventoryWarehouseCacheModel.street3 = getStreet3();
-
-		String street3 = commerceInventoryWarehouseCacheModel.street3;
-
-		if ((street3 != null) && (street3.length() == 0)) {
-			commerceInventoryWarehouseCacheModel.street3 = null;
-		}
 
 		commerceInventoryWarehouseCacheModel.city = getCity();
 
@@ -1278,14 +1513,6 @@ public class CommerceInventoryWarehouseModelImpl
 
 		if ((city != null) && (city.length() == 0)) {
 			commerceInventoryWarehouseCacheModel.city = null;
-		}
-
-		commerceInventoryWarehouseCacheModel.zip = getZip();
-
-		String zip = commerceInventoryWarehouseCacheModel.zip;
-
-		if ((zip != null) && (zip.length() == 0)) {
-			commerceInventoryWarehouseCacheModel.zip = null;
 		}
 
 		commerceInventoryWarehouseCacheModel.commerceRegionCode =
@@ -1313,9 +1540,25 @@ public class CommerceInventoryWarehouseModelImpl
 				null;
 		}
 
+		commerceInventoryWarehouseCacheModel.description = getDescription();
+
+		String description = commerceInventoryWarehouseCacheModel.description;
+
+		if ((description != null) && (description.length() == 0)) {
+			commerceInventoryWarehouseCacheModel.description = null;
+		}
+
 		commerceInventoryWarehouseCacheModel.latitude = getLatitude();
 
 		commerceInventoryWarehouseCacheModel.longitude = getLongitude();
+
+		commerceInventoryWarehouseCacheModel.name = getName();
+
+		String name = commerceInventoryWarehouseCacheModel.name;
+
+		if ((name != null) && (name.length() == 0)) {
+			commerceInventoryWarehouseCacheModel.name = null;
+		}
 
 		commerceInventoryWarehouseCacheModel.type = getType();
 
@@ -1323,6 +1566,38 @@ public class CommerceInventoryWarehouseModelImpl
 
 		if ((type != null) && (type.length() == 0)) {
 			commerceInventoryWarehouseCacheModel.type = null;
+		}
+
+		commerceInventoryWarehouseCacheModel.street1 = getStreet1();
+
+		String street1 = commerceInventoryWarehouseCacheModel.street1;
+
+		if ((street1 != null) && (street1.length() == 0)) {
+			commerceInventoryWarehouseCacheModel.street1 = null;
+		}
+
+		commerceInventoryWarehouseCacheModel.street2 = getStreet2();
+
+		String street2 = commerceInventoryWarehouseCacheModel.street2;
+
+		if ((street2 != null) && (street2.length() == 0)) {
+			commerceInventoryWarehouseCacheModel.street2 = null;
+		}
+
+		commerceInventoryWarehouseCacheModel.street3 = getStreet3();
+
+		String street3 = commerceInventoryWarehouseCacheModel.street3;
+
+		if ((street3 != null) && (street3.length() == 0)) {
+			commerceInventoryWarehouseCacheModel.street3 = null;
+		}
+
+		commerceInventoryWarehouseCacheModel.zip = getZip();
+
+		String zip = commerceInventoryWarehouseCacheModel.zip;
+
+		if ((zip != null) && (zip.length() == 0)) {
+			commerceInventoryWarehouseCacheModel.zip = null;
 		}
 
 		return commerceInventoryWarehouseCacheModel;
@@ -1429,19 +1704,21 @@ public class CommerceInventoryWarehouseModelImpl
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
-	private String _name;
-	private String _description;
 	private boolean _active;
+	private String _city;
+	private String _commerceRegionCode;
+	private String _countryTwoLettersISOCode;
+	private String _description;
+	private String _descriptionCurrentLanguageId;
+	private double _latitude;
+	private double _longitude;
+	private String _name;
+	private String _nameCurrentLanguageId;
+	private String _type;
 	private String _street1;
 	private String _street2;
 	private String _street3;
-	private String _city;
 	private String _zip;
-	private String _commerceRegionCode;
-	private String _countryTwoLettersISOCode;
-	private double _latitude;
-	private double _longitude;
-	private String _type;
 
 	public <T> T getColumnValue(String columnName) {
 		columnName = _attributeNames.getOrDefault(columnName, columnName);
@@ -1482,20 +1759,20 @@ public class CommerceInventoryWarehouseModelImpl
 		_columnOriginalValues.put("userName", _userName);
 		_columnOriginalValues.put("createDate", _createDate);
 		_columnOriginalValues.put("modifiedDate", _modifiedDate);
-		_columnOriginalValues.put("name", _name);
-		_columnOriginalValues.put("description", _description);
 		_columnOriginalValues.put("active_", _active);
-		_columnOriginalValues.put("street1", _street1);
-		_columnOriginalValues.put("street2", _street2);
-		_columnOriginalValues.put("street3", _street3);
 		_columnOriginalValues.put("city", _city);
-		_columnOriginalValues.put("zip", _zip);
 		_columnOriginalValues.put("commerceRegionCode", _commerceRegionCode);
 		_columnOriginalValues.put(
 			"countryTwoLettersISOCode", _countryTwoLettersISOCode);
+		_columnOriginalValues.put("description", _description);
 		_columnOriginalValues.put("latitude", _latitude);
 		_columnOriginalValues.put("longitude", _longitude);
+		_columnOriginalValues.put("name", _name);
 		_columnOriginalValues.put("type_", _type);
+		_columnOriginalValues.put("street1", _street1);
+		_columnOriginalValues.put("street2", _street2);
+		_columnOriginalValues.put("street3", _street3);
+		_columnOriginalValues.put("zip", _zip);
 	}
 
 	private static final Map<String, String> _attributeNames;
@@ -1537,31 +1814,31 @@ public class CommerceInventoryWarehouseModelImpl
 
 		columnBitmasks.put("modifiedDate", 128L);
 
-		columnBitmasks.put("name", 256L);
+		columnBitmasks.put("active_", 256L);
 
-		columnBitmasks.put("description", 512L);
+		columnBitmasks.put("city", 512L);
 
-		columnBitmasks.put("active_", 1024L);
+		columnBitmasks.put("commerceRegionCode", 1024L);
 
-		columnBitmasks.put("street1", 2048L);
+		columnBitmasks.put("countryTwoLettersISOCode", 2048L);
 
-		columnBitmasks.put("street2", 4096L);
+		columnBitmasks.put("description", 4096L);
 
-		columnBitmasks.put("street3", 8192L);
+		columnBitmasks.put("latitude", 8192L);
 
-		columnBitmasks.put("city", 16384L);
+		columnBitmasks.put("longitude", 16384L);
 
-		columnBitmasks.put("zip", 32768L);
+		columnBitmasks.put("name", 32768L);
 
-		columnBitmasks.put("commerceRegionCode", 65536L);
+		columnBitmasks.put("type_", 65536L);
 
-		columnBitmasks.put("countryTwoLettersISOCode", 131072L);
+		columnBitmasks.put("street1", 131072L);
 
-		columnBitmasks.put("latitude", 262144L);
+		columnBitmasks.put("street2", 262144L);
 
-		columnBitmasks.put("longitude", 524288L);
+		columnBitmasks.put("street3", 524288L);
 
-		columnBitmasks.put("type_", 1048576L);
+		columnBitmasks.put("zip", 1048576L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}

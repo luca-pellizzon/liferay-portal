@@ -58,14 +58,32 @@ public class CommerceInventoryWarehouseTable
 	public final Column<CommerceInventoryWarehouseTable, Date> modifiedDate =
 		createColumn(
 			"modifiedDate", Date.class, Types.TIMESTAMP, Column.FLAG_DEFAULT);
-	public final Column<CommerceInventoryWarehouseTable, String> name =
-		createColumn("name", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
-	public final Column<CommerceInventoryWarehouseTable, String> description =
-		createColumn(
-			"description", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<CommerceInventoryWarehouseTable, Boolean> active =
 		createColumn(
 			"active_", Boolean.class, Types.BOOLEAN, Column.FLAG_DEFAULT);
+	public final Column<CommerceInventoryWarehouseTable, String> city =
+		createColumn("city", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+	public final Column<CommerceInventoryWarehouseTable, String>
+		commerceRegionCode = createColumn(
+			"commerceRegionCode", String.class, Types.VARCHAR,
+			Column.FLAG_DEFAULT);
+	public final Column<CommerceInventoryWarehouseTable, String>
+		countryTwoLettersISOCode = createColumn(
+			"countryTwoLettersISOCode", String.class, Types.VARCHAR,
+			Column.FLAG_DEFAULT);
+	public final Column<CommerceInventoryWarehouseTable, String> description =
+		createColumn(
+			"description", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+	public final Column<CommerceInventoryWarehouseTable, Double> latitude =
+		createColumn(
+			"latitude", Double.class, Types.DOUBLE, Column.FLAG_DEFAULT);
+	public final Column<CommerceInventoryWarehouseTable, Double> longitude =
+		createColumn(
+			"longitude", Double.class, Types.DOUBLE, Column.FLAG_DEFAULT);
+	public final Column<CommerceInventoryWarehouseTable, String> name =
+		createColumn("name", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+	public final Column<CommerceInventoryWarehouseTable, String> type =
+		createColumn("type_", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<CommerceInventoryWarehouseTable, String> street1 =
 		createColumn(
 			"street1", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
@@ -75,26 +93,8 @@ public class CommerceInventoryWarehouseTable
 	public final Column<CommerceInventoryWarehouseTable, String> street3 =
 		createColumn(
 			"street3", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
-	public final Column<CommerceInventoryWarehouseTable, String> city =
-		createColumn("city", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<CommerceInventoryWarehouseTable, String> zip =
 		createColumn("zip", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
-	public final Column<CommerceInventoryWarehouseTable, String>
-		commerceRegionCode = createColumn(
-			"commerceRegionCode", String.class, Types.VARCHAR,
-			Column.FLAG_DEFAULT);
-	public final Column<CommerceInventoryWarehouseTable, String>
-		countryTwoLettersISOCode = createColumn(
-			"countryTwoLettersISOCode", String.class, Types.VARCHAR,
-			Column.FLAG_DEFAULT);
-	public final Column<CommerceInventoryWarehouseTable, Double> latitude =
-		createColumn(
-			"latitude", Double.class, Types.DOUBLE, Column.FLAG_DEFAULT);
-	public final Column<CommerceInventoryWarehouseTable, Double> longitude =
-		createColumn(
-			"longitude", Double.class, Types.DOUBLE, Column.FLAG_DEFAULT);
-	public final Column<CommerceInventoryWarehouseTable, String> type =
-		createColumn("type_", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 
 	private CommerceInventoryWarehouseTable() {
 		super("CIWarehouse", CommerceInventoryWarehouseTable::new);
