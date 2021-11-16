@@ -132,19 +132,19 @@
 
 		<!-- Other fields -->
 
-		<column name="name" type="String" />
-		<column name="description" type="String" />
 		<column name="active" type="boolean" />
+		<column name="city" type="String" />
+		<column name="commerceRegionCode" type="String" />
+		<column name="countryTwoLettersISOCode" type="String" />
+		<column localized="true" name="description" type="String" />
+		<column name="latitude" type="double" />
+		<column name="longitude" type="double" />
+		<column localized="true" name="name" type="String" />
+		<column name="type" type="String" />
 		<column name="street1" type="String" />
 		<column name="street2" type="String" />
 		<column name="street3" type="String" />
-		<column name="city" type="String" />
 		<column name="zip" type="String" />
-		<column name="commerceRegionCode" type="String" />
-		<column name="countryTwoLettersISOCode" type="String" />
-		<column name="latitude" type="double" />
-		<column name="longitude" type="double" />
-		<column name="type" type="String" />
 
 		<!-- Order -->
 
