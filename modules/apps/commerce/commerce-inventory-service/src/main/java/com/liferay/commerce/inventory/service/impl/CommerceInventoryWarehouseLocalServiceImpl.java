@@ -123,19 +123,19 @@ public class CommerceInventoryWarehouseLocalServiceImpl
 		commerceInventoryWarehouse.setCompanyId(user.getCompanyId());
 		commerceInventoryWarehouse.setUserId(user.getUserId());
 		commerceInventoryWarehouse.setUserName(user.getFullName());
-		commerceInventoryWarehouse.setName(name);
-		commerceInventoryWarehouse.setDescription(description);
 		commerceInventoryWarehouse.setActive(active);
-		commerceInventoryWarehouse.setStreet1(street1);
-		commerceInventoryWarehouse.setStreet2(street2);
-		commerceInventoryWarehouse.setStreet3(street3);
 		commerceInventoryWarehouse.setCity(city);
-		commerceInventoryWarehouse.setZip(zip);
 		commerceInventoryWarehouse.setCommerceRegionCode(commerceRegionCode);
 		commerceInventoryWarehouse.setCountryTwoLettersISOCode(
 			commerceCountryCode);
+		commerceInventoryWarehouse.setDescription(description);
 		commerceInventoryWarehouse.setLatitude(latitude);
 		commerceInventoryWarehouse.setLongitude(longitude);
+		commerceInventoryWarehouse.setName(name);
+		commerceInventoryWarehouse.setStreet1(street1);
+		commerceInventoryWarehouse.setStreet2(street2);
+		commerceInventoryWarehouse.setStreet3(street3);
+		commerceInventoryWarehouse.setZip(zip);
 		commerceInventoryWarehouse.setExpandoBridgeAttributes(serviceContext);
 
 		commerceInventoryWarehouse =
@@ -361,19 +361,19 @@ public class CommerceInventoryWarehouseLocalServiceImpl
 			throw new MVCCException();
 		}
 
-		commerceInventoryWarehouse.setName(name);
-		commerceInventoryWarehouse.setDescription(description);
 		commerceInventoryWarehouse.setActive(active);
-		commerceInventoryWarehouse.setStreet1(street1);
-		commerceInventoryWarehouse.setStreet2(street2);
-		commerceInventoryWarehouse.setStreet3(street3);
 		commerceInventoryWarehouse.setCity(city);
-		commerceInventoryWarehouse.setZip(zip);
 		commerceInventoryWarehouse.setCommerceRegionCode(commerceRegionCode);
 		commerceInventoryWarehouse.setCountryTwoLettersISOCode(
 			commerceCountryCode);
+		commerceInventoryWarehouse.setDescription(description);
 		commerceInventoryWarehouse.setLatitude(latitude);
 		commerceInventoryWarehouse.setLongitude(longitude);
+		commerceInventoryWarehouse.setName(name);
+		commerceInventoryWarehouse.setStreet1(street1);
+		commerceInventoryWarehouse.setStreet2(street2);
+		commerceInventoryWarehouse.setStreet3(street3);
+		commerceInventoryWarehouse.setZip(zip);
 		commerceInventoryWarehouse.setExpandoBridgeAttributes(serviceContext);
 
 		return commerceInventoryWarehousePersistence.update(
