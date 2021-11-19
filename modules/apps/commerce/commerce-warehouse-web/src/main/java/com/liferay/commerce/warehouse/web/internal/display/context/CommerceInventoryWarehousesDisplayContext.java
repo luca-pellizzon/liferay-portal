@@ -15,6 +15,7 @@
 package com.liferay.commerce.warehouse.web.internal.display.context;
 
 import com.liferay.commerce.country.CommerceCountryManager;
+import com.liferay.commerce.frontend.model.HeaderActionModel;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
 import com.liferay.commerce.inventory.service.CommerceInventoryWarehouseService;
 import com.liferay.commerce.product.display.context.helper.CPRequestHelper;
@@ -31,6 +32,7 @@ import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Country;
+import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.service.CountryService;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -44,6 +46,7 @@ import java.util.stream.Stream;
 
 import javax.portlet.PortletException;
 import javax.portlet.PortletURL;
+import javax.portlet.RenderURL;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -132,6 +135,25 @@ public class CommerceInventoryWarehousesDisplayContext {
 		return ParamUtil.getString(
 			_cpRequestHelper.getRenderRequest(), "countryTwoLettersISOCode",
 			null);
+	}
+
+	public List<HeaderActionModel> getHeaderActionModels() {
+		List<HeaderActionModel> headerActionModels = new ArrayList<>();
+
+		LiferayPortletResponse liferayPortletResponse =
+			_cpRequestHelper.getLiferayPortletResponse();
+
+		RenderURL renderURL = liferayPortletResponse.createRenderURL();
+
+		headerActionModels.add(
+			new HeaderActionModel(null, renderURL.toString(), null, "cancel"));
+
+		headerActionModels.add(
+			new HeaderActionModel(
+				"btn-primary", liferayPortletResponse.getNamespace() + "fm",
+				null, null, "save"));
+
+		return headerActionModels;
 	}
 
 	public List<ManagementBarFilterItem> getManagementBarFilterItems()
