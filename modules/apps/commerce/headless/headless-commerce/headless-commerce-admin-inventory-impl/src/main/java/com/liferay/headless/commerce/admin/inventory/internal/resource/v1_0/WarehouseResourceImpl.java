@@ -31,15 +31,18 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.odata.entity.EntityModel;
+import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 import com.liferay.portal.vulcan.util.SearchUtil;
 
-import java.util.Collections;
+import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -125,8 +128,7 @@ public class WarehouseResourceImpl
 		throws Exception {
 
 		return SearchUtil.search(
-			Collections.emptyMap(),
-			booleanQuery -> booleanQuery.getPreBooleanFilter(), filter,
+			null, booleanQuery -> booleanQuery.getPreBooleanFilter(), filter,
 			CommerceInventoryWarehouse.class.getName(), StringPool.BLANK,
 			pagination,
 			queryConfig -> queryConfig.setSelectedFieldNames(
@@ -231,14 +233,44 @@ public class WarehouseResourceImpl
 				contextAcceptLanguage.getPreferredLocale()));
 	}
 
+	private Map<String, Map<String, String>> _getActions(
+		CommerceInventoryWarehouse commerceInventoryWarehouse) {
+
+		return HashMapBuilder.<String, Map<String, String>>put(
+			"delete",
+			addAction(
+				"UPDATE",
+				commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
+				"deleteWarehousId",
+				_commerceInventoryWarehouseWarehouseModelResourcePermission)
+		).put(
+			"get",
+			addAction(
+				"VIEW",
+				commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
+				"getWarehousId",
+				_commerceInventoryWarehouseWarehouseModelResourcePermission)
+		).put(
+			"update",
+			addAction(
+				"UPDATE",
+				commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
+				"patchWarehousId",
+				_commerceInventoryWarehouseWarehouseModelResourcePermission)
+		).build();
+	}
+
 	private Warehouse _toWarehouse(
 			CommerceInventoryWarehouse commerceInventoryWarehouse)
 		throws Exception {
 
 		return _warehouseDTOConverter.toDTO(
 			new DefaultDTOConverterContext(
+				contextAcceptLanguage.isAcceptAllLanguages(),
+				_getActions(commerceInventoryWarehouse), _dtoConverterRegistry,
 				commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
-				contextAcceptLanguage.getPreferredLocale()));
+				contextAcceptLanguage.getPreferredLocale(), contextUriInfo,
+				contextUser));
 	}
 
 	private void _updateNestedResources(
@@ -318,6 +350,15 @@ public class WarehouseResourceImpl
 	@Reference
 	private CommerceInventoryWarehouseService
 		_commerceInventoryWarehouseService;
+
+	@Reference(
+		target = "(model.class.name=com.liferay.commerce.inventory.model.CommerceInventoryWarehouse)"
+	)
+	private ModelResourcePermission<CommerceInventoryWarehouse>
+		_commerceInventoryWarehouseWarehouseModelResourcePermission;
+
+	@Reference
+	private DTOConverterRegistry _dtoConverterRegistry;
 
 	@Reference
 	private ServiceContextHelper _serviceContextHelper;
