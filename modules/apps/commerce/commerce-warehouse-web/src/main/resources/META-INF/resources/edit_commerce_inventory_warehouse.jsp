@@ -31,17 +31,26 @@ if (Validator.isNotNull(backURL)) {
 }
 %>
 
-<portlet:actionURL name="/commerce_inventory_warehouse/edit_commerce_inventory_warehouse" var="editCommerceInventoryWarehouseActionURL" />
+<liferay-portlet:renderURL var="editCommerceInventoryWarehouseExternalReferenceCodeURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+	<portlet:param name="mvcRenderCommandName" value="/commerce_inventory_warehouse/edit_commerce_inventory_warehouse_external_reference_code" />
+	<portlet:param name="commerceInventoryWarehouseId" value="<%= String.valueOf(commerceInventoryWarehouse.getCommerceInventoryWarehouseId()) %>" />
+</liferay-portlet:renderURL>
 
-<aui:form action="<%= editCommerceInventoryWarehouseActionURL %>" cssClass="container-fluid container-fluid-max-xl" method="post" name="fm">
-	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= (commerceInventoryWarehouse == null) ? Constants.ADD : Constants.UPDATE %>" />
-	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
-	<aui:input name="commerceInventoryWarehouseId" type="hidden" value="<%= (commerceInventoryWarehouse == null) ? 0 : commerceInventoryWarehouse.getCommerceInventoryWarehouseId() %>" />
-	<aui:input name="commerceChannelIds" type="hidden" />
-	<aui:input name="mvccVersion" type="hidden" value="<%= (commerceInventoryWarehouse == null) ? 0 : commerceInventoryWarehouse.getMvccVersion() %>" />
+<commerce-ui:header
+	actions="<%= commerceInventoryWarehousesDisplayContext.getHeaderActionModels() %>"
+	bean="<%= commerceInventoryWarehouse %>"
+	beanIdLabel="id"
+	externalReferenceCode="<%= commerceInventoryWarehouse.getExternalReferenceCode() %>"
+	externalReferenceCodeEditUrl="<%= editCommerceInventoryWarehouseExternalReferenceCodeURL %>"
+	model="<%= CommerceInventoryWarehouse.class %>"
+	title="<%= commerceInventoryWarehouse.getName() %>"
+/>
 
-	<liferay-frontend:form-navigator
-		formModelBean="<%= commerceInventoryWarehouse %>"
-		id="<%= CommerceInventoryWarehouseFormNavigatorConstants.FORM_NAVIGATOR_ID_COMMERCE_WAREHOUSE %>"
+<div class="editCommerceInventoryWarehouseContainer">
+	<liferay-frontend:screen-navigation
+		containerWrapperCssClass="container"
+		key="<%= CommerceInventoryWarehouseScreenNavigationConstants.SCREEN_NAVIGATION_KEY_COMMERCE_INVENTORY_WAREHOUSE_GENERAL %>"
+		modelBean="<%= commerceInventoryWarehouse %>"
+		portletURL="<%= currentURLObj %>"
 	/>
-</aui:form>
+</div>
