@@ -21,11 +21,7 @@ import com.liferay.frontend.taglib.servlet.taglib.ScreenNavigationCategory;
 import com.liferay.frontend.taglib.servlet.taglib.ScreenNavigationEntry;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.security.permission.ActionKeys;
-import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -86,27 +82,7 @@ public class CommerceInventoryWarehouseQualifiersScreenNavigationCategory
 	public boolean isVisible(
 		User user, CommerceInventoryWarehouse commerceInventoryWarehouse) {
 
-		if (commerceInventoryWarehouse == null) {
-			return false;
-		}
-
-		boolean hasPermission = false;
-
-		try {
-			hasPermission =
-				_commerceInventoryWarehouseModelResourcePermission.contains(
-					PermissionThreadLocal.getPermissionChecker(),
-					commerceInventoryWarehouse.
-						getCommerceInventoryWarehouseId(),
-					ActionKeys.UPDATE);
-		}
-		catch (Exception exception) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(exception, exception);
-			}
-		}
-
-		return hasPermission;
+		return false;
 	}
 
 	@Override
@@ -123,9 +99,6 @@ public class CommerceInventoryWarehouseQualifiersScreenNavigationCategory
 			httpServletRequest, httpServletResponse,
 			"/commerce_inventory_warehouse/qualifiers.jsp");
 	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceInventoryWarehouseQualifiersScreenNavigationCategory.class);
 
 	@Reference(
 		target = "(model.class.name=com.liferay.commerce.inventory.model.CommerceInventoryWarehouse)"
