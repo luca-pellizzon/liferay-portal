@@ -496,6 +496,31 @@ public class CommerceInventoryWarehouseServiceSoap {
 		}
 	}
 
+	public static
+		com.liferay.commerce.inventory.model.CommerceInventoryWarehouseSoap
+				updateCommerceInventoryWarehouseExternalReferenceCode(
+					String externalReferenceCode,
+					long commerceInventoryWarehouseId)
+			throws RemoteException {
+
+		try {
+			com.liferay.commerce.inventory.model.CommerceInventoryWarehouse
+				returnValue =
+					CommerceInventoryWarehouseServiceUtil.
+						updateCommerceInventoryWarehouseExternalReferenceCode(
+							externalReferenceCode,
+							commerceInventoryWarehouseId);
+
+			return com.liferay.commerce.inventory.model.
+				CommerceInventoryWarehouseSoap.toSoapModel(returnValue);
+		}
+		catch (Exception exception) {
+			_log.error(exception, exception);
+
+			throw new RemoteException(exception.getMessage());
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(
 		CommerceInventoryWarehouseServiceSoap.class);
 
