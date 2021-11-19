@@ -21,6 +21,8 @@ import com.liferay.headless.commerce.core.util.LanguageUtils;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 
+import java.util.Locale;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -48,8 +50,11 @@ public class WarehouseDTOConverter
 			_commerceInventoryWarehouseService.getCommerceInventoryWarehouse(
 				(Long)dtoConverterContext.getId());
 
+		Locale locale = dtoConverterContext.getLocale();
+
 		return new Warehouse() {
 			{
+				actions = dtoConverterContext.getActions();
 				active = commerceInventoryWarehouse.isActive();
 				city = commerceInventoryWarehouse.getCity();
 				countryISOCode =
