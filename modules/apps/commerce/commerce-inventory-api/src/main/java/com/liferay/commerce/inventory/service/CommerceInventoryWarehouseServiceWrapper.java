@@ -266,6 +266,17 @@ public class CommerceInventoryWarehouseServiceWrapper
 	}
 
 	@Override
+	public com.liferay.commerce.inventory.model.CommerceInventoryWarehouse
+			updateCommerceInventoryWarehouseExternalReferenceCode(
+				String externalReferenceCode, long commerceInventoryWarehouseId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _commerceInventoryWarehouseService.
+			updateCommerceInventoryWarehouseExternalReferenceCode(
+				externalReferenceCode, commerceInventoryWarehouseId);
+	}
+
+	@Override
 	public CommerceInventoryWarehouseService getWrappedService() {
 		return _commerceInventoryWarehouseService;
 	}

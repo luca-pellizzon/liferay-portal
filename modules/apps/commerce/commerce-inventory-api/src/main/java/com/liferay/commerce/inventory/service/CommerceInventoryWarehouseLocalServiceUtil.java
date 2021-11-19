@@ -523,6 +523,16 @@ public class CommerceInventoryWarehouseLocalServiceUtil {
 			serviceContext);
 	}
 
+	public static CommerceInventoryWarehouse
+			updateCommerceInventoryWarehouseExternalReferenceCode(
+				String externalReferenceCode, long commerceInventoryWarehouseId)
+		throws PortalException {
+
+		return getService().
+			updateCommerceInventoryWarehouseExternalReferenceCode(
+				externalReferenceCode, commerceInventoryWarehouseId);
+	}
+
 	public static CommerceInventoryWarehouseLocalService getService() {
 		return _service;
 	}
