@@ -180,4 +180,9 @@ public interface CommerceInventoryWarehouseService extends BaseService {
 			long mvccVersion, ServiceContext serviceContext)
 		throws PortalException;
 
+	public CommerceInventoryWarehouse
+			updateCommerceInventoryWarehouseExternalReferenceCode(
+				String externalReferenceCode, long commerceInventoryWarehouseId)
+		throws PortalException;
+
 }

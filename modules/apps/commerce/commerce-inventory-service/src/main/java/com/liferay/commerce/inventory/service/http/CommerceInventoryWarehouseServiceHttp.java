@@ -848,6 +848,51 @@ public class CommerceInventoryWarehouseServiceHttp {
 		}
 	}
 
+	public static
+		com.liferay.commerce.inventory.model.CommerceInventoryWarehouse
+				updateCommerceInventoryWarehouseExternalReferenceCode(
+					HttpPrincipal httpPrincipal, String externalReferenceCode,
+					long commerceInventoryWarehouseId)
+			throws com.liferay.portal.kernel.exception.PortalException {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				CommerceInventoryWarehouseServiceUtil.class,
+				"updateCommerceInventoryWarehouseExternalReferenceCode",
+				_updateCommerceInventoryWarehouseExternalReferenceCodeParameterTypes17);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, externalReferenceCode, commerceInventoryWarehouseId);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception exception) {
+				if (exception instanceof
+						com.liferay.portal.kernel.exception.PortalException) {
+
+					throw (com.liferay.portal.kernel.exception.PortalException)
+						exception;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					exception);
+			}
+
+			return (com.liferay.commerce.inventory.model.
+				CommerceInventoryWarehouse)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException
+					systemException) {
+
+			_log.error(systemException, systemException);
+
+			throw systemException;
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(
 		CommerceInventoryWarehouseServiceHttp.class);
 
@@ -930,5 +975,8 @@ public class CommerceInventoryWarehouseServiceHttp {
 			String.class, String.class, double.class, double.class, long.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
+	private static final Class<?>[]
+		_updateCommerceInventoryWarehouseExternalReferenceCodeParameterTypes17 =
+			new Class[] {String.class, long.class};
 
 }
