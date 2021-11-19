@@ -28,6 +28,7 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.commerce.exception.CommerceGeocoderException" %><%@
+page import="com.liferay.commerce.exception.NoSuchWarehouseException" %><%@
 page import="com.liferay.commerce.inventory.exception.CommerceInventoryWarehouseActiveException" %><%@
 page import="com.liferay.commerce.inventory.exception.CommerceInventoryWarehouseNameException" %><%@
 page import="com.liferay.commerce.inventory.exception.MVCCException" %><%@
