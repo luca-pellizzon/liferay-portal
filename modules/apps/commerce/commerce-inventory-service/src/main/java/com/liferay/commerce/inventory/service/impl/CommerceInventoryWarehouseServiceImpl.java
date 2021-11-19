@@ -336,6 +336,21 @@ public class CommerceInventoryWarehouseServiceImpl
 				serviceContext);
 	}
 
+	@Override
+	public CommerceInventoryWarehouse
+			updateCommerceInventoryWarehouseExternalReferenceCode(
+				String externalReferenceCode, long commerceInventoryWarehouseId)
+		throws PortalException {
+
+		_commerceInventoryWarehouseModelResourcePermission.check(
+			getPermissionChecker(), commerceInventoryWarehouseId,
+			ActionKeys.UPDATE);
+
+		return commerceInventoryWarehouseLocalService.
+			updateCommerceInventoryWarehouseExternalReferenceCode(
+				externalReferenceCode, commerceInventoryWarehouseId);
+	}
+
 	private static volatile ModelResourcePermission<CommerceInventoryWarehouse>
 		_commerceInventoryWarehouseModelResourcePermission =
 			ModelResourcePermissionFactory.getInstance(
