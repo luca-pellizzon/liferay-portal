@@ -380,6 +380,24 @@ public class CommerceInventoryWarehouseLocalServiceImpl
 			commerceInventoryWarehouse);
 	}
 
+	@Indexable(type = IndexableType.REINDEX)
+	@Override
+	public CommerceInventoryWarehouse
+			updateCommerceInventoryWarehouseExternalReferenceCode(
+				String externalReferenceCode, long commerceInventoryWarehouseId)
+		throws PortalException {
+
+		CommerceInventoryWarehouse commerceInventoryWarehouse =
+			commerceInventoryWarehousePersistence.findByPrimaryKey(
+				commerceInventoryWarehouseId);
+
+		commerceInventoryWarehouse.setExternalReferenceCode(
+			externalReferenceCode);
+
+		return commerceInventoryWarehousePersistence.update(
+			commerceInventoryWarehouse);
+	}
+
 	protected SearchContext buildSearchContext(
 		long companyId, Boolean active, String commerceCountryCode,
 		String keywords, int start, int end, Sort sort) {
