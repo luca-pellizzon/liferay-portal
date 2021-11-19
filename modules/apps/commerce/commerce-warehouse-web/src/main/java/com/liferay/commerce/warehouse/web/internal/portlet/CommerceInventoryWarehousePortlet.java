@@ -14,14 +14,12 @@
 
 package com.liferay.commerce.warehouse.web.internal.portlet;
 
-import com.liferay.commerce.country.CommerceCountryManager;
 import com.liferay.commerce.inventory.service.CommerceInventoryWarehouseService;
 import com.liferay.commerce.product.constants.CPPortletKeys;
 import com.liferay.commerce.product.service.CommerceChannelRelService;
 import com.liferay.commerce.product.service.CommerceChannelService;
 import com.liferay.commerce.warehouse.web.internal.display.context.CommerceInventoryWarehousesDisplayContext;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.service.CountryService;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 
@@ -72,8 +70,7 @@ public class CommerceInventoryWarehousePortlet extends MVCPortlet {
 			commerceInventoryWarehousesDisplayContext =
 				new CommerceInventoryWarehousesDisplayContext(
 					_commerceChannelRelService, _commerceChannelService,
-					_commerceCountryManager, _commerceInventoryWarehouseService,
-					_countryService,
+					_commerceInventoryWarehouseService,
 					_portal.getHttpServletRequest(renderRequest));
 
 		renderRequest.setAttribute(
@@ -90,14 +87,8 @@ public class CommerceInventoryWarehousePortlet extends MVCPortlet {
 	private CommerceChannelService _commerceChannelService;
 
 	@Reference
-	private CommerceCountryManager _commerceCountryManager;
-
-	@Reference
 	private CommerceInventoryWarehouseService
 		_commerceInventoryWarehouseService;
-
-	@Reference
-	private CountryService _countryService;
 
 	@Reference
 	private Portal _portal;
