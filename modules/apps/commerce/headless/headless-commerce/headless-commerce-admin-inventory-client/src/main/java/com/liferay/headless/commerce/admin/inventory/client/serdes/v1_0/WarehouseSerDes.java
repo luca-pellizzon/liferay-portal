@@ -100,11 +100,7 @@ public class WarehouseSerDes {
 
 			sb.append("\"description\": ");
 
-			sb.append("\"");
-
-			sb.append(_escape(warehouse.getDescription()));
-
-			sb.append("\"");
+			sb.append(_toJSON(warehouse.getDescription()));
 		}
 
 		if (warehouse.getExternalReferenceCode() != null) {
@@ -168,11 +164,7 @@ public class WarehouseSerDes {
 
 			sb.append("\"name\": ");
 
-			sb.append("\"");
-
-			sb.append(_escape(warehouse.getName()));
-
-			sb.append("\"");
+			sb.append(_toJSON(warehouse.getName()));
 		}
 
 		if (warehouse.getRegionISOCode() != null) {
@@ -460,7 +452,9 @@ public class WarehouseSerDes {
 			}
 			else if (Objects.equals(jsonParserFieldName, "description")) {
 				if (jsonParserFieldValue != null) {
-					warehouse.setDescription((String)jsonParserFieldValue);
+					warehouse.setDescription(
+						(Map)WarehouseSerDes.toMap(
+							(String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(
@@ -496,7 +490,9 @@ public class WarehouseSerDes {
 			}
 			else if (Objects.equals(jsonParserFieldName, "name")) {
 				if (jsonParserFieldValue != null) {
-					warehouse.setName((String)jsonParserFieldValue);
+					warehouse.setName(
+						(Map)WarehouseSerDes.toMap(
+							(String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "regionISOCode")) {
