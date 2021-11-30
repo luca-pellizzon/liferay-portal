@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.service.CountryLocalService;
 import com.liferay.portal.kernel.service.RegionLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
@@ -124,8 +125,14 @@ public class CommerceInventoryWarehousesImporter {
 			commerceInventoryWarehouse =
 				_commerceInventoryWarehouseLocalService.
 					addCommerceInventoryWarehouse(
-						externalReferenceCode, name, description, active,
-						street1, street2, street3, city, zip,
+						externalReferenceCode,
+						HashMapBuilder.put(
+							serviceContext.getLocale(), name
+						).build(),
+						HashMapBuilder.put(
+							serviceContext.getLocale(), description
+						).build(),
+						active, street1, street2, street3, city, zip,
 						region.getRegionCode(), country.getA2(), latitude,
 						longitude, serviceContext);
 		}
