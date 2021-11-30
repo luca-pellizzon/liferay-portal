@@ -19,6 +19,7 @@ import com.liferay.headless.commerce.admin.inventory.client.serdes.v1_0.Warehous
 
 import java.io.Serializable;
 
+import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -95,16 +96,17 @@ public class Warehouse implements Cloneable, Serializable {
 
 	protected String countryISOCode;
 
-	public String getDescription() {
+	public Map<String, String> getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(Map<String, String> description) {
 		this.description = description;
 	}
 
 	public void setDescription(
-		UnsafeSupplier<String, Exception> descriptionUnsafeSupplier) {
+		UnsafeSupplier<Map<String, String>, Exception>
+			descriptionUnsafeSupplier) {
 
 		try {
 			description = descriptionUnsafeSupplier.get();
@@ -114,7 +116,7 @@ public class Warehouse implements Cloneable, Serializable {
 		}
 	}
 
-	protected String description;
+	protected Map<String, String> description;
 
 	public String getExternalReferenceCode() {
 		return externalReferenceCode;
@@ -219,15 +221,17 @@ public class Warehouse implements Cloneable, Serializable {
 
 	protected Number mvccVersion;
 
-	public String getName() {
+	public Map<String, String> getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(Map<String, String> name) {
 		this.name = name;
 	}
 
-	public void setName(UnsafeSupplier<String, Exception> nameUnsafeSupplier) {
+	public void setName(
+		UnsafeSupplier<Map<String, String>, Exception> nameUnsafeSupplier) {
+
 		try {
 			name = nameUnsafeSupplier.get();
 		}
@@ -236,7 +240,7 @@ public class Warehouse implements Cloneable, Serializable {
 		}
 	}
 
-	protected String name;
+	protected Map<String, String> name;
 
 	public String getRegionISOCode() {
 		return regionISOCode;

@@ -32,7 +32,6 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
@@ -41,7 +40,6 @@ import com.liferay.portal.vulcan.resource.EntityModelResource;
 import com.liferay.portal.vulcan.util.SearchUtil;
 
 import java.util.Collections;
-import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -202,13 +200,13 @@ public class WarehouseResourceImpl
 				contextCompany.getCompanyId());
 
 		if (commerceInventoryWarehouse == null) {
-
 			commerceInventoryWarehouse =
 				_commerceInventoryWarehouseService.
 					addCommerceInventoryWarehouse(
 						warehouse.getExternalReferenceCode(),
 						LanguageUtils.getLocalizedMap(warehouse.getName()),
-						LanguageUtils.getLocalizedMap(warehouse.getDescription()),
+						LanguageUtils.getLocalizedMap(
+							warehouse.getDescription()),
 						GetterUtil.get(warehouse.getActive(), true),
 						warehouse.getStreet1(), warehouse.getStreet2(),
 						warehouse.getStreet3(), warehouse.getCity(),
