@@ -39,6 +39,8 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import java.io.Serializable;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -80,30 +82,13 @@ public interface CommerceInventoryWarehouseLocalService
 	public CommerceInventoryWarehouse addCommerceInventoryWarehouse(
 		CommerceInventoryWarehouse commerceInventoryWarehouse);
 
-	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 #addCommerceInventoryWarehouse(String,
-	 String, String, String, boolean, String, String, String,
-	 String, String, String, String, double, double,
-	 ServiceContext)}
-	 */
-	@Deprecated
 	@Indexable(type = IndexableType.REINDEX)
 	public CommerceInventoryWarehouse addCommerceInventoryWarehouse(
-			String name, String description, boolean active, String street1,
+			String externalReferenceCode, Map<Locale, String> nameMap,
+			Map<Locale, String> descriptionMap, boolean active, String street1,
 			String street2, String street3, String city, String zip,
 			String commerceRegionCode, String commerceCountryCode,
-			double latitude, double longitude, String externalReferenceCode,
-			ServiceContext serviceContext)
-		throws PortalException;
-
-	@Indexable(type = IndexableType.REINDEX)
-	public CommerceInventoryWarehouse addCommerceInventoryWarehouse(
-			String externalReferenceCode, String name, String description,
-			boolean active, String street1, String street2, String street3,
-			String city, String zip, String commerceRegionCode,
-			String commerceCountryCode, double latitude, double longitude,
-			ServiceContext serviceContext)
+			double latitude, double longitude, ServiceContext serviceContext)
 		throws PortalException;
 
 	/**
@@ -410,6 +395,23 @@ public interface CommerceInventoryWarehouseLocalService
 	public CommerceInventoryWarehouse updateCommerceInventoryWarehouse(
 		CommerceInventoryWarehouse commerceInventoryWarehouse);
 
+	public CommerceInventoryWarehouse updateCommerceInventoryWarehouse(
+			long commerceInventoryWarehouseId, Map<Locale, String> nameMap,
+			Map<Locale, String> descriptionMap, boolean active, String street1,
+			String street2, String street3, String city, String zip,
+			String commerceRegionCode, String commerceCountryCode,
+			double latitude, double longitude, long mvccVersion,
+			ServiceContext serviceContext)
+		throws PortalException;
+
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
+	 #updateCommerceInventoryWarehouse(long,
+	 Map, Map, boolean, String, String, String, String,
+	 String, String, String, double, double,
+	 long, ServiceContext)}
+	 */
+	@Deprecated
 	@Indexable(type = IndexableType.REINDEX)
 	public CommerceInventoryWarehouse updateCommerceInventoryWarehouse(
 			long commerceInventoryWarehouseId, String name, String description,
