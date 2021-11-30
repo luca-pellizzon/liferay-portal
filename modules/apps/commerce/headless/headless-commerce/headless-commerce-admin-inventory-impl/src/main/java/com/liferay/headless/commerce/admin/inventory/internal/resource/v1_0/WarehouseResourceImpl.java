@@ -23,6 +23,7 @@ import com.liferay.headless.commerce.admin.inventory.dto.v1_0.WarehouseItem;
 import com.liferay.headless.commerce.admin.inventory.internal.dto.v1_0.WarehouseDTOConverter;
 import com.liferay.headless.commerce.admin.inventory.internal.odata.entity.v1_0.WarehouseEntityModel;
 import com.liferay.headless.commerce.admin.inventory.resource.v1_0.WarehouseResource;
+import com.liferay.headless.commerce.core.util.LanguageUtils;
 import com.liferay.headless.commerce.core.util.ServiceContextHelper;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.string.StringPool;
@@ -31,6 +32,7 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
@@ -39,6 +41,7 @@ import com.liferay.portal.vulcan.resource.EntityModelResource;
 import com.liferay.portal.vulcan.util.SearchUtil;
 
 import java.util.Collections;
+import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -199,11 +202,13 @@ public class WarehouseResourceImpl
 				contextCompany.getCompanyId());
 
 		if (commerceInventoryWarehouse == null) {
+
 			commerceInventoryWarehouse =
 				_commerceInventoryWarehouseService.
 					addCommerceInventoryWarehouse(
 						warehouse.getExternalReferenceCode(),
-						warehouse.getName(), warehouse.getDescription(),
+						LanguageUtils.getLocalizedMap(warehouse.getName()),
+						LanguageUtils.getLocalizedMap(warehouse.getDescription()),
 						GetterUtil.get(warehouse.getActive(), true),
 						warehouse.getStreet1(), warehouse.getStreet2(),
 						warehouse.getStreet3(), warehouse.getCity(),
@@ -264,11 +269,8 @@ public class WarehouseResourceImpl
 		commerceInventoryWarehouse =
 			_commerceInventoryWarehouseService.updateCommerceInventoryWarehouse(
 				commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
-				GetterUtil.get(
-					warehouse.getName(), commerceInventoryWarehouse.getName()),
-				GetterUtil.get(
-					warehouse.getDescription(),
-					commerceInventoryWarehouse.getDescription()),
+				LanguageUtils.getLocalizedMap(warehouse.getName()),
+				LanguageUtils.getLocalizedMap(warehouse.getDescription()),
 				GetterUtil.get(
 					warehouse.getActive(),
 					commerceInventoryWarehouse.isActive()),
