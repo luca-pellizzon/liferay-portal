@@ -17,8 +17,12 @@ package com.liferay.commerce.inventory.service.http;
 import com.liferay.commerce.inventory.service.CommerceInventoryWarehouseServiceUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 
 import java.rmi.RemoteException;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Provides the SOAP utility for the
@@ -63,64 +67,33 @@ import java.rmi.RemoteException;
 @Deprecated
 public class CommerceInventoryWarehouseServiceSoap {
 
-	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 #addCommerceInventoryWarehouse(String, String, String,
-	 boolean, String, String, String, String, String, String,
-	 String, double, double, serviceContext)}
-	 */
-	@Deprecated
 	public static
 		com.liferay.commerce.inventory.model.CommerceInventoryWarehouseSoap
 				addCommerceInventoryWarehouse(
-					String name, String description, boolean active,
+					String externalReferenceCode, String[] nameMapLanguageIds,
+					String[] nameMapValues, String[] descriptionMapLanguageIds,
+					String[] descriptionMapValues, boolean active,
 					String street1, String street2, String street3, String city,
 					String zip, String commerceRegionCode,
 					String commerceCountryCode, double latitude,
-					double longitude, String externalReferenceCode,
+					double longitude,
 					com.liferay.portal.kernel.service.ServiceContext
 						serviceContext)
 			throws RemoteException {
 
 		try {
+			Map<Locale, String> nameMap = LocalizationUtil.getLocalizationMap(
+				nameMapLanguageIds, nameMapValues);
+			Map<Locale, String> descriptionMap =
+				LocalizationUtil.getLocalizationMap(
+					descriptionMapLanguageIds, descriptionMapValues);
+
 			com.liferay.commerce.inventory.model.CommerceInventoryWarehouse
 				returnValue =
 					CommerceInventoryWarehouseServiceUtil.
 						addCommerceInventoryWarehouse(
-							name, description, active, street1, street2,
-							street3, city, zip, commerceRegionCode,
-							commerceCountryCode, latitude, longitude,
-							externalReferenceCode, serviceContext);
-
-			return com.liferay.commerce.inventory.model.
-				CommerceInventoryWarehouseSoap.toSoapModel(returnValue);
-		}
-		catch (Exception exception) {
-			_log.error(exception, exception);
-
-			throw new RemoteException(exception.getMessage());
-		}
-	}
-
-	public static
-		com.liferay.commerce.inventory.model.CommerceInventoryWarehouseSoap
-				addCommerceInventoryWarehouse(
-					String externalReferenceCode, String name,
-					String description, boolean active, String street1,
-					String street2, String street3, String city, String zip,
-					String commerceRegionCode, String commerceCountryCode,
-					double latitude, double longitude,
-					com.liferay.portal.kernel.service.ServiceContext
-						serviceContext)
-			throws RemoteException {
-
-		try {
-			com.liferay.commerce.inventory.model.CommerceInventoryWarehouse
-				returnValue =
-					CommerceInventoryWarehouseServiceUtil.
-						addCommerceInventoryWarehouse(
-							externalReferenceCode, name, description, active,
-							street1, street2, street3, city, zip,
+							externalReferenceCode, nameMap, descriptionMap,
+							active, street1, street2, street3, city, zip,
 							commerceRegionCode, commerceCountryCode, latitude,
 							longitude, serviceContext);
 
@@ -467,24 +440,33 @@ public class CommerceInventoryWarehouseServiceSoap {
 	public static
 		com.liferay.commerce.inventory.model.CommerceInventoryWarehouseSoap
 				updateCommerceInventoryWarehouse(
-					long commerceInventoryWarehouseId, String name,
-					String description, boolean active, String street1,
-					String street2, String street3, String city, String zip,
-					String commerceRegionCode, String commerceCountryCode,
-					double latitude, double longitude, long mvccVersion,
+					long commerceInventoryWarehouseId,
+					String[] nameMapLanguageIds, String[] nameMapValues,
+					String[] descriptionMapLanguageIds,
+					String[] descriptionMapValues, boolean active,
+					String street1, String street2, String street3, String city,
+					String zip, String commerceRegionCode,
+					String commerceCountryCode, double latitude,
+					double longitude, long mvccVersion,
 					com.liferay.portal.kernel.service.ServiceContext
 						serviceContext)
 			throws RemoteException {
 
 		try {
+			Map<Locale, String> nameMap = LocalizationUtil.getLocalizationMap(
+				nameMapLanguageIds, nameMapValues);
+			Map<Locale, String> descriptionMap =
+				LocalizationUtil.getLocalizationMap(
+					descriptionMapLanguageIds, descriptionMapValues);
+
 			com.liferay.commerce.inventory.model.CommerceInventoryWarehouse
 				returnValue =
 					CommerceInventoryWarehouseServiceUtil.
 						updateCommerceInventoryWarehouse(
-							commerceInventoryWarehouseId, name, description,
-							active, street1, street2, street3, city, zip,
-							commerceRegionCode, commerceCountryCode, latitude,
-							longitude, mvccVersion, serviceContext);
+							commerceInventoryWarehouseId, nameMap,
+							descriptionMap, active, street1, street2, street3,
+							city, zip, commerceRegionCode, commerceCountryCode,
+							latitude, longitude, mvccVersion, serviceContext);
 
 			return com.liferay.commerce.inventory.model.
 				CommerceInventoryWarehouseSoap.toSoapModel(returnValue);
