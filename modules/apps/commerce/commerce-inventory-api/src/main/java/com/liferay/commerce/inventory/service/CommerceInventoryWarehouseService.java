@@ -30,6 +30,8 @@ import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -63,28 +65,12 @@ public interface CommerceInventoryWarehouseService extends BaseService {
 	 *
 	 * Never modify this interface directly. Add custom service methods to <code>com.liferay.commerce.inventory.service.impl.CommerceInventoryWarehouseServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the commerce inventory warehouse remote service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link CommerceInventoryWarehouseServiceUtil} if injection and service tracking are not available.
 	 */
-
-	/**
-	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 #addCommerceInventoryWarehouse(String, String, String,
-	 boolean, String, String, String, String, String, String,
-	 String, double, double, serviceContext)}
-	 */
-	@Deprecated
 	public CommerceInventoryWarehouse addCommerceInventoryWarehouse(
-			String name, String description, boolean active, String street1,
+			String externalReferenceCode, Map<Locale, String> nameMap,
+			Map<Locale, String> descriptionMap, boolean active, String street1,
 			String street2, String street3, String city, String zip,
 			String commerceRegionCode, String commerceCountryCode,
-			double latitude, double longitude, String externalReferenceCode,
-			ServiceContext serviceContext)
-		throws PortalException;
-
-	public CommerceInventoryWarehouse addCommerceInventoryWarehouse(
-			String externalReferenceCode, String name, String description,
-			boolean active, String street1, String street2, String street3,
-			String city, String zip, String commerceRegionCode,
-			String commerceCountryCode, double latitude, double longitude,
-			ServiceContext serviceContext)
+			double latitude, double longitude, ServiceContext serviceContext)
 		throws PortalException;
 
 	public CommerceInventoryWarehouse deleteCommerceInventoryWarehouse(
@@ -173,11 +159,12 @@ public interface CommerceInventoryWarehouseService extends BaseService {
 		throws PortalException;
 
 	public CommerceInventoryWarehouse updateCommerceInventoryWarehouse(
-			long commerceInventoryWarehouseId, String name, String description,
-			boolean active, String street1, String street2, String street3,
-			String city, String zip, String commerceRegionCode,
-			String commerceCountryCode, double latitude, double longitude,
-			long mvccVersion, ServiceContext serviceContext)
+			long commerceInventoryWarehouseId, Map<Locale, String> nameMap,
+			Map<Locale, String> descriptionMap, boolean active, String street1,
+			String street2, String street3, String city, String zip,
+			String commerceRegionCode, String commerceCountryCode,
+			double latitude, double longitude, long mvccVersion,
+			ServiceContext serviceContext)
 		throws PortalException;
 
 	public CommerceInventoryWarehouse
