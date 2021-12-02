@@ -32,6 +32,9 @@ import com.liferay.portal.kernel.test.randomizerbumpers.NumericStringRandomizerB
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * @author Luca Pellizzon
  */
@@ -88,7 +91,8 @@ public class CommerceInventoryTestUtil {
 
 		return CommerceInventoryWarehouseLocalServiceUtil.
 			addCommerceInventoryWarehouse(
-				null, name, RandomTestUtil.randomString(), active,
+				null, RandomTestUtil.randomLocaleStringMap(),
+				RandomTestUtil.randomLocaleStringMap(), active,
 				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 				RandomTestUtil.randomString(), region.getRegionCode(),
@@ -106,7 +110,8 @@ public class CommerceInventoryTestUtil {
 
 		return CommerceInventoryWarehouseLocalServiceUtil.
 			addCommerceInventoryWarehouse(
-				null, name, RandomTestUtil.randomString(), active,
+				null, RandomTestUtil.randomLocaleStringMap(),
+				RandomTestUtil.randomLocaleStringMap(), active,
 				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 				RandomTestUtil.randomString(), region.getRegionCode(),
@@ -158,7 +163,7 @@ public class CommerceInventoryTestUtil {
 
 	public static CommerceInventoryWarehouse
 			addCommerceInventoryWarehouseWithExternalReferenceCode(
-				long groupId, String name)
+				long groupId, Map<Locale, String> name)
 		throws Exception {
 
 		ServiceContext serviceContext =
@@ -171,7 +176,7 @@ public class CommerceInventoryTestUtil {
 		return CommerceInventoryWarehouseLocalServiceUtil.
 			addCommerceInventoryWarehouse(
 				RandomTestUtil.randomString(), name,
-				RandomTestUtil.randomString(), true,
+				RandomTestUtil.randomLocaleStringMap(), true,
 				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 				RandomTestUtil.randomString(), region.getRegionCode(),
