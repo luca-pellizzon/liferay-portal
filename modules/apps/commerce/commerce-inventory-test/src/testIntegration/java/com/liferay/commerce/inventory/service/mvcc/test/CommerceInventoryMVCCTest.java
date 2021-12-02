@@ -38,6 +38,8 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
 import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -140,10 +142,13 @@ public class CommerceInventoryMVCCTest {
 			CommerceInventoryTestUtil.addCommerceInventoryWarehouse(
 				RandomTestUtil.randomString(), true, _serviceContext);
 
+		Map<Locale, String> newDescriptionMap =
+			RandomTestUtil.randomLocaleStringMap();
+
 		_commerceInventoryWarehouseLocalService.
 			updateCommerceInventoryWarehouse(
 				commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
-				commerceInventoryWarehouse.getName(), "New Description OK",
+				commerceInventoryWarehouse.getNameMap(), newDescriptionMap,
 				commerceInventoryWarehouse.isActive(),
 				commerceInventoryWarehouse.getStreet1(),
 				commerceInventoryWarehouse.getStreet2(),
@@ -156,10 +161,12 @@ public class CommerceInventoryMVCCTest {
 				commerceInventoryWarehouse.getLongitude(),
 				commerceInventoryWarehouse.getMvccVersion(), _serviceContext);
 
+		newDescriptionMap = RandomTestUtil.randomLocaleStringMap();
+
 		_commerceInventoryWarehouseLocalService.
 			updateCommerceInventoryWarehouse(
 				commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
-				commerceInventoryWarehouse.getName(), "New Description KO",
+				commerceInventoryWarehouse.getNameMap(), newDescriptionMap,
 				commerceInventoryWarehouse.isActive(),
 				commerceInventoryWarehouse.getStreet1(),
 				commerceInventoryWarehouse.getStreet2(),
