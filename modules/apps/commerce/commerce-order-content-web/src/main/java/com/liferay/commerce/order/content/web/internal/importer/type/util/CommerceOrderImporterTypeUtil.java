@@ -231,10 +231,10 @@ public class CommerceOrderImporterTypeUtil {
 	}
 
 	public static CSVFormat getCSVFormat(
+		CSVFormat csvFormat = CSVFormat.DEFAULT;
+
 		CommerceOrderImporterTypeConfiguration
 			commerceOrderImporterTypeConfiguration) {
-
-		CSVFormat csvFormat = CSVFormat.DEFAULT;
 
 		String csvSeparator =
 			commerceOrderImporterTypeConfiguration.csvSeparator();
