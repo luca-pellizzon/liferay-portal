@@ -49,9 +49,7 @@ public class WarehouseDTOConverter
 		CommerceInventoryWarehouse commerceInventoryWarehouse =
 			_commerceInventoryWarehouseService.getCommerceInventoryWarehouse(
 				(Long)dtoConverterContext.getId());
-
-		Locale locale = dtoConverterContext.getLocale();
-
+		
 		return new Warehouse() {
 			{
 				actions = dtoConverterContext.getActions();
