@@ -94,7 +94,7 @@ public class WarehouseItemResourceImpl
 
 	@Override
 	public Page<WarehouseItem>
-			getWarehousByExternalReferenceCodeWarehouseItemsPage(
+			getWarehouseByExternalReferenceCodeWarehouseItemsPage(
 				String externalReferenceCode, Pagination pagination)
 		throws Exception {
 
@@ -120,6 +120,27 @@ public class WarehouseItemResourceImpl
 				getCommerceInventoryWarehouseItemsCount(
 					commerceInventoryWarehouse.
 						getCommerceInventoryWarehouseId());
+
+		return Page.of(
+			_toWarehouseItems(commerceInventoryWarehouseItems), pagination,
+			totalItems);
+	}
+
+	@NestedField(parentClass = Warehouse.class, value = "items")
+	@Override
+	public Page<WarehouseItem> getWarehouseIdWarehouseItemsPage(
+			Long id, Pagination pagination)
+		throws Exception {
+
+		List<CommerceInventoryWarehouseItem> commerceInventoryWarehouseItems =
+			_commerceInventoryWarehouseItemService.
+				getCommerceInventoryWarehouseItems(
+					id, pagination.getStartPosition(),
+					pagination.getEndPosition());
+
+		int totalItems =
+			_commerceInventoryWarehouseItemService.
+				getCommerceInventoryWarehouseItemsCount(id);
 
 		return Page.of(
 			_toWarehouseItems(commerceInventoryWarehouseItems), pagination,
@@ -191,27 +212,6 @@ public class WarehouseItemResourceImpl
 			totalItems);
 	}
 
-	@NestedField(parentClass = Warehouse.class, value = "items")
-	@Override
-	public Page<WarehouseItem> getWarehousIdWarehouseItemsPage(
-			Long id, Pagination pagination)
-		throws Exception {
-
-		List<CommerceInventoryWarehouseItem> commerceInventoryWarehouseItems =
-			_commerceInventoryWarehouseItemService.
-				getCommerceInventoryWarehouseItems(
-					id, pagination.getStartPosition(),
-					pagination.getEndPosition());
-
-		int totalItems =
-			_commerceInventoryWarehouseItemService.
-				getCommerceInventoryWarehouseItemsCount(id);
-
-		return Page.of(
-			_toWarehouseItems(commerceInventoryWarehouseItems), pagination,
-			totalItems);
-	}
-
 	@Override
 	public Response patchWarehouseItem(Long id, WarehouseItem warehouseItem)
 		throws Exception {
@@ -260,7 +260,7 @@ public class WarehouseItemResourceImpl
 	}
 
 	@Override
-	public WarehouseItem postWarehousByExternalReferenceCodeWarehouseItem(
+	public WarehouseItem postWarehouseByExternalReferenceCodeWarehouseItem(
 			String externalReferenceCode, WarehouseItem warehouseItem)
 		throws Exception {
 
@@ -294,6 +294,30 @@ public class WarehouseItemResourceImpl
 							getCommerceInventoryWarehouseId(),
 						warehouseItem.getSku(), warehouseItem.getQuantity());
 		}
+
+		return _warehouseItemDTOConverter.toDTO(
+			new DefaultDTOConverterContext(
+				commerceInventoryWarehouseItem.
+					getCommerceInventoryWarehouseItemId(),
+				contextAcceptLanguage.getPreferredLocale()));
+	}
+
+	@Override
+	public WarehouseItem postWarehouseIdWarehouseItem(
+			Long id, WarehouseItem warehouseItem)
+		throws Exception {
+
+		CommerceInventoryWarehouse commerceInventoryWarehouse =
+			_commerceInventoryWarehouseService.getCommerceInventoryWarehouse(
+				id);
+
+		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem =
+			_commerceInventoryWarehouseItemService.
+				addCommerceInventoryWarehouseItem(
+					warehouseItem.getExternalReferenceCode(),
+					commerceInventoryWarehouse.
+						getCommerceInventoryWarehouseId(),
+					warehouseItem.getSku(), warehouseItem.getQuantity());
 
 		return _warehouseItemDTOConverter.toDTO(
 			new DefaultDTOConverterContext(
@@ -342,30 +366,6 @@ public class WarehouseItemResourceImpl
 			_commerceInventoryWarehouseItemService.
 				addCommerceInventoryWarehouseItem(
 					externalReferenceCode,
-					commerceInventoryWarehouse.
-						getCommerceInventoryWarehouseId(),
-					warehouseItem.getSku(), warehouseItem.getQuantity());
-
-		return _warehouseItemDTOConverter.toDTO(
-			new DefaultDTOConverterContext(
-				commerceInventoryWarehouseItem.
-					getCommerceInventoryWarehouseItemId(),
-				contextAcceptLanguage.getPreferredLocale()));
-	}
-
-	@Override
-	public WarehouseItem postWarehousIdWarehouseItem(
-			Long id, WarehouseItem warehouseItem)
-		throws Exception {
-
-		CommerceInventoryWarehouse commerceInventoryWarehouse =
-			_commerceInventoryWarehouseService.getCommerceInventoryWarehouse(
-				id);
-
-		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem =
-			_commerceInventoryWarehouseItemService.
-				addCommerceInventoryWarehouseItem(
-					warehouseItem.getExternalReferenceCode(),
 					commerceInventoryWarehouse.
 						getCommerceInventoryWarehouseId(),
 					warehouseItem.getSku(), warehouseItem.getQuantity());
