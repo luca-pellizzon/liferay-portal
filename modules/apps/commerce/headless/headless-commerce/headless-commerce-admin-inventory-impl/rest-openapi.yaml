@@ -597,7 +597,7 @@ paths:
                 - WarehouseItem
     "/warehouses/by-externalReferenceCode/{externalReferenceCode}":
         delete:
-            operationId: deleteWarehousByExternalReferenceCode
+            operationId: deleteWarehouseByExternalReferenceCode
             parameters:
                 - in: path
                   name: externalReferenceCode
@@ -631,7 +631,7 @@ paths:
             tags:
                 - Warehouse
         get:
-            operationId: getWarehousByExternalReferenceCode
+            operationId: getWarehouseByExternalReferenceCode
             parameters:
                 - in: path
                   name: externalReferenceCode
@@ -695,7 +695,7 @@ paths:
             tags:
                 - Warehouse
         patch:
-            operationId: patchWarehousByExternalReferenceCode
+            operationId: patchWarehouseByExternalReferenceCode
             parameters:
                 - in: path
                   name: externalReferenceCode
@@ -765,7 +765,7 @@ paths:
                 - Warehouse
     "/warehouses/by-externalReferenceCode/{externalReferenceCode}/warehouseItems":
         get:
-            operationId: getWarehousByExternalReferenceCodeWarehouseItemsPage
+            operationId: getWarehouseByExternalReferenceCodeWarehouseItemsPage
             parameters:
                 - in: path
                   name: externalReferenceCode
@@ -843,7 +843,7 @@ paths:
             tags:
                 - WarehouseItem
         post:
-            operationId: postWarehousByExternalReferenceCodeWarehouseItem
+            operationId: postWarehouseByExternalReferenceCodeWarehouseItem
             parameters:
                 - in: path
                   name: externalReferenceCode
@@ -923,7 +923,7 @@ paths:
                 - WarehouseItem
     "/warehouses/{id}":
         delete:
-            operationId: deleteWarehousId
+            operationId: deleteWarehouse
             parameters:
                 - in: path
                   name: id
@@ -958,7 +958,7 @@ paths:
             tags:
                 - Warehouse
         get:
-            operationId: getWarehousId
+            operationId: getWarehouse
             parameters:
                 - in: path
                   name: id
@@ -1023,7 +1023,7 @@ paths:
             tags:
                 - Warehouse
         patch:
-            operationId: patchWarehousId
+            operationId: patchWarehouse
             parameters:
                 - in: path
                   name: id
@@ -1094,7 +1094,7 @@ paths:
                 - Warehouse
     "/warehouses/{id}/warehouseItems":
         get:
-            operationId: getWarehousIdWarehouseItemsPage
+            operationId: getWarehouseIdWarehouseItemsPage
             parameters:
                 - in: path
                   name: id
@@ -1173,7 +1173,7 @@ paths:
             tags:
                 - WarehouseItem
         post:
-            operationId: postWarehousIdWarehouseItem
+            operationId: postWarehouseIdWarehouseItem
             parameters:
                 - in: path
                   name: id
@@ -1428,7 +1428,7 @@ paths:
             tags:
                 - Warehouse
         post:
-            operationId: postWarehous
+            operationId: postWarehouse
             requestBody:
                 content:
                     application/json:
