@@ -105,38 +105,48 @@ public interface WarehouseItemResource {
 		throws Exception;
 
 	public Page<WarehouseItem>
-			getWarehousByExternalReferenceCodeWarehouseItemsPage(
+			getWarehouseByExternalReferenceCodeWarehouseItemsPage(
 				String externalReferenceCode, Pagination pagination)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
-			getWarehousByExternalReferenceCodeWarehouseItemsPageHttpResponse(
+			getWarehouseByExternalReferenceCodeWarehouseItemsPageHttpResponse(
 				String externalReferenceCode, Pagination pagination)
 		throws Exception;
 
-	public WarehouseItem postWarehousByExternalReferenceCodeWarehouseItem(
+	public WarehouseItem postWarehouseByExternalReferenceCodeWarehouseItem(
 			String externalReferenceCode, WarehouseItem warehouseItem)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse
-			postWarehousByExternalReferenceCodeWarehouseItemHttpResponse(
+			postWarehouseByExternalReferenceCodeWarehouseItemHttpResponse(
 				String externalReferenceCode, WarehouseItem warehouseItem)
 		throws Exception;
 
-	public Page<WarehouseItem> getWarehousIdWarehouseItemsPage(
+	public Page<WarehouseItem> getWarehouseIdWarehouseItemsPage(
 			Long id, Pagination pagination)
 		throws Exception;
 
-	public HttpInvoker.HttpResponse getWarehousIdWarehouseItemsPageHttpResponse(
-			Long id, Pagination pagination)
+	public HttpInvoker.HttpResponse
+			getWarehouseIdWarehouseItemsPageHttpResponse(
+				Long id, Pagination pagination)
 		throws Exception;
 
-	public WarehouseItem postWarehousIdWarehouseItem(
+	public WarehouseItem postWarehouseIdWarehouseItem(
 			Long id, WarehouseItem warehouseItem)
 		throws Exception;
 
-	public HttpInvoker.HttpResponse postWarehousIdWarehouseItemHttpResponse(
+	public HttpInvoker.HttpResponse postWarehouseIdWarehouseItemHttpResponse(
 			Long id, WarehouseItem warehouseItem)
+		throws Exception;
+
+	public void postWarehouseIdWarehouseItemBatch(
+			Long id, String callbackURL, Object object)
+		throws Exception;
+
+	public HttpInvoker.HttpResponse
+			postWarehouseIdWarehouseItemBatchHttpResponse(
+				Long id, String callbackURL, Object object)
 		throws Exception;
 
 	public Page<WarehouseItem> getWarehouseItemsUpdatedPage(
@@ -833,12 +843,12 @@ public interface WarehouseItemResource {
 		}
 
 		public Page<WarehouseItem>
-				getWarehousByExternalReferenceCodeWarehouseItemsPage(
+				getWarehouseByExternalReferenceCodeWarehouseItemsPage(
 					String externalReferenceCode, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
-				getWarehousByExternalReferenceCodeWarehouseItemsPageHttpResponse(
+				getWarehouseByExternalReferenceCodeWarehouseItemsPageHttpResponse(
 					externalReferenceCode, pagination);
 
 			String content = httpResponse.getContent();
@@ -879,7 +889,7 @@ public interface WarehouseItemResource {
 		}
 
 		public HttpInvoker.HttpResponse
-				getWarehousByExternalReferenceCodeWarehouseItemsPageHttpResponse(
+				getWarehouseByExternalReferenceCodeWarehouseItemsPageHttpResponse(
 					String externalReferenceCode, Pagination pagination)
 			throws Exception {
 
@@ -924,12 +934,12 @@ public interface WarehouseItemResource {
 			return httpInvoker.invoke();
 		}
 
-		public WarehouseItem postWarehousByExternalReferenceCodeWarehouseItem(
+		public WarehouseItem postWarehouseByExternalReferenceCodeWarehouseItem(
 				String externalReferenceCode, WarehouseItem warehouseItem)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
-				postWarehousByExternalReferenceCodeWarehouseItemHttpResponse(
+				postWarehouseByExternalReferenceCodeWarehouseItemHttpResponse(
 					externalReferenceCode, warehouseItem);
 
 			String content = httpResponse.getContent();
@@ -970,7 +980,7 @@ public interface WarehouseItemResource {
 		}
 
 		public HttpInvoker.HttpResponse
-				postWarehousByExternalReferenceCodeWarehouseItemHttpResponse(
+				postWarehouseByExternalReferenceCodeWarehouseItemHttpResponse(
 					String externalReferenceCode, WarehouseItem warehouseItem)
 			throws Exception {
 
@@ -1010,12 +1020,12 @@ public interface WarehouseItemResource {
 			return httpInvoker.invoke();
 		}
 
-		public Page<WarehouseItem> getWarehousIdWarehouseItemsPage(
+		public Page<WarehouseItem> getWarehouseIdWarehouseItemsPage(
 				Long id, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
-				getWarehousIdWarehouseItemsPageHttpResponse(id, pagination);
+				getWarehouseIdWarehouseItemsPageHttpResponse(id, pagination);
 
 			String content = httpResponse.getContent();
 
@@ -1055,7 +1065,7 @@ public interface WarehouseItemResource {
 		}
 
 		public HttpInvoker.HttpResponse
-				getWarehousIdWarehouseItemsPageHttpResponse(
+				getWarehouseIdWarehouseItemsPageHttpResponse(
 					Long id, Pagination pagination)
 			throws Exception {
 
@@ -1100,12 +1110,12 @@ public interface WarehouseItemResource {
 			return httpInvoker.invoke();
 		}
 
-		public WarehouseItem postWarehousIdWarehouseItem(
+		public WarehouseItem postWarehouseIdWarehouseItem(
 				Long id, WarehouseItem warehouseItem)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
-				postWarehousIdWarehouseItemHttpResponse(id, warehouseItem);
+				postWarehouseIdWarehouseItemHttpResponse(id, warehouseItem);
 
 			String content = httpResponse.getContent();
 
@@ -1144,8 +1154,9 @@ public interface WarehouseItemResource {
 			}
 		}
 
-		public HttpInvoker.HttpResponse postWarehousIdWarehouseItemHttpResponse(
-				Long id, WarehouseItem warehouseItem)
+		public HttpInvoker.HttpResponse
+				postWarehouseIdWarehouseItemHttpResponse(
+					Long id, WarehouseItem warehouseItem)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -1175,6 +1186,86 @@ public interface WarehouseItemResource {
 				_builder._scheme + "://" + _builder._host + ":" +
 					_builder._port +
 						"/o/headless-commerce-admin-inventory/v1.0/warehouses/{id}/warehouseItems");
+
+			httpInvoker.path("id", id);
+
+			httpInvoker.userNameAndPassword(
+				_builder._login + ":" + _builder._password);
+
+			return httpInvoker.invoke();
+		}
+
+		public void postWarehouseIdWarehouseItemBatch(
+				Long id, String callbackURL, Object object)
+			throws Exception {
+
+			HttpInvoker.HttpResponse httpResponse =
+				postWarehouseIdWarehouseItemBatchHttpResponse(
+					id, callbackURL, object);
+
+			String content = httpResponse.getContent();
+
+			if ((httpResponse.getStatusCode() / 100) != 2) {
+				_logger.log(
+					Level.WARNING,
+					"Unable to process HTTP response content: " + content);
+				_logger.log(
+					Level.WARNING,
+					"HTTP response message: " + httpResponse.getMessage());
+				_logger.log(
+					Level.WARNING,
+					"HTTP response status code: " +
+						httpResponse.getStatusCode());
+
+				throw new Problem.ProblemException(Problem.toDTO(content));
+			}
+			else {
+				_logger.fine("HTTP response content: " + content);
+				_logger.fine(
+					"HTTP response message: " + httpResponse.getMessage());
+				_logger.fine(
+					"HTTP response status code: " +
+						httpResponse.getStatusCode());
+			}
+		}
+
+		public HttpInvoker.HttpResponse
+				postWarehouseIdWarehouseItemBatchHttpResponse(
+					Long id, String callbackURL, Object object)
+			throws Exception {
+
+			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
+
+			httpInvoker.body(object.toString(), "application/json");
+
+			if (_builder._locale != null) {
+				httpInvoker.header(
+					"Accept-Language", _builder._locale.toLanguageTag());
+			}
+
+			for (Map.Entry<String, String> entry :
+					_builder._headers.entrySet()) {
+
+				httpInvoker.header(entry.getKey(), entry.getValue());
+			}
+
+			for (Map.Entry<String, String> entry :
+					_builder._parameters.entrySet()) {
+
+				httpInvoker.parameter(entry.getKey(), entry.getValue());
+			}
+
+			httpInvoker.httpMethod(HttpInvoker.HttpMethod.POST);
+
+			if (callbackURL != null) {
+				httpInvoker.parameter(
+					"callbackURL", String.valueOf(callbackURL));
+			}
+
+			httpInvoker.path(
+				_builder._scheme + "://" + _builder._host + ":" +
+					_builder._port +
+						"/o/headless-commerce-admin-inventory/v1.0/warehouses/warehouseItems/batch");
 
 			httpInvoker.path("id", id);
 
