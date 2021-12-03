@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
@@ -63,7 +64,16 @@ public class WarehouseResourceImpl
 	extends BaseWarehouseResourceImpl implements EntityModelResource {
 
 	@Override
-	public Response deleteWarehousByExternalReferenceCode(
+	public Response deleteWarehouse(Long id) throws Exception {
+		_commerceInventoryWarehouseService.deleteCommerceInventoryWarehouse(id);
+
+		Response.ResponseBuilder responseBuilder = Response.ok();
+
+		return responseBuilder.build();
+	}
+
+	@Override
+	public Response deleteWarehouseByExternalReferenceCode(
 			String externalReferenceCode)
 		throws Exception {
 
@@ -86,15 +96,6 @@ public class WarehouseResourceImpl
 	}
 
 	@Override
-	public Response deleteWarehousId(Long id) throws Exception {
-		_commerceInventoryWarehouseService.deleteCommerceInventoryWarehouse(id);
-
-		Response.ResponseBuilder responseBuilder = Response.ok();
-
-		return responseBuilder.build();
-	}
-
-	@Override
 	public EntityModel getEntityModel(MultivaluedMap multivaluedMap)
 		throws Exception {
 
@@ -102,7 +103,15 @@ public class WarehouseResourceImpl
 	}
 
 	@Override
-	public Warehouse getWarehousByExternalReferenceCode(
+	public Warehouse getWarehouse(Long id) throws Exception {
+		return _warehouseDTOConverter.toDTO(
+			new DefaultDTOConverterContext(
+				GetterUtil.getLong(id),
+				contextAcceptLanguage.getPreferredLocale()));
+	}
+
+	@Override
+	public Warehouse getWarehouseByExternalReferenceCode(
 			String externalReferenceCode)
 		throws Exception {
 
@@ -151,15 +160,21 @@ public class WarehouseResourceImpl
 	}
 
 	@Override
-	public Warehouse getWarehousId(Long id) throws Exception {
-		return _warehouseDTOConverter.toDTO(
-			new DefaultDTOConverterContext(
-				GetterUtil.getLong(id),
-				contextAcceptLanguage.getPreferredLocale()));
+	public Response patchWarehouse(Long id, Warehouse warehouse)
+		throws Exception {
+
+		_updateWarehouse(
+			_commerceInventoryWarehouseService.getCommerceInventoryWarehouse(
+				id),
+			warehouse);
+
+		Response.ResponseBuilder responseBuilder = Response.noContent();
+
+		return responseBuilder.build();
 	}
 
 	@Override
-	public Response patchWarehousByExternalReferenceCode(
+	public Response patchWarehouseByExternalReferenceCode(
 			String externalReferenceCode, Warehouse warehouse)
 		throws Exception {
 
@@ -181,27 +196,29 @@ public class WarehouseResourceImpl
 	}
 
 	@Override
-	public Response patchWarehousId(Long id, Warehouse warehouse)
-		throws Exception {
-
-		_updateWarehouse(
-			_commerceInventoryWarehouseService.getCommerceInventoryWarehouse(
-				id),
-			warehouse);
-
-		Response.ResponseBuilder responseBuilder = Response.noContent();
-
-		return responseBuilder.build();
-	}
-
-	@Override
-	public Warehouse postWarehous(Warehouse warehouse) throws Exception {
+	public Warehouse postWarehouse(Warehouse warehouse) throws Exception {
 		CommerceInventoryWarehouse commerceInventoryWarehouse =
 			_commerceInventoryWarehouseService.fetchByExternalReferenceCode(
 				warehouse.getExternalReferenceCode(),
 				contextCompany.getCompanyId());
 
 		if (commerceInventoryWarehouse == null) {
+			Map<String, String> nameMap = warehouse.getName();
+
+			if ((commerceInventoryWarehouse != null) && (nameMap == null)) {
+				nameMap = LanguageUtils.getLanguageIdMap(
+					commerceInventoryWarehouse.getNameMap());
+			}
+
+			Map<String, String> descriptionMap = warehouse.getDescription();
+
+			if ((commerceInventoryWarehouse != null) &&
+				(descriptionMap == null)) {
+
+				descriptionMap = LanguageUtils.getLanguageIdMap(
+					commerceInventoryWarehouse.getDescriptionMap());
+			}
+
 			commerceInventoryWarehouse =
 				_commerceInventoryWarehouseService.
 					addCommerceInventoryWarehouse(
@@ -239,23 +256,23 @@ public class WarehouseResourceImpl
 		return HashMapBuilder.<String, Map<String, String>>put(
 			"delete",
 			addAction(
-				"UPDATE",
+				"DELETE",
 				commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
-				"deleteWarehousId",
+				"deleteWarehouse",
 				_commerceInventoryWarehouseWarehouseModelResourcePermission)
 		).put(
 			"get",
 			addAction(
 				"VIEW",
 				commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
-				"getWarehousId",
+				"getWarehouse",
 				_commerceInventoryWarehouseWarehouseModelResourcePermission)
 		).put(
 			"update",
 			addAction(
 				"UPDATE",
 				commerceInventoryWarehouse.getCommerceInventoryWarehouseId(),
-				"patchWarehousId",
+				"patchWarehouse",
 				_commerceInventoryWarehouseWarehouseModelResourcePermission)
 		).build();
 	}
