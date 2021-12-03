@@ -86,20 +86,24 @@ public interface WarehouseItemResource {
 		throws Exception;
 
 	public Page<WarehouseItem>
-			getWarehousByExternalReferenceCodeWarehouseItemsPage(
+			getWarehouseByExternalReferenceCodeWarehouseItemsPage(
 				String externalReferenceCode, Pagination pagination)
 		throws Exception;
 
-	public WarehouseItem postWarehousByExternalReferenceCodeWarehouseItem(
+	public WarehouseItem postWarehouseByExternalReferenceCodeWarehouseItem(
 			String externalReferenceCode, WarehouseItem warehouseItem)
 		throws Exception;
 
-	public Page<WarehouseItem> getWarehousIdWarehouseItemsPage(
+	public Page<WarehouseItem> getWarehouseIdWarehouseItemsPage(
 			Long id, Pagination pagination)
 		throws Exception;
 
-	public WarehouseItem postWarehousIdWarehouseItem(
+	public WarehouseItem postWarehouseIdWarehouseItem(
 			Long id, WarehouseItem warehouseItem)
+		throws Exception;
+
+	public Response postWarehouseIdWarehouseItemBatch(
+			Long id, String callbackURL, Object object)
 		throws Exception;
 
 	public Page<WarehouseItem> getWarehouseItemsUpdatedPage(

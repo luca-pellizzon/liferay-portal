@@ -55,6 +55,16 @@ public class WarehouseSerDes {
 
 		sb.append("{");
 
+		if (warehouse.getActions() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"actions\": ");
+
+			sb.append(_toJSON(warehouse.getActions()));
+		}
+
 		if (warehouse.getActive() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -289,6 +299,13 @@ public class WarehouseSerDes {
 
 		Map<String, String> map = new TreeMap<>();
 
+		if (warehouse.getActions() == null) {
+			map.put("actions", null);
+		}
+		else {
+			map.put("actions", String.valueOf(warehouse.getActions()));
+		}
+
 		if (warehouse.getActive() == null) {
 			map.put("active", null);
 		}
@@ -435,7 +452,14 @@ public class WarehouseSerDes {
 			Warehouse warehouse, String jsonParserFieldName,
 			Object jsonParserFieldValue) {
 
-			if (Objects.equals(jsonParserFieldName, "active")) {
+			if (Objects.equals(jsonParserFieldName, "actions")) {
+				if (jsonParserFieldValue != null) {
+					warehouse.setActions(
+						(Map)WarehouseSerDes.toMap(
+							(String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "active")) {
 				if (jsonParserFieldValue != null) {
 					warehouse.setActive((Boolean)jsonParserFieldValue);
 				}

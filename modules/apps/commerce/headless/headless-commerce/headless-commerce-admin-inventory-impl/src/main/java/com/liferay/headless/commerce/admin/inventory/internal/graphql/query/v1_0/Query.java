@@ -70,10 +70,10 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {warehousByExternalReferenceCode(externalReferenceCode: ___){active, city, countryISOCode, description, externalReferenceCode, id, latitude, longitude, mvccVersion, name, regionISOCode, street1, street2, street3, type, warehouseItems, zip}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {warehouseByExternalReferenceCode(externalReferenceCode: ___){actions, active, city, countryISOCode, description, externalReferenceCode, id, latitude, longitude, mvccVersion, name, regionISOCode, street1, street2, street3, type, warehouseItems, zip}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
-	public Warehouse warehousByExternalReferenceCode(
+	public Warehouse warehouseByExternalReferenceCode(
 			@GraphQLName("externalReferenceCode") String externalReferenceCode)
 		throws Exception {
 
@@ -81,21 +81,21 @@ public class Query {
 			_warehouseResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			warehouseResource ->
-				warehouseResource.getWarehousByExternalReferenceCode(
+				warehouseResource.getWarehouseByExternalReferenceCode(
 					externalReferenceCode));
 	}
 
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {warehousId(id: ___){active, city, countryISOCode, description, externalReferenceCode, id, latitude, longitude, mvccVersion, name, regionISOCode, street1, street2, street3, type, warehouseItems, zip}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {warehouse(id: ___){actions, active, city, countryISOCode, description, externalReferenceCode, id, latitude, longitude, mvccVersion, name, regionISOCode, street1, street2, street3, type, warehouseItems, zip}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
-	public Warehouse warehousId(@GraphQLName("id") Long id) throws Exception {
+	public Warehouse warehouse(@GraphQLName("id") Long id) throws Exception {
 		return _applyComponentServiceObjects(
 			_warehouseResourceComponentServiceObjects,
 			this::_populateResourceContext,
-			warehouseResource -> warehouseResource.getWarehousId(id));
+			warehouseResource -> warehouseResource.getWarehouse(id));
 	}
 
 	/**
@@ -158,10 +158,10 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {warehousByExternalReferenceCodeWarehouseItems(externalReferenceCode: ___, page: ___, pageSize: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {warehouseByExternalReferenceCodeWarehouseItems(externalReferenceCode: ___, page: ___, pageSize: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
-	public WarehouseItemPage warehousByExternalReferenceCodeWarehouseItems(
+	public WarehouseItemPage warehouseByExternalReferenceCodeWarehouseItems(
 			@GraphQLName("externalReferenceCode") String externalReferenceCode,
 			@GraphQLName("pageSize") int pageSize,
 			@GraphQLName("page") int page)
@@ -172,17 +172,17 @@ public class Query {
 			this::_populateResourceContext,
 			warehouseItemResource -> new WarehouseItemPage(
 				warehouseItemResource.
-					getWarehousByExternalReferenceCodeWarehouseItemsPage(
+					getWarehouseByExternalReferenceCodeWarehouseItemsPage(
 						externalReferenceCode, Pagination.of(page, pageSize))));
 	}
 
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {warehousIdWarehouseItems(id: ___, page: ___, pageSize: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {warehouseIdWarehouseItems(id: ___, page: ___, pageSize: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
-	public WarehouseItemPage warehousIdWarehouseItems(
+	public WarehouseItemPage warehouseIdWarehouseItems(
 			@GraphQLName("id") Long id, @GraphQLName("pageSize") int pageSize,
 			@GraphQLName("page") int page)
 		throws Exception {
@@ -191,7 +191,7 @@ public class Query {
 			_warehouseItemResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			warehouseItemResource -> new WarehouseItemPage(
-				warehouseItemResource.getWarehousIdWarehouseItemsPage(
+				warehouseItemResource.getWarehouseIdWarehouseItemsPage(
 					id, Pagination.of(page, pageSize))));
 	}
 
@@ -213,6 +213,29 @@ public class Query {
 			warehouseItemResource -> new WarehouseItemPage(
 				warehouseItemResource.getWarehouseItemsUpdatedPage(
 					end, start, Pagination.of(page, pageSize))));
+	}
+
+	@GraphQLTypeExtension(WarehouseItem.class)
+	public class GetWarehouseByExternalReferenceCodeTypeExtension {
+
+		public GetWarehouseByExternalReferenceCodeTypeExtension(
+			WarehouseItem warehouseItem) {
+
+			_warehouseItem = warehouseItem;
+		}
+
+		@GraphQLField
+		public Warehouse warehouseByExternalReferenceCode() throws Exception {
+			return _applyComponentServiceObjects(
+				_warehouseResourceComponentServiceObjects,
+				Query.this::_populateResourceContext,
+				warehouseResource ->
+					warehouseResource.getWarehouseByExternalReferenceCode(
+						_warehouseItem.getExternalReferenceCode()));
+		}
+
+		private WarehouseItem _warehouseItem;
+
 	}
 
 	@GraphQLTypeExtension(Warehouse.class)
@@ -241,16 +264,16 @@ public class Query {
 
 	@GraphQLTypeExtension(Warehouse.class)
 	public class
-		GetWarehousByExternalReferenceCodeWarehouseItemsPageTypeExtension {
+		GetWarehouseByExternalReferenceCodeWarehouseItemsPageTypeExtension {
 
-		public GetWarehousByExternalReferenceCodeWarehouseItemsPageTypeExtension(
+		public GetWarehouseByExternalReferenceCodeWarehouseItemsPageTypeExtension(
 			Warehouse warehouse) {
 
 			_warehouse = warehouse;
 		}
 
 		@GraphQLField
-		public WarehouseItemPage warehousByExternalReferenceCodeWarehouseItems(
+		public WarehouseItemPage byExternalReferenceCodeWarehouseItems(
 				@GraphQLName("pageSize") int pageSize,
 				@GraphQLName("page") int page)
 			throws Exception {
@@ -260,35 +283,12 @@ public class Query {
 				Query.this::_populateResourceContext,
 				warehouseItemResource -> new WarehouseItemPage(
 					warehouseItemResource.
-						getWarehousByExternalReferenceCodeWarehouseItemsPage(
+						getWarehouseByExternalReferenceCodeWarehouseItemsPage(
 							_warehouse.getExternalReferenceCode(),
 							Pagination.of(page, pageSize))));
 		}
 
 		private Warehouse _warehouse;
-
-	}
-
-	@GraphQLTypeExtension(WarehouseItem.class)
-	public class GetWarehousByExternalReferenceCodeTypeExtension {
-
-		public GetWarehousByExternalReferenceCodeTypeExtension(
-			WarehouseItem warehouseItem) {
-
-			_warehouseItem = warehouseItem;
-		}
-
-		@GraphQLField
-		public Warehouse warehousByExternalReferenceCode() throws Exception {
-			return _applyComponentServiceObjects(
-				_warehouseResourceComponentServiceObjects,
-				Query.this::_populateResourceContext,
-				warehouseResource ->
-					warehouseResource.getWarehousByExternalReferenceCode(
-						_warehouseItem.getExternalReferenceCode()));
-		}
-
-		private WarehouseItem _warehouseItem;
 
 	}
 
