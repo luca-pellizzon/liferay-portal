@@ -14,14 +14,15 @@
 
 package com.liferay.commerce.warehouse.web.internal.display.context;
 
+import com.liferay.commerce.frontend.model.HeaderActionModel;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
 import com.liferay.commerce.inventory.service.CommerceInventoryWarehouseService;
-import com.liferay.commerce.price.list.constants.CommercePriceListScreenNavigationConstants;
 import com.liferay.commerce.product.display.context.util.CPRequestHelper;
 import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.product.model.CommerceChannelRel;
 import com.liferay.commerce.product.service.CommerceChannelRelService;
 import com.liferay.commerce.product.service.CommerceChannelService;
+import com.liferay.commerce.warehouse.web.internal.servlet.taglib.ui.constants.CommerceInventoryWarehouseScreenNavigationConstants;
 import com.liferay.frontend.taglib.clay.data.set.servlet.taglib.util.ClayDataSetActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenuBuilder;
@@ -29,13 +30,19 @@ import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.portlet.ActionRequest;
 import javax.portlet.PortletURL;
+import javax.portlet.RenderURL;
+import javax.portlet.WindowStateException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -54,7 +61,6 @@ public class CommerceInventoryWarehousesDisplayContext {
 		_commerceChannelRelService = commerceChannelRelService;
 		_commerceChannelService = commerceChannelService;
 		_commerceInventoryWarehouseService = commerceInventoryWarehouseService;
-		_httpServletRequest = httpServletRequest;
 
 		_cpRequestHelper = new CPRequestHelper(httpServletRequest);
 	}
@@ -127,34 +133,23 @@ public class CommerceInventoryWarehousesDisplayContext {
 		).build();
 	}
 
-	public List<ClayDataSetActionDropdownItem>
-	getWarehouseClayDataSetActionDropdownItems()
-		throws PortalException {
+	public List<HeaderActionModel> getHeaderActionModels() {
+		List<HeaderActionModel> headerActionModels = new ArrayList<>();
 
-		List<ClayDataSetActionDropdownItem> clayDataSetActionDropdownItems =
-			getClayDataSetActionDropdownItems(
-				PortletURLBuilder.createRenderURL(
-					commercePricingRequestHelper.getRenderResponse()
-				).setMVCRenderCommandName(
-					"/commerce_price_list/edit_commerce_price_list"
-				).setRedirect(
-					commercePricingRequestHelper.getCurrentURL()
-				).setParameter(
-					"commercePriceListId", "{id}"
-				).setParameter(
-					"screenNavigationCategoryKey",
-					CommercePriceListScreenNavigationConstants.
-						CATEGORY_KEY_DETAILS
-				).buildString(),
-				false);
+		LiferayPortletResponse liferayPortletResponse =
+			_cpRequestHelper.getLiferayPortletResponse();
 
-		clayDataSetActionDropdownItems.add(
-			new ClayDataSetActionDropdownItem(
-				_getManagePriceListPermissionsURL(), null, "permissions",
-				LanguageUtil.get(httpServletRequest, "permissions"), "get",
-				"permissions", "modal-permissions"));
+		RenderURL renderURL = liferayPortletResponse.createRenderURL();
 
-		return clayDataSetActionDropdownItems;
+		headerActionModels.add(
+			new HeaderActionModel(null, renderURL.toString(), null, "cancel"));
+
+		headerActionModels.add(
+			new HeaderActionModel(
+				"btn-primary", liferayPortletResponse.getNamespace() + "fm",
+				null, null, "save"));
+
+		return headerActionModels;
 	}
 
 	public PortletURL getPortletURL() {
@@ -163,8 +158,99 @@ public class CommerceInventoryWarehousesDisplayContext {
 		).buildPortletURL();
 	}
 
+	public List<ClayDataSetActionDropdownItem>
+			getWarehouseClayDataSetActionDropdownItems()
+		throws PortalException {
+
+		List<ClayDataSetActionDropdownItem> clayDataSetActionDropdownItems =
+			getClayDataSetActionDropdownItems(
+				PortletURLBuilder.createRenderURL(
+					_cpRequestHelper.getRenderResponse()
+				).setMVCRenderCommandName(
+					"/commerce_inventory_warehouse" +
+						"/edit_commerce_inventory_warehouse"
+				).setRedirect(
+					_cpRequestHelper.getCurrentURL()
+				).setParameter(
+					"commerceWarehouseId", "{id}"
+				).setParameter(
+					"screenNavigationCategoryKey",
+					CommerceInventoryWarehouseScreenNavigationConstants.
+						CATEGORY_KEY_DETAILS
+				).buildString(),
+				false);
+
+		clayDataSetActionDropdownItems.add(
+			new ClayDataSetActionDropdownItem(
+				_getManageCommerceWarehousePermissionsURL(), null,
+				"permissions",
+				LanguageUtil.get(_cpRequestHelper.getRequest(), "permissions"),
+				"get", "permissions", "modal-permissions"));
+
+		return clayDataSetActionDropdownItems;
+	}
+
 	public boolean hasManageCommerceInventoryWarehousePermission() {
 		return true;
+	}
+
+	protected List<ClayDataSetActionDropdownItem>
+		getClayDataSetActionDropdownItems(
+			String portletURL, boolean sidePanel) {
+
+		List<ClayDataSetActionDropdownItem> clayDataSetActionDropdownItems =
+			new ArrayList<>();
+
+		ClayDataSetActionDropdownItem clayDataSetActionDropdownItem =
+			new ClayDataSetActionDropdownItem(
+				portletURL, "pencil", "edit",
+				LanguageUtil.get(_cpRequestHelper.getRequest(), "edit"), "get",
+				null, null);
+
+		if (sidePanel) {
+			clayDataSetActionDropdownItem.setTarget("sidePanel");
+		}
+
+		clayDataSetActionDropdownItems.add(clayDataSetActionDropdownItem);
+
+		clayDataSetActionDropdownItems.add(
+			new ClayDataSetActionDropdownItem(
+				null, "trash", "delete",
+				LanguageUtil.get(_cpRequestHelper.getRequest(), "delete"),
+				"delete", "delete", "headless"));
+
+		return clayDataSetActionDropdownItems;
+	}
+
+	private String _getManageCommerceWarehousePermissionsURL()
+		throws PortalException {
+
+		PortletURL portletURL = PortletURLBuilder.create(
+			PortalUtil.getControlPanelPortletURL(
+				_cpRequestHelper.getRequest(),
+				"com_liferay_portlet_configuration_web_portlet_" +
+					"PortletConfigurationPortlet",
+				ActionRequest.RENDER_PHASE)
+		).setMVCPath(
+			"/edit_permissions.jsp"
+		).setRedirect(
+			_cpRequestHelper.getCurrentURL()
+		).setParameter(
+			"modelResource", CommerceInventoryWarehouse.class.getName()
+		).setParameter(
+			"modelResourceDescription", "{name}"
+		).setParameter(
+			"resourcePrimKey", "{id}"
+		).buildPortletURL();
+
+		try {
+			portletURL.setWindowState(LiferayWindowState.POP_UP);
+		}
+		catch (WindowStateException windowStateException) {
+			throw new PortalException(windowStateException);
+		}
+
+		return portletURL.toString();
 	}
 
 	private final CommerceChannelRelService _commerceChannelRelService;
@@ -173,6 +259,5 @@ public class CommerceInventoryWarehousesDisplayContext {
 	private final CommerceInventoryWarehouseService
 		_commerceInventoryWarehouseService;
 	private final CPRequestHelper _cpRequestHelper;
-	private final HttpServletRequest _httpServletRequest;
 
 }

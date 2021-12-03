@@ -29,7 +29,7 @@ PortletURL portletURL = commerceInventoryWarehousesDisplayContext.getPortletURL(
 
 		<clay:headless-data-set-display
 			apiURL="/o/headless-commerce-admin-inventory/v1.0/warehouses"
-			clayDataSetActionDropdownItems=""
+			clayDataSetActionDropdownItems="<%= commerceInventoryWarehousesDisplayContext.getWarehouseClayDataSetActionDropdownItems() %>"
 			creationMenu="<%= commerceInventoryWarehousesDisplayContext.getCreationMenu() %>"
 			formName="fm"
 			id="<%= CommerceInventoryWarehouseDataSetConstants.COMMERCE_DATA_SET_KEY_WAREHOUSES %>"

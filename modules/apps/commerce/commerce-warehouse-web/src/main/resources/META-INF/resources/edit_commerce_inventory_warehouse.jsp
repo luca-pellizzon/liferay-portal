@@ -41,7 +41,6 @@ if (Validator.isNotNull(backURL)) {
 	bean="<%= commerceInventoryWarehouse %>"
 	beanIdLabel="id"
 	externalReferenceCode="<%= commerceInventoryWarehouse.getExternalReferenceCode() %>"
-	externalReferenceCodeEditUrl="<%= editCommerceInventoryWarehouseExternalReferenceCodeURL %>"
 	model="<%= CommerceInventoryWarehouse.class %>"
 	title="<%= commerceInventoryWarehouse.getName() %>"
 />
