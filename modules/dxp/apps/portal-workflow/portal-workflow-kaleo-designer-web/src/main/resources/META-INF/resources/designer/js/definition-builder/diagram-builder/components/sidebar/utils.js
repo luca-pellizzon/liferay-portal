@@ -22,6 +22,14 @@ function isIdDuplicated(elements, id) {
 }
 
 function getModalInfo(itemType) {
+	if (itemType === 'condition') {
+		return {
+			message: Liferay.Language.get(
+				'are-you-sure-you-want-to-delete-the-selected-condition-node'
+			),
+			title: Liferay.Language.get('delete-condition-node'),
+		};
+	}
 	if (itemType === 'end') {
 		return {
 			message: Liferay.Language.get(

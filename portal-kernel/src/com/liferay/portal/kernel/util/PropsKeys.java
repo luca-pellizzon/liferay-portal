@@ -286,12 +286,6 @@ public interface PropsKeys {
 		AUTO_DEPLOY_WEBSPHERE_WSADMIN_APP_MANAGER_UPDATE_OPTIONS =
 			"auto.deploy.websphere.wsadmin.app.manager.update.options";
 
-	public static final String AUTO_DEPLOY_WEBSPHERE_WSADMIN_APP_NAME_SUFFIX =
-		"auto.deploy.websphere.wsadmin.app.name.suffix";
-
-	public static final String AUTO_DEPLOY_WEBSPHERE_WSADMIN_PROPERTIES_FILE =
-		"auto.deploy.websphere.wsadmin.properties.file.name";
-
 	public static final String AUTO_LOGIN_HOOKS = "auto.login.hooks";
 
 	public static final String AUTO_LOGIN_IGNORE_HOSTS =
@@ -3490,13 +3484,6 @@ public interface PropsKeys {
 	 */
 	@Deprecated
 	public static final String VERIFY_FREQUENCY = "verify.frequency";
-
-	/**
-	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
-	 */
-	@Deprecated
-	public static final String VERIFY_PATCH_LEVELS_DISABLED =
-		"verify.patch.levels.disabled";
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), with no direct replacement

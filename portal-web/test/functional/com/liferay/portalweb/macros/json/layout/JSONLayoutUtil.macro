@@ -56,7 +56,7 @@ definition {
 		else if ("${widgetName}" == "Breadcrumb") {
 			var portletId = "com_liferay_site_navigation_breadcrumb_web_portlet_SiteNavigationBreadcrumbPortlet";
 		}
-		else if ("${widgetName}" == "Category filter") {
+		else if ("${widgetName}" == "Category Filter") {
 			var portletId = "com_liferay_asset_categories_navigation_web_portlet_AssetCategoriesNavigationPortlet";
 		}
 		else if ("${widgetName}" == "Clay Sample") {
@@ -86,10 +86,10 @@ definition {
 		else if ("${widgetName}" == "Invite Members") {
 			var portletId = "com_liferay_invitation_invite_members_web_portlet_InviteMembersPortlet";
 		}
-		else if ("${widgetName}" == "JS A11y Sample Web") {
+		else if ("${widgetName}" == "JS A11y Sample") {
 			var portletId = "com_liferay_frontend_js_a11y_sample_web_internal_portlet_FrontendJSA11ySampleWebPortlet";
 		}
-		else if ("${widgetName}" == "JS Clay Sample Web") {
+		else if ("${widgetName}" == "JS Clay Sample") {
 			var portletId = "com_liferay_frontend_js_clay_sample_web_internal_portlet_FrontendJSClaySampleWebPortlet";
 		}
 		else if ("${widgetName}" == "Knowledge Base Article") {
@@ -173,7 +173,7 @@ definition {
 		else if ("${widgetName}" == "Sites Directory") {
 			var portletId = "com_liferay_site_navigation_directory_web_portlet_SitesDirectoryPortlet";
 		}
-		else if ("${widgetName}" == "Tag filter") {
+		else if ("${widgetName}" == "Tag Filter") {
 			var portletId = "com_liferay_asset_tags_navigation_web_portlet_AssetTagsNavigationPortlet";
 		}
 		else if ("${widgetName}" == "Tree Menu") {

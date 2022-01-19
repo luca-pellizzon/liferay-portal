@@ -34,11 +34,13 @@ import {
 	cleanUIConfiguration,
 	filterAndSortClassNames,
 	getConfigurationEntry,
+	getResultsError,
 	getUIConfigurationValues,
 	isCustomJSONSXPElement,
 	isDefined,
 	parseCustomSXPElement,
 	transformToSearchContextAttributes,
+	transformToSearchPreviewHits,
 } from '../utils/utils';
 import {
 	validateBoost,
@@ -597,13 +599,49 @@ function EditSXPBlueprintForm({
 			return;
 		}
 
-		const resultsError = {
-			errors: [
-				{
-					msg: DEFAULT_ERROR,
-					severity: Liferay.Language.get('error'),
-				},
-			],
+		const parseResponseContent = (responseContent) => {
+			const exceptionKey = 'java.lang.RuntimeException';
+
+			if (
+				responseContent.searchHits?.totalHits > 0 ||
+				!responseContent.responseString?.startsWith(exceptionKey)
+			) {
+				return responseContent;
+			}
+
+			let exceptionClass;
+
+			const exceptionKeyIndex = responseContent.responseString.indexOf(
+				':',
+				exceptionKey.length + 1
+			);
+
+			if (exceptionKeyIndex !== -1) {
+				exceptionClass = responseContent.responseString.substring(
+					exceptionKey.length + 1,
+					exceptionKeyIndex
+				);
+			}
+
+			let msg;
+
+			const errorObjectIndex = responseContent.responseString.indexOf(
+				'{"error":{'
+			);
+
+			if (errorObjectIndex > 0) {
+				const errorJSONObject = JSON.parse(
+					responseContent.responseString.substring(errorObjectIndex)
+				);
+
+				msg = errorJSONObject.error.root_cause[0]?.reason;
+			}
+
+			return getResultsError({
+				exceptionClass,
+				exceptionTrace: responseContent.responseString,
+				msg,
+			});
 		};
 
 		return fetch(
@@ -637,7 +675,11 @@ function EditSXPBlueprintForm({
 		)
 			.then((response) => {
 				if (!response.ok) {
-					return resultsError;
+					if (response.status === 400) {
+						return response.json().then((json) => {
+							return getResultsError({msg: json.title});
+						});
+					}
 				}
 
 				return response.json();
@@ -645,14 +687,14 @@ function EditSXPBlueprintForm({
 			.then((responseContent) => {
 				setPreviewInfo({
 					loading: false,
-					results: responseContent,
+					results: parseResponseContent(responseContent),
 				});
 			})
 			.catch(() => {
 				setTimeout(() => {
 					setPreviewInfo({
 						loading: false,
-						results: resultsError,
+						results: getResultsError(),
 					});
 				}, 100);
 			});
@@ -857,6 +899,7 @@ function EditSXPBlueprintForm({
 
 			<PreviewSidebar
 				errors={previewInfo.results.errors}
+				hits={transformToSearchPreviewHits(previewInfo.results)}
 				loading={previewInfo.loading}
 				onClose={_handleCloseSidebar}
 				onFetchResults={_handleFetchPreviewSearch}

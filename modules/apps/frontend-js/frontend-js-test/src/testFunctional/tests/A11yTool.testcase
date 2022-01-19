@@ -19,7 +19,7 @@ definition {
 		JSONLayout.addWidgetToPublicLayout(
 			groupName = "Guest",
 			layoutName = "A11y Test Page",
-			widgetName = "JS A11y Sample Web");
+			widgetName = "JS A11y Sample");
 
 		JSONLayout.updateLayoutTemplateOfPublicLayout(
 			groupName = "Guest",
@@ -232,7 +232,7 @@ definition {
 			JSONLayout.addWidgetToPublicLayout(
 				groupName = "Guest",
 				layoutName = "Blank Test Page",
-				widgetName = "JS A11y Sample Web");
+				widgetName = "JS A11y Sample");
 		}
 
 		task ("Assert the rule violation is highlighted and appear on the side panel") {

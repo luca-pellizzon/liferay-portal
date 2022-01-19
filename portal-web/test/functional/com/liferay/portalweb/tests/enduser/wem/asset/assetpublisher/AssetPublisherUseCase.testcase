@@ -791,7 +791,7 @@ definition {
 			JSONLayout.addWidgetToPublicLayout(
 				groupName = "Test Site Name",
 				layoutName = "Asset Publisher Page",
-				widgetName = "Category filter");
+				widgetName = "Category Filter");
 		}
 
 		task ("Configure the pagination type to Regular") {
@@ -1427,7 +1427,9 @@ definition {
 				key_assetTitle = "Web Content Title",
 				locator1 = "AP#ASSET_DETAILS_LINK");
 
-			Click(locator1 = "APAsset#ASSET_BACK_TO_ICON");
+			Click(
+				key_text = "angle-left",
+				locator1 = "Icon#ANY");
 		}
 
 		task ("Change the display template of Asset Publisher to Full Content") {
@@ -1839,7 +1841,7 @@ catch (Exception e) {
 			JSONLayout.addWidgetToPublicLayout(
 				groupName = "Test Site Name",
 				layoutName = "Asset Publisher Page",
-				widgetName = "Tag filter");
+				widgetName = "Tag Filter");
 		}
 
 		task ("Configure the Asset Publisher to display tags") {

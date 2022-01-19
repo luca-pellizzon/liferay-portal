@@ -175,9 +175,10 @@ function DisplayPageItemContextualSidebar({
 					<ClayInput.GroupItem>
 						<ClayInput
 							className="text-secondary"
-							disabled={!customNameEnabled}
 							id={`${namespace}_itemInput`}
+							onClick={openChooseItemModal}
 							readOnly
+							style={{cursor: 'pointer'}}
 							type="text"
 							value={selectedItem.title}
 						/>
@@ -195,7 +196,7 @@ function DisplayPageItemContextualSidebar({
 				</ClayInput.Group>
 			</ClayForm.Group>
 
-			<ClayForm.Group>
+			<ClayForm.Group className="pt-2">
 				<div className="list-group">
 					<p className="list-group-title">
 						{Liferay.Language.get('type')}

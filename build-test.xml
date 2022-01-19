@@ -37,9 +37,6 @@
 
 	<propertycopy from="operating.system.${operating.system.type}.version" name="operating.system.version" />
 
-	<property location="${project.dir}/tools/putty/plink.exe" name="plink.executable" />
-	<property location="${project.dir}/tools/putty/pscp.exe" name="pscp.executable" />
-
 	<macrodef name="apply-portal-ext-properties">
 		<sequential>
 			<if>

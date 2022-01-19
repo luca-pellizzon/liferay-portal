@@ -12,7 +12,6 @@
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayLayout from '@clayui/layout';
-import ClayLink from '@clayui/link';
 import ClayList from '@clayui/list';
 import getCN from 'classnames';
 import moment from 'moment';
@@ -31,13 +30,12 @@ const getResultDefaultKeys = (locale) => [
 
 const SXP_BLUEPRINT_FIELD_PREFIX = '_';
 const RESULTS_SHOW_KEYS = ['assetEntryId'];
-const DATE_KEYS = ['createDate', 'modified'];
+const DATE_KEYS = ['birthDate', 'createDate', 'modified'];
 const TRUNCATE_LENGTH = 700;
 
 const sxpBlueprintFieldPrefixRegex = new RegExp(
 	`^(${SXP_BLUEPRINT_FIELD_PREFIX})`
 );
-const bracketsQuotesRegex = new RegExp(/[[\]"]/, 'g');
 
 function localizeDate(property, value) {
 	if (DATE_KEYS.includes(property)) {
@@ -53,17 +51,13 @@ function removeSXPBlueprintFieldPrefix(value) {
 	return value.replace(sxpBlueprintFieldPrefixRegex, '');
 }
 
-function removeBrackets(value) {
-	return value.replace(bracketsQuotesRegex, '');
-}
-
 function truncateString(value) {
 	return value.length > TRUNCATE_LENGTH
 		? value.substring(0, TRUNCATE_LENGTH).concat('...')
 		: value;
 }
 
-function ResultListItem({item}) {
+function ResultListItem({explanation = '', fields, id, score = 0}) {
 	const {locale} = useContext(ThemeContext);
 
 	const [collapse, setCollapse] = useState(true);
@@ -79,65 +73,37 @@ function ResultListItem({item}) {
 					className={getCN({'text-truncate': collapse})}
 					size={8}
 				>
-					{truncateString(
-						typeof value === 'object'
-							? localizeDate(
-									property,
-									removeBrackets(JSON.stringify(value))
-							  )
-							: localizeDate(property, value)
-					)}
+					{truncateString(localizeDate(property, value))}
 				</ClayLayout.Col>
 			</ClayLayout.Row>
 		);
 
 	return (
-		<ClayList.Item
-			className="result-list-item"
-			flex
-			key={item[`title_${locale}`]}
-		>
+		<ClayList.Item className="result-list-item" flex key={id}>
 			<ClayList.ItemField>
 				<PreviewModalWithCopyDownload
 					fileName="score_explanation.json"
 					size="lg"
-					text={JSON.stringify(
-						item?._explanation?.details || [],
-						null,
-						2
-					)}
+					text={explanation}
 					title={Liferay.Language.get('score-explanation')}
 				>
 					<ClayButton className="score" displayType="unstyled" small>
-						{item._score.toFixed(2)}
+						{score.toFixed(2)}
 					</ClayButton>
 				</PreviewModalWithCopyDownload>
 			</ClayList.ItemField>
 
 			<ClayList.ItemField expand>
-				<ClayList.ItemTitle>
-					{item.viewURL ? (
-						<ClayLink href={item.viewURL} target="_blank">
-							{item[`title_${locale}`] || item.fullName}
-
-							<ClayIcon
-								className="shortcut-icon"
-								symbol="shortcut"
-							/>
-						</ClayLink>
-					) : (
-						item[`title_${locale}`] || item.fullName
-					)}
-				</ClayList.ItemTitle>
+				<ClayList.ItemTitle>{fields.assetTitle}</ClayList.ItemTitle>
 
 				{getResultDefaultKeys(locale).map((property) =>
-					_renderListRow(property, item[property])
+					_renderListRow(property, fields[property])
 				)}
 
 				{!collapse && (
 					<>
 						{RESULTS_SHOW_KEYS.map((property) =>
-							_renderListRow(property, item[property])
+							_renderListRow(property, fields[property])
 						)}
 
 						<div className="list-group-header">
@@ -146,10 +112,10 @@ function ResultListItem({item}) {
 							</span>
 						</div>
 
-						{Object.keys(item.fields)
+						{Object.keys(fields)
 							.sort()
 							.map((property) =>
-								_renderListRow(property, item.fields[property])
+								_renderListRow(property, fields[property])
 							)}
 					</>
 				)}

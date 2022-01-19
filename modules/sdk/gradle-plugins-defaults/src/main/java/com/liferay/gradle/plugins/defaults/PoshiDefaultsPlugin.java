@@ -16,6 +16,7 @@ package com.liferay.gradle.plugins.defaults;
 
 import com.liferay.gradle.plugins.defaults.internal.util.GradleUtil;
 import com.liferay.gradle.plugins.source.formatter.SourceFormatterPlugin;
+import com.liferay.gradle.plugins.testray.TestrayPlugin;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -31,6 +32,7 @@ public class PoshiDefaultsPlugin implements Plugin<Project> {
 		GradleUtil.applyPlugin(
 			project, PoshiRunnerResourcesDefaultsPlugin.class);
 		GradleUtil.applyPlugin(project, SourceFormatterPlugin.class);
+		GradleUtil.applyPlugin(project, TestrayPlugin.class);
 	}
 
 }

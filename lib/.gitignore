@@ -119,9 +119,7 @@
 /portal/commons-pool.jar
 /portal/commons-validator.jar
 /portal/crypt.jar
-/portal/daisydiff.jar
 /portal/dom4j.jar
-/portal/eclipse-core-runtime.jar
 /portal/fontbox.jar
 /portal/hessian.jar
 /portal/hibernate-core.jar
@@ -143,7 +141,6 @@
 /portal/jai_codec.jar
 /portal/jai_core.jar
 /portal/jakarta-regexp.jar
-/portal/java-diff.jar
 /portal/java-libpst.jar
 /portal/javassist.jar
 /portal/jaxb-api.jar

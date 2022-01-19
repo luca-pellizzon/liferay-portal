@@ -1,5 +1,43 @@
 definition {
 
+	macro addOrderType {
+		LexiconEntry.gotoAdd();
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		Type(
+			locator1 = "TextInput#NAME",
+			value1 = "${orderTypeName}");
+
+		Type(
+			locator1 = "CommerceEntry#DESCRIPTION_FIELD",
+			value1 = "${orderTypeDescription}");
+
+		Button.clickSubmitButton();
+
+		ClickNoError(locator1 = "ToggleSwitch#ACTIVE");
+
+		Button.clickPublish();
+
+		Alert.viewSuccessMessage();
+	}
+
+	macro assertOrderTypesEntry {
+		AssertTextEquals(
+			locator1 = "CommerceEntry#NAME_FIELD",
+			value1 = "${orderTypeName}");
+
+		AssertTextEquals(
+			locator1 = "CommerceEntry#DESCRIPTION_FIELD",
+			value1 = "${orderTypeDescription}");
+
+		if (isSet(displayOrder)) {
+			AssertTextEquals(
+				locator1 = "CommerceEntry#DISPLAY_ORDER_FIELD",
+				value1 = "${displayOrder}");
+		}
+	}
+
 	macro createShipment {
 		Click(
 			key_text = "Create Shipment",
@@ -134,6 +172,36 @@ definition {
 			value1 = "\ESCAPE");
 
 		IFrame.selectTopFrame();
+	}
+
+	macro editOrderType {
+		if (isSet(orderTypeName)) {
+			Type(
+				locator1 = "CommerceEntry#NAME_FIELD",
+				value1 = "${orderTypeName}");
+		}
+
+		if (isSet(orderTypeDescription)) {
+			Type(
+				locator1 = "CommerceEntry#DESCRIPTION_FIELD",
+				value1 = "${orderTypeDescription}");
+		}
+
+		if (isSet(displayOrder)) {
+			Type(
+				locator1 = "CommerceEntry#DISPLAY_ORDER_FIELD",
+				value1 = "${displayOrder}");
+		}
+
+		Button.clickPublish();
+
+		Alert.viewSuccessMessage();
+	}
+
+	macro openOrderTypesAdmin {
+		Navigator.openWithAppendToBaseURL(
+			baseURL = "${baseURL}",
+			urlAppend = "group/control_panel/manage?p_p_id=com_liferay_commerce_order_web_internal_portlet_CommerceOrderTypePortlet");
 	}
 
 	macro viewOrdersEntry {

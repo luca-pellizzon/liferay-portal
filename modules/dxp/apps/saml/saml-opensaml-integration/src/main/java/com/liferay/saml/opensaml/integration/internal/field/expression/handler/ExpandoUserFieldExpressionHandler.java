@@ -14,7 +14,9 @@
 
 package com.liferay.saml.opensaml.integration.internal.field.expression.handler;
 
+import com.liferay.expando.kernel.exception.ValueDataException;
 import com.liferay.expando.kernel.model.ExpandoColumn;
+import com.liferay.expando.kernel.model.ExpandoColumnConstants;
 import com.liferay.expando.kernel.model.ExpandoTable;
 import com.liferay.expando.kernel.model.ExpandoTableConstants;
 import com.liferay.expando.kernel.model.ExpandoValue;
@@ -33,6 +35,7 @@ import com.liferay.portal.kernel.security.ldap.LDAPSettings;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -53,12 +56,16 @@ import com.liferay.saml.opensaml.integration.processor.context.ProcessorContext;
 import com.liferay.saml.opensaml.integration.processor.context.UserProcessorContext;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.naming.Binding;
@@ -103,7 +110,30 @@ public class ExpandoUserFieldExpressionHandler
 					user -> _getExpandoValue(user, validFieldExpression),
 					_processingIndex, validFieldExpression, this::_update);
 
-			userBind.mapString(validFieldExpression, ExpandoValue::setData);
+			userBind.handleUnsafeStringArray(
+				validFieldExpression,
+				(expandoValue, values) -> {
+					ExpandoColumn expandoColumn = expandoValue.getColumn();
+
+					try {
+						_setExpandoValueData(
+							expandoValue,
+							_valueConsumers.get(expandoColumn.getType()),
+							values);
+					}
+					catch (Exception exception) {
+						if (exception instanceof PortalException) {
+							throw exception;
+						}
+
+						throw new PortalException(
+							StringBundler.concat(
+								"Unable to set value for expando column ",
+								validFieldExpression, ": ",
+								exception.getMessage()),
+							exception);
+					}
+				});
 		}
 	}
 
@@ -112,6 +142,9 @@ public class ExpandoUserFieldExpressionHandler
 			long companyId, String userIdentifier,
 			String userIdentifierExpression)
 		throws Exception {
+
+		userIdentifier = _getNormalizedData(
+			companyId, userIdentifierExpression, userIdentifier);
 
 		Collection<LDAPServerConfiguration> ldapServerConfigurations =
 			_ldapServerConfigurationProvider.getConfigurations(companyId);
@@ -172,12 +205,12 @@ public class ExpandoUserFieldExpressionHandler
 			_expandoValueLocalService.getColumnValues(
 				companyId, User.class.getName(),
 				ExpandoTableConstants.DEFAULT_TABLE_NAME,
-				userIdentifierExpression, userIdentifier, QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS);
+				userIdentifierExpression,
+				_getNormalizedData(
+					companyId, userIdentifierExpression, userIdentifier),
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		if (expandoValues.size() > 1) {
-			expandoValues.forEach(StringBundler::concat);
-
 			List<Long> userIds = new ArrayList<>();
 
 			expandoValues.forEach(
@@ -205,13 +238,16 @@ public class ExpandoUserFieldExpressionHandler
 	@Override
 	public List<String> getValidFieldExpressions() {
 		List<String> validExpressions = new ArrayList<>();
-		long companyId = CompanyThreadLocal.getCompanyId();
+
+		Set<Integer> types = _valueConsumers.keySet();
 
 		for (ExpandoColumn column :
 				_expandoColumnLocalService.getDefaultTableColumns(
-					companyId, User.class.getName())) {
+					CompanyThreadLocal.getCompanyId(), User.class.getName())) {
 
-			validExpressions.add(column.getName());
+			if (types.contains(column.getType())) {
+				validExpressions.add(column.getName());
+			}
 		}
 
 		return Collections.unmodifiableList(validExpressions);
@@ -220,6 +256,14 @@ public class ExpandoUserFieldExpressionHandler
 	@Override
 	public boolean isSupportedForUserMatching(String userIdentifier) {
 		return true;
+	}
+
+	@FunctionalInterface
+	public interface ValueConsumer<T> {
+
+		public void accept(ExpandoValue expandoValue, T value)
+			throws PortalException;
+
 	}
 
 	@Activate
@@ -237,6 +281,21 @@ public class ExpandoUserFieldExpressionHandler
 			ldapServerConfigurationProvider) {
 
 		_ldapServerConfigurationProvider = ldapServerConfigurationProvider;
+	}
+
+	private static <V> ValueConsumer<String[]> _getValueConsumer(
+		Function<String[], V> function, ValueConsumer<V> valueConsumer) {
+
+		return (expandoValue, value) -> valueConsumer.accept(
+			expandoValue, function.apply(value));
+	}
+
+	private static <V> V _head(V[] values) {
+		if ((values == null) || (values.length == 0)) {
+			return null;
+		}
+
+		return values[0];
 	}
 
 	private ExpandoValue _getExpandoValue(
@@ -403,6 +462,44 @@ public class ExpandoUserFieldExpressionHandler
 		}
 	}
 
+	private String _getNormalizedData(
+			long companyId, String columnName, String... values)
+		throws PortalException {
+
+		ExpandoValue expandoValue =
+			_expandoValueLocalService.createExpandoValue(0);
+
+		ExpandoColumn expandoColumn = _expandoColumnLocalService.getColumn(
+			companyId, User.class.getName(),
+			ExpandoTableConstants.DEFAULT_TABLE_NAME, columnName);
+
+		expandoValue.setColumnId(expandoColumn.getColumnId());
+
+		_setExpandoValueData(
+			expandoValue, _valueConsumers.get(expandoColumn.getType()), values);
+
+		return expandoValue.getData();
+	}
+
+	private void _setExpandoValueData(
+			ExpandoValue expandoValue, ValueConsumer<String[]> valueConsumer,
+			String[] values)
+		throws PortalException {
+
+		if (valueConsumer == null) {
+			ExpandoColumn expandoColumn = expandoValue.getColumn();
+
+			throw new ValueDataException(
+				StringBundler.concat(
+					"Unsupported column ", expandoColumn.getColumnId(),
+					" type ",
+					ExpandoColumnConstants.getTypeLabel(
+						expandoColumn.getType())));
+		}
+
+		valueConsumer.accept(expandoValue, values);
+	}
+
 	private ExpandoValue _update(
 			ExpandoValue currentExpandoValue, ExpandoValue newExpandoValue,
 			ServiceContext serviceContext)
@@ -419,11 +516,120 @@ public class ExpandoUserFieldExpressionHandler
 		return _expandoValueLocalService.addValue(
 			newExpandoValue.getCompanyId(), User.class.getName(),
 			ExpandoTableConstants.DEFAULT_TABLE_NAME, column.getName(),
-			newExpandoValue.getClassPK(), newExpandoValue.getData());
+			newExpandoValue.getClassPK(), (Object)newExpandoValue.getData());
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ExpandoUserFieldExpressionHandler.class);
+
+	private static final HashMap<Integer, ValueConsumer<String[]>>
+		_valueConsumers = HashMapBuilder.<Integer, ValueConsumer<String[]>>put(
+			ExpandoColumnConstants.BOOLEAN,
+			_getValueConsumer(
+				values -> GetterUtil.getBoolean(_head(values)),
+				ExpandoValue::setBoolean)
+		).put(
+			ExpandoColumnConstants.BOOLEAN_ARRAY,
+			_getValueConsumer(
+				GetterUtil::getBooleanValues, ExpandoValue::setBooleanArray)
+		).put(
+			ExpandoColumnConstants.DOUBLE,
+			_getValueConsumer(
+				values -> GetterUtil.getDouble(_head(values)),
+				ExpandoValue::setDouble)
+		).put(
+			ExpandoColumnConstants.DOUBLE_ARRAY,
+			_getValueConsumer(
+				GetterUtil::getDoubleValues, ExpandoValue::setDoubleArray)
+		).put(
+			ExpandoColumnConstants.FLOAT,
+			_getValueConsumer(
+				values -> GetterUtil.getFloat(_head(values)),
+				ExpandoValue::setFloat)
+		).put(
+			ExpandoColumnConstants.FLOAT_ARRAY,
+			_getValueConsumer(
+				GetterUtil::getLongValues, ExpandoValue::setLongArray)
+		).put(
+			ExpandoColumnConstants.INTEGER,
+			_getValueConsumer(
+				values -> GetterUtil.getIntegerStrict(_head(values)),
+				ExpandoValue::setInteger)
+		).put(
+			ExpandoColumnConstants.INTEGER_ARRAY,
+			_getValueConsumer(
+				values -> {
+					if (values == null) {
+						return null;
+					}
+
+					Stream<String> stream = Arrays.stream(values);
+
+					return stream.mapToInt(
+						GetterUtil::getIntegerStrict
+					).toArray();
+				},
+				ExpandoValue::setIntegerArray)
+		).put(
+			ExpandoColumnConstants.LONG,
+			_getValueConsumer(
+				values -> GetterUtil.getLongStrict(_head(values)),
+				ExpandoValue::setLong)
+		).put(
+			ExpandoColumnConstants.LONG_ARRAY,
+			_getValueConsumer(
+				values -> {
+					if (values == null) {
+						return null;
+					}
+
+					Stream<String> stream = Arrays.stream(values);
+
+					return stream.mapToLong(
+						GetterUtil::getLongStrict
+					).toArray();
+				},
+				ExpandoValue::setLongArray)
+		).put(
+			ExpandoColumnConstants.NUMBER,
+			_getValueConsumer(
+				values -> GetterUtil.getNumber(_head(values)),
+				ExpandoValue::setNumber)
+		).put(
+			ExpandoColumnConstants.NUMBER_ARRAY,
+			_getValueConsumer(
+				GetterUtil::getNumberValues, ExpandoValue::setNumberArray)
+		).put(
+			ExpandoColumnConstants.SHORT,
+			_getValueConsumer(
+				values -> GetterUtil.getShortStrict(_head(values)),
+				ExpandoValue::setShort)
+		).put(
+			ExpandoColumnConstants.SHORT_ARRAY,
+			_getValueConsumer(
+				values -> {
+					if (values == null) {
+						return null;
+					}
+
+					short[] shortValues = new short[values.length];
+
+					for (int i = 0; i < values.length; i++) {
+						shortValues[i] = GetterUtil.getShortStrict(values[i]);
+					}
+
+					return shortValues;
+				},
+				ExpandoValue::setShortArray)
+		).put(
+			ExpandoColumnConstants.STRING,
+			_getValueConsumer(
+				ExpandoUserFieldExpressionHandler::_head,
+				ExpandoValue::setString)
+		).put(
+			ExpandoColumnConstants.STRING_ARRAY,
+			_getValueConsumer(Function.identity(), ExpandoValue::setStringArray)
+		).build();
 
 	@Reference
 	private ExpandoColumnLocalService _expandoColumnLocalService;

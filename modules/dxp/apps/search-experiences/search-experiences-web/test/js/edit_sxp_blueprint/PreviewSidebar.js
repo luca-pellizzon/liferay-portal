@@ -13,6 +13,7 @@ import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
 
 import PreviewSidebar from '../../../src/main/resources/META-INF/resources/sxp_blueprint_admin/js/edit_sxp_blueprint/PreviewSidebar';
+import {transformToSearchPreviewHits} from '../../../src/main/resources/META-INF/resources/sxp_blueprint_admin/js/utils/utils';
 import {mockSearchResults} from '../mocks/data';
 
 import '@testing-library/jest-dom/extend-expect';
@@ -27,8 +28,7 @@ jest.mock(
 Liferay.ThemeDisplay.getDefaultLanguageId = () => 'en_US';
 
 const SEARCH_RESULTS = mockSearchResults();
-
-const SEARCH_RESULTS_HITS = JSON.parse(SEARCH_RESULTS.responseString).hits.hits;
+const SEARCH_HITS = transformToSearchPreviewHits(SEARCH_RESULTS);
 
 function renderPreviewSidebar(props) {
 	return render(
@@ -58,9 +58,10 @@ describe('PreviewSidebar', () => {
 
 	it('renders the loading icon', () => {
 		const {container} = renderPreviewSidebar({
+			hits: SEARCH_HITS,
 			loading: true,
 			responseString: SEARCH_RESULTS.responseString,
-			totalHits: SEARCH_RESULTS.totalHits,
+			totalHits: SEARCH_RESULTS.searchHits.totalHits,
 		});
 
 		container.querySelector('.loading-animation');
@@ -68,25 +69,27 @@ describe('PreviewSidebar', () => {
 
 	it('renders the titles for the search results', () => {
 		const {getByText} = renderPreviewSidebar({
+			hits: SEARCH_HITS,
 			responseString: SEARCH_RESULTS.responseString,
-			totalHits: SEARCH_RESULTS.totalHits,
+			totalHits: SEARCH_RESULTS.searchHits.totalHits,
 		});
 
-		SEARCH_RESULTS_HITS.map((result) => {
-			getByText(result.fields.title_en_US[0]);
+		SEARCH_HITS.forEach(({documentFields}) => {
+			getByText(documentFields.assetTitle);
 		});
 	});
 
 	it('expands the result when clicked on', () => {
 		const {getAllByLabelText, queryAllByText} = renderPreviewSidebar({
+			hits: SEARCH_HITS,
 			responseString: SEARCH_RESULTS.responseString,
-			totalHits: SEARCH_RESULTS.totalHits,
+			totalHits: SEARCH_RESULTS.searchHits.totalHits,
 		});
 
 		fireEvent.click(getAllByLabelText('expand')[0]);
 
-		Object.keys(SEARCH_RESULTS_HITS[0].fields).map((key) => {
-			queryAllByText(`${SEARCH_RESULTS_HITS[0].fields[key][0]}`);
+		Object.entries(SEARCH_HITS[0].documentFields).forEach(([, value]) => {
+			queryAllByText(value);
 		});
 	});
 

@@ -11,7 +11,7 @@
 
 import moment from 'moment';
 
-import {CONFIG_PREFIX} from './constants';
+import {CONFIG_PREFIX, DEFAULT_ERROR} from './constants';
 import {INPUT_TYPES} from './inputTypes';
 
 /**
@@ -25,6 +25,29 @@ export function filterAndSortClassNames(items) {
 		.map(({className}) => className)
 		.filter((item) => item)
 		.sort();
+}
+
+/**
+ * Used for formatting a search response's error message.
+ * @param {object} error Information about the error.
+ * @returns {object}
+ */
+export function getResultsError({
+	exceptionClass,
+	exceptionTrace,
+	msg,
+	severity,
+}) {
+	return {
+		errors: [
+			{
+				exceptionClass,
+				exceptionTrace,
+				msg: msg || DEFAULT_ERROR,
+				severity: severity || Liferay.Language.get('error'),
+			},
+		],
+	};
 }
 
 /**
@@ -94,6 +117,18 @@ export function parseAndPrettifyJSON(json) {
 
 		return json;
 	}
+}
+
+const BRACKETS_QUOTES_REGEX = new RegExp(/[[\]"]/, 'g');
+
+/**
+ * Function to remove brackets and quotations from a string.
+ *
+ * @param {String} value String with brackets and quotes
+ * @return {String}
+ */
+export function removeBrackets(value) {
+	return value.replace(BRACKETS_QUOTES_REGEX, '');
 }
 
 /**
@@ -598,4 +633,34 @@ export function transformToSearchContextAttributes(attributes) {
 			}),
 			{}
 		);
+}
+
+/**
+ * Converts the results from search preview into the format expected
+ * for `hits` property inside PreviewSidebar.
+ *
+ * @param {object} results Contains search hits
+ * @returns {Array}
+ */
+export function transformToSearchPreviewHits(results) {
+	const searchHits = results.searchHits?.hits || [];
+
+	const finalHits = [];
+
+	searchHits.forEach((hit) => {
+		const documentFields = {};
+
+		Object.entries(hit.documentFields).forEach(([key, value]) => {
+			documentFields[key] = removeBrackets(
+				JSON.stringify(value.values || [])
+			);
+		});
+
+		finalHits.push({
+			...hit,
+			documentFields,
+		});
+	});
+
+	return finalHits;
 }
