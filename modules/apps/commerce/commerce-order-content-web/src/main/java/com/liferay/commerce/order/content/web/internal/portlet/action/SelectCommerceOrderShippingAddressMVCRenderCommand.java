@@ -12,12 +12,14 @@
  * details.
  */
 
-package com.liferay.commerce.order.content.web.internal.portlet;
+package com.liferay.commerce.order.content.web.internal.portlet.action;
 
 import com.liferay.commerce.constants.CommerceOrderConstants;
 import com.liferay.commerce.constants.CommercePortletKeys;
+import com.liferay.commerce.exception.NoSuchOrderException;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.order.CommerceOrderHttpHelper;
+import com.liferay.commerce.order.CommerceOrderValidatorRegistry;
 import com.liferay.commerce.order.content.web.internal.display.context.CommerceOrderContentDisplayContext;
 import com.liferay.commerce.order.engine.CommerceOrderEngine;
 import com.liferay.commerce.order.importer.type.CommerceOrderImporterTypeRegistry;
@@ -35,22 +37,14 @@ import com.liferay.commerce.service.CommerceShipmentItemService;
 import com.liferay.commerce.term.service.CommerceTermEntryService;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.item.selector.ItemSelector;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.messaging.proxy.ProxyModeThreadLocal;
-import com.liferay.portal.kernel.messaging.proxy.ProxyModeThreadLocalCloseable;
-import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
+import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 
-import java.io.IOException;
-
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -59,51 +53,23 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Alessio Antonio Rendina
+ * @author Luca Pellizzon
  */
 @Component(
-	enabled = false, immediate = true,
+	enabled = false,
 	property = {
-		"com.liferay.portlet.add-default-resource=true",
-		"com.liferay.portlet.css-class-wrapper=portlet-commerce-order-content",
-		"com.liferay.portlet.display-category=commerce",
-		"com.liferay.portlet.instanceable=false",
-		"com.liferay.portlet.layout-cacheable=true",
-		"com.liferay.portlet.preferences-owned-by-group=true",
-		"com.liferay.portlet.private-request-attributes=false",
-		"com.liferay.portlet.private-session-attributes=false",
-		"com.liferay.portlet.render-weight=50",
-		"com.liferay.portlet.scopeable=true",
-		"javax.portlet.display-name=Placed Orders",
-		"javax.portlet.expiration-cache=0",
-		"javax.portlet.init-param.view-template=/placed_commerce_orders/view.jsp",
-		"javax.portlet.name=" + CommercePortletKeys.COMMERCE_ORDER_CONTENT,
-		"javax.portlet.resource-bundle=content.Language",
-		"javax.portlet.security-role-ref=power-user,user",
-		"javax.portlet.version=3.0"
+		"javax.portlet.name=" + CommercePortletKeys.COMMERCE_OPEN_ORDER_CONTENT,
+		"mvc.command.name=/commerce_open_order_content/select_commerce_order_shipping_address"
 	},
-	service = {CommerceOrderContentPortlet.class, Portlet.class}
+	service = MVCRenderCommand.class
 )
-public class CommerceOrderContentPortlet extends MVCPortlet {
+public class SelectCommerceOrderShippingAddressMVCRenderCommand
+	implements MVCRenderCommand {
 
 	@Override
-	public void processAction(
-			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws IOException, PortletException {
-
-		try (ProxyModeThreadLocalCloseable proxyModeThreadLocalCloseable =
-				new ProxyModeThreadLocalCloseable()) {
-
-			ProxyModeThreadLocal.setWithSafeCloseable(true);
-
-			super.processAction(actionRequest, actionResponse);
-		}
-	}
-
-	@Override
-	public void render(
+	public String render(
 			RenderRequest renderRequest, RenderResponse renderResponse)
-		throws IOException, PortletException {
+		throws PortletException {
 
 		try {
 			CommerceOrderContentDisplayContext
@@ -115,7 +81,7 @@ public class CommerceOrderContentPortlet extends MVCPortlet {
 						_commerceOrderNoteService,
 						_commerceOrderPriceCalculation, _commerceOrderService,
 						_commerceOrderStatusRegistry, _commerceOrderTypeService,
-						_commercePaymentMethodGroupRelServiceService,
+						_commercePaymentMethodGroupRelLocalService,
 						_commercePaymentMethodRegistry,
 						_commerceShipmentItemService, _commerceTermEntryService,
 						_dlAppLocalService,
@@ -127,15 +93,20 @@ public class CommerceOrderContentPortlet extends MVCPortlet {
 				WebKeys.PORTLET_DISPLAY_CONTEXT,
 				commerceOrderContentDisplayContext);
 		}
-		catch (PortalException portalException) {
-			_log.error(portalException);
+		catch (Exception exception) {
+			if (exception instanceof NoSuchOrderException ||
+				exception instanceof PrincipalException) {
+
+				SessionErrors.add(renderRequest, exception.getClass());
+
+				return "/error.jsp";
+			}
+
+			throw new PortletException(exception);
 		}
 
-		super.render(renderRequest, renderResponse);
+		return "/pending_commerce_orders/commerce_order/shipping_address.jsp";
 	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceOrderContentPortlet.class);
 
 	@Reference
 	private CommerceAddressService _commerceAddressService;
@@ -169,8 +140,11 @@ public class CommerceOrderContentPortlet extends MVCPortlet {
 	private CommerceOrderTypeService _commerceOrderTypeService;
 
 	@Reference
+	private CommerceOrderValidatorRegistry _commerceOrderValidatorRegistry;
+
+	@Reference
 	private CommercePaymentMethodGroupRelLocalService
-		_commercePaymentMethodGroupRelServiceService;
+		_commercePaymentMethodGroupRelLocalService;
 
 	@Reference
 	private CommercePaymentMethodRegistry _commercePaymentMethodRegistry;
