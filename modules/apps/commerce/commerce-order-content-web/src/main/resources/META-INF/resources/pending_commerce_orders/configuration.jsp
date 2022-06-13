@@ -38,6 +38,10 @@
 						/>
 					</div>
 				</aui:fieldset>
+
+				<aui:fieldset collapsible="<%= true %>" label="show-updated-order-details-page-display">
+					<aui:input checked="<%= commerceOrderContentDisplayContext.isShowUpdatedOrderDetailsPage() %>" id="showUpdatedOrderDetailsPage" label="show-updated-order-details-page" name="preferences--showUpdatedOrderDetailsPage--" type="toggle-switch" />
+				</aui:fieldset>
 			</aui:fieldset-group>
 		</div>
 	</div>

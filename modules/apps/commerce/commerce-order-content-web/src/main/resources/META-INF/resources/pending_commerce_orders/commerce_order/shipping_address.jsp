@@ -37,7 +37,7 @@ CommerceOrder commerceOrder = commerceOrderContentDisplayContext.getCommerceOrde
 					"commerceOrderId", String.valueOf(commerceOrder.getCommerceOrderId())
 				).build()
 			%>'
-			creationMenu="<%= null %>"
+			creationMenu='<%= commerceOrderContentDisplayContext.getCommerceAddressCreationMenu("/commerce_open_order_content/edit_commerce_order_shipping_address") %>'
 			dataProviderKey="<%= CommerceOrderFDSNames.SHIPPING_ADDRESSES %>"
 			formName="fm"
 			id="<%= CommerceOrderFDSNames.SHIPPING_ADDRESSES %>"

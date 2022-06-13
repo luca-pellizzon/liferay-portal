@@ -457,9 +457,6 @@ public class EditCommerceOrderMVCActionCommand extends BaseMVCActionCommand {
 			_executeWorkflowTransition(
 				actionRequest, commerceOrderId, transitionName, workflowTaskId);
 		}
-		else if (transitionName.equals("checkout")) {
-			_checkoutCommerceOrder(actionRequest, commerceOrderId);
-		}
 		else {
 			CommerceOrder commerceOrder =
 				_commerceOrderService.getCommerceOrder(commerceOrderId);
@@ -467,12 +464,17 @@ public class EditCommerceOrderMVCActionCommand extends BaseMVCActionCommand {
 			int orderStatus = GetterUtil.getInteger(
 				transitionName, commerceOrder.getOrderStatus());
 
-			if (transitionName.equals("submit")) {
-				orderStatus = CommerceOrderConstants.ORDER_STATUS_IN_PROGRESS;
-			}
+			if ((orderStatus ==
+					CommerceOrderConstants.ORDER_STATUS_IN_PROGRESS) &&
+				commerceOrder.isApproved()) {
 
-			_commerceOrderEngine.transitionCommerceOrder(
-				commerceOrder, orderStatus, _portal.getUserId(actionRequest));
+				_checkoutCommerceOrder(actionRequest, commerceOrderId);
+			}
+			else {
+				_commerceOrderEngine.transitionCommerceOrder(
+					commerceOrder, orderStatus,
+					_portal.getUserId(actionRequest));
+			}
 		}
 
 		hideDefaultSuccessMessage(actionRequest);

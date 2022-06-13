@@ -14,6 +14,7 @@
 
 package com.liferay.commerce.order.content.web.internal.portlet.action;
 
+import com.liferay.commerce.configuration.CommerceOrderItemDecimalQuantityConfiguration;
 import com.liferay.commerce.constants.CommerceOrderConstants;
 import com.liferay.commerce.constants.CommercePortletKeys;
 import com.liferay.commerce.exception.NoSuchOrderException;
@@ -37,6 +38,7 @@ import com.liferay.commerce.service.CommerceShipmentItemService;
 import com.liferay.commerce.term.service.CommerceTermEntryService;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.item.selector.ItemSelector;
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
@@ -45,25 +47,30 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 
+import java.util.Map;
+
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Luca Pellizzon
+ * @author Alessio Antonio Rendina
  */
 @Component(
+	configurationPid = "com.liferay.commerce.configuration.CommerceOrderItemDecimalQuantityConfiguration",
 	enabled = false,
 	property = {
 		"javax.portlet.name=" + CommercePortletKeys.COMMERCE_OPEN_ORDER_CONTENT,
-		"mvc.command.name=/commerce_open_order_content/edit_commerce_order_billing_address"
+		"mvc.command.name=/commerce_open_order_content/edit_commerce_order_external_reference_code"
 	},
 	service = MVCRenderCommand.class
 )
-public class EditCommerceOrderBillingAddressMVCRenderCommand
+public class EditCommerceOrderExternalReferenceCodeMVCRenderCommand
 	implements MVCRenderCommand {
 
 	@Override
@@ -106,7 +113,16 @@ public class EditCommerceOrderBillingAddressMVCRenderCommand
 		}
 
 		return "/pending_commerce_orders/commerce_order" +
-			"/edit_billing_address.jsp";
+			"/external_reference_code.jsp";
+	}
+
+	@Activate
+	@Modified
+	protected void activate(Map<String, Object> properties) {
+		_commerceOrderItemDecimalQuantityConfiguration =
+			ConfigurableUtil.createConfigurable(
+				CommerceOrderItemDecimalQuantityConfiguration.class,
+				properties);
 	}
 
 	@Reference
@@ -124,6 +140,9 @@ public class EditCommerceOrderBillingAddressMVCRenderCommand
 	@Reference
 	private CommerceOrderImporterTypeRegistry
 		_commerceOrderImporterTypeRegistry;
+
+	private volatile CommerceOrderItemDecimalQuantityConfiguration
+		_commerceOrderItemDecimalQuantityConfiguration;
 
 	@Reference
 	private CommerceOrderNoteService _commerceOrderNoteService;

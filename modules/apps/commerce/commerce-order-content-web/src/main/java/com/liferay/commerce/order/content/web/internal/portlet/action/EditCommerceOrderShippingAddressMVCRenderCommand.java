@@ -105,7 +105,8 @@ public class EditCommerceOrderShippingAddressMVCRenderCommand
 			throw new PortletException(exception);
 		}
 
-		return "/pending_commerce_orders/commerce_order/edit_shipping_address.jsp";
+		return "/pending_commerce_orders/commerce_order" +
+			"/edit_shipping_address.jsp";
 	}
 
 	@Reference

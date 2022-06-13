@@ -105,7 +105,8 @@ public class EditCommerceOrderPurchaseOrderNumberMVCRenderCommand
 			throw new PortletException(exception);
 		}
 
-		return "/pending_commerce_orders/commerce_order/purchase_order_number.jsp";
+		return "/pending_commerce_orders/commerce_order" +
+			"/purchase_order_number.jsp";
 	}
 
 	@Reference

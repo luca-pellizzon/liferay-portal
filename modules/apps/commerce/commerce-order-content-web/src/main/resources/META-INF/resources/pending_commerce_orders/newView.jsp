@@ -115,6 +115,7 @@ CommerceOrder commerceOrder = commerceOrderContentDisplayContext.getCommerceOrde
 			actions="<%= commerceOrderContentDisplayContext.getHeaderActionModels() %>"
 			bean="<%= commerceOrder %>"
 			beanIdLabel="id"
+			dropdownItems="<%= commerceOrderContentDisplayContext.getDropdownItems() %>"
 			externalReferenceCode="<%= commerceOrder.getExternalReferenceCode() %>"
 			externalReferenceCodeEditUrl="<%= editCommerceOrderExternalReferenceCodeURL %>"
 			model="<%= CommerceOrder.class %>"

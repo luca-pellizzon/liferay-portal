@@ -105,7 +105,8 @@ public class EditCommerceOrderRequestedDeliveryDateMVCRenderCommand
 			throw new PortletException(exception);
 		}
 
-		return "/pending_commerce_orders/commerce_order/requested_delivery_date.jsp";
+		return "/pending_commerce_orders/commerce_order" +
+			"/requested_delivery_date.jsp";
 	}
 
 	@Reference
