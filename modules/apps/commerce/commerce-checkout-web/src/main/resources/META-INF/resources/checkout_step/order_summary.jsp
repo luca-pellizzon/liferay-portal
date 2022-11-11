@@ -435,15 +435,23 @@ Map<Long, List<CommerceOrderValidatorResult>> commerceOrderValidatorResultsMap =
 						int requestedDeliveryDay = 0;
 						int requestedDeliveryMonth = -1;
 						int requestedDeliveryYear = 0;
+						int requestedDeliveryDateHour = 0;
+						int requestedDeliveryDateMinute = 0;
+						int requestedDeliveryDateAmPm = 0;
+						
+						Calendar calendar = CalendarFactoryUtil.getCalendar(timeZone, locale);
 
 						Date requestedDeliveryDate = commerceOrder.getRequestedDeliveryDate();
 
 						if (requestedDeliveryDate != null) {
-							Calendar calendar = CalendarFactoryUtil.getCalendar(requestedDeliveryDate.getTime());
+							calendar = CalendarFactoryUtil.getCalendar(requestedDeliveryDate.getTime());
 
 							requestedDeliveryDay = calendar.get(Calendar.DAY_OF_MONTH);
 							requestedDeliveryMonth = calendar.get(Calendar.MONTH);
 							requestedDeliveryYear = calendar.get(Calendar.YEAR);
+							requestedDeliveryDateHour = calendar.get(Calendar.HOUR);
+							requestedDeliveryDateMinute = calendar.get(Calendar.MINUTE);
+							requestedDeliveryDateAmPm = calendar.get(Calendar.AM_PM);
 						}
 						%>
 
@@ -462,6 +470,17 @@ Map<Long, List<CommerceOrderValidatorResult>> commerceOrderValidatorResultsMap =
 								showDisableCheckbox="<%= false %>"
 								yearParam="requestedDeliveryDateYear"
 								yearValue="<%= requestedDeliveryYear %>"
+							/>
+
+							<liferay-ui:input-time
+								amPmParam="requestedDeliveryDateAmPm"
+								amPmValue="<%= requestedDeliveryDateAmPm %>"
+								dateValue="<%= calendar.getTime() %>"
+								hourParam="requestedDeliveryDateHour"
+								hourValue="<%= requestedDeliveryDateHour %>"
+								minuteParam="requestedDeliveryDateMinute"
+								minuteValue="<%= requestedDeliveryDateMinute %>"
+								timeFormat="24-hour"
 							/>
 						</div>
 					</c:if>
