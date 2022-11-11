@@ -472,16 +472,20 @@ Map<Long, List<CommerceOrderValidatorResult>> commerceOrderValidatorResultsMap =
 								yearValue="<%= requestedDeliveryYear %>"
 							/>
 
-							<liferay-ui:input-time
-								amPmParam="requestedDeliveryDateAmPm"
-								amPmValue="<%= requestedDeliveryDateAmPm %>"
-								dateValue="<%= calendar.getTime() %>"
-								hourParam="requestedDeliveryDateHour"
-								hourValue="<%= requestedDeliveryDateHour %>"
-								minuteParam="requestedDeliveryDateMinute"
-								minuteValue="<%= requestedDeliveryDateMinute %>"
-								timeFormat="24-hour"
-							/>
+							<aui:select label="" name="time">
+		
+
+								<%
+								for (String time : orderSummaryCheckoutStepDisplayContext.getAvaliableDeliveryTimes(calendar.getTime())) {
+								%>
+
+									<aui:option label="<%= time %>" value="<%= time %>" />
+
+								<%
+								}
+								%>
+
+							</aui:select>
 						</div>
 					</c:if>
 				</address>

@@ -246,6 +246,8 @@ public class OrderSummaryCommerceCheckoutStep extends BaseCommerceCheckoutStep {
 					actionRequest, "requestedDeliveryDateDay");
 				int requestedDeliveryDateYear = ParamUtil.getInteger(
 					actionRequest, "requestedDeliveryDateYear");
+				String time = ParamUtil.getString(actionRequest, "time");
+				String[] parts = time.split(":");
 
 				if ((requestedDeliveryDateMonth > -1) &&
 					(requestedDeliveryDateDay > 0) &&
@@ -259,7 +261,7 @@ public class OrderSummaryCommerceCheckoutStep extends BaseCommerceCheckoutStep {
 						commerceOrder.getCommerceOrderId(),
 						commerceOrder.getPrintedNote(),
 						requestedDeliveryDateMonth, requestedDeliveryDateDay,
-						requestedDeliveryDateYear, 0, 0, serviceContext);
+						requestedDeliveryDateYear, Integer.valueOf(parts[0]), Integer.valueOf(parts[1]), serviceContext);
 				}
 			}
 

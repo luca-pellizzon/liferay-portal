@@ -71,6 +71,8 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -117,6 +119,10 @@ public class OrderSummaryCheckoutStepDisplayContext {
 			CommerceWebKeys.COMMERCE_CONTEXT);
 		_commerceOrder = (CommerceOrder)httpServletRequest.getAttribute(
 			CommerceCheckoutWebKeys.COMMERCE_ORDER);
+	}
+
+	public List<String> getAvaliableDeliveryTimes(Date date) {
+		return Arrays.asList("18:00", "18:30", "19:00", "19:30","20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00");
 	}
 
 	public CommerceOrder getCommerceOrder() {
