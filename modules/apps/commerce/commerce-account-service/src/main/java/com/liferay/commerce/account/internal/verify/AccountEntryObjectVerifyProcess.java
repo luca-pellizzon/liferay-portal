@@ -26,6 +26,8 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.object.util.LocalizedMapUtil;
 
+import java.util.Collections;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -58,13 +60,14 @@ public class AccountEntryObjectVerifyProcess extends VerifyProcess {
 					if (objectField != null) {
 						return;
 					}
-
-					_objectFieldLocalService.addOrUpdateSystemObjectField(
-						_userLocalService.getDefaultUserId(companyId), objectDefinition.getObjectDefinitionId(), "Integer",
-						"points", "AccountEntry", "Integer",
-						null, false, false,
-						null, LocalizedMapUtil.getLocalizedMap(LanguageUtil.get(LocaleUtil.getDefault(), "Points")), "points",
-						false, false);
+					
+					_objectFieldLocalService.addOrUpdateCustomObjectField(
+						null, 0, _userLocalService.getDefaultUserId(companyId),
+						0, objectDefinition.getObjectDefinitionId(),
+						"Integer", "Integer", null,
+						false, false, null,
+						LocalizedMapUtil.getLocalizedMap(LanguageUtil.get(LocaleUtil.getDefault(), "Points")), "points",
+						false, false, Collections.emptyList());
 				});
 		}
 	}
