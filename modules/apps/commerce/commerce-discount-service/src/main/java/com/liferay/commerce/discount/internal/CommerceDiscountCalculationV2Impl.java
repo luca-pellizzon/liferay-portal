@@ -24,6 +24,8 @@ import com.liferay.commerce.discount.application.strategy.CommerceDiscountApplic
 import com.liferay.commerce.discount.constants.CommerceDiscountConstants;
 import com.liferay.commerce.discount.model.CommerceDiscount;
 import com.liferay.commerce.discount.service.CommerceDiscountUsageEntryLocalService;
+import com.liferay.commerce.discount.target.CommerceDiscountTarget;
+import com.liferay.commerce.discount.target.CommerceDiscountTargetRegistry;
 import com.liferay.commerce.discount.validator.helper.CommerceDiscountValidatorHelper;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.price.list.model.CommercePriceListDiscountRel;
@@ -155,7 +157,8 @@ public class CommerceDiscountCalculationV2Impl
 			}
 
 			return _getCommerceDiscountValues(
-				productUnitPrice, quantity, commerceContext, commerceDiscounts);
+				cpInstance, productUnitPrice, quantity, commerceContext,
+				commerceDiscounts);
 		}
 
 		long commerceOrderTypeId = 0;
@@ -176,7 +179,8 @@ public class CommerceDiscountCalculationV2Impl
 		}
 
 		return _getCommerceDiscountValues(
-			productUnitPrice, quantity, commerceContext, commerceDiscounts);
+			cpInstance, productUnitPrice, quantity, commerceContext,
+			commerceDiscounts);
 	}
 
 	public void unsetCommerceDiscountApplicationStrategy(
@@ -296,7 +300,7 @@ public class CommerceDiscountCalculationV2Impl
 	}
 
 	private BigDecimal[] _getCommerceDiscountLevels(
-			String couponCode, BigDecimal commercePrice,
+			CPInstance cpInstance, String couponCode, BigDecimal commercePrice,
 			CommerceContext commerceContext,
 			List<CommerceDiscount> commerceDiscounts)
 		throws PortalException {
@@ -326,7 +330,14 @@ public class CommerceDiscountCalculationV2Impl
 				continue;
 			}
 
-			if (_isValidDiscount(commerceContext, commerceDiscount)) {
+			CommerceDiscountTarget commerceDiscountTarget =
+				_commerceDiscountTargetRegistry.getCommerceDiscountTarget(
+					commerceDiscount.getTarget());
+
+			if (_isValidDiscount(commerceContext, commerceDiscount) &&
+				commerceDiscountTarget.isApplicable(
+					commerceContext, commerceDiscount, cpInstance)) {
+
 				String discountLevel = commerceDiscount.getLevel();
 
 				if (discountLevel.isEmpty() ||
@@ -400,7 +411,7 @@ public class CommerceDiscountCalculationV2Impl
 		}
 
 		BigDecimal[] commerceDiscountLevels = _getCommerceDiscountLevels(
-			commerceOrder.getCouponCode(), amount, commerceContext,
+			null, commerceOrder.getCouponCode(), amount, commerceContext,
 			commerceDiscounts);
 
 		CommerceDiscountApplicationStrategy
@@ -433,13 +444,13 @@ public class CommerceDiscountCalculationV2Impl
 	}
 
 	private CommerceDiscountValue _getCommerceDiscountValues(
-			BigDecimal commercePrice, int quantity,
+			CPInstance cpInstance, BigDecimal commercePrice, int quantity,
 			CommerceContext commerceContext,
 			List<CommerceDiscount> commerceDiscounts)
 		throws PortalException {
 
 		BigDecimal[] commerceDiscountLevels = _getCommerceDiscountLevels(
-			StringPool.BLANK, commercePrice, commerceContext,
+			cpInstance, StringPool.BLANK, commercePrice, commerceContext,
 			commerceDiscounts);
 
 		CommerceDiscountApplicationStrategy
@@ -533,6 +544,9 @@ public class CommerceDiscountCalculationV2Impl
 
 	private final Map<String, CommerceDiscountApplicationStrategy>
 		_commerceDiscountApplicationStrategyMap = new ConcurrentHashMap<>();
+
+	@Reference
+	private CommerceDiscountTargetRegistry _commerceDiscountTargetRegistry;
 
 	@Reference
 	private CommerceDiscountUsageEntryLocalService

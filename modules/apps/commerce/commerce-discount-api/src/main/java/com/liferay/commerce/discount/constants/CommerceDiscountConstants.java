@@ -58,6 +58,9 @@ public class CommerceDiscountConstants {
 
 	public static final String TARGET_CATEGORIES = "categories";
 
+	public static final String TARGET_CHEAPEST_ITEM_IN_CART =
+		"cheapest-item-in-cart";
+
 	/**
 	 * @deprecated As of Athanasius (7.3.x)
 	 */

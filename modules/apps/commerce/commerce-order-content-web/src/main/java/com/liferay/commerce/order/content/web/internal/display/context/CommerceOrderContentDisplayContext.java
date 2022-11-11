@@ -67,6 +67,10 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenuBuilder;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemBuilder;
 import com.liferay.item.selector.ItemSelector;
+import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectEntry;
+import com.liferay.object.service.ObjectDefinitionLocalServiceUtil;
+import com.liferay.object.service.ObjectEntryLocalServiceUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -106,6 +110,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import java.io.File;
 import java.io.InputStream;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import java.text.DateFormat;
@@ -116,6 +121,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
@@ -192,6 +198,30 @@ public class CommerceOrderContentDisplayContext {
 
 		_commerceOrderNoteId = ParamUtil.getLong(
 			_httpServletRequest, "commerceOrderNoteId");
+	}
+
+	public String getLoyaltyPoints(){
+		ObjectDefinition objectDefinition =
+			ObjectDefinitionLocalServiceUtil.fetchSystemObjectDefinition("AccountEntry");
+
+		if(objectDefinition == null){
+			return StringPool.BLANK;
+		}
+
+		CommerceAccount commerceAccount = getCommerceAccount();
+
+		ObjectEntry objectEntry = ObjectEntryLocalServiceUtil.fetchObjectEntry(
+			commerceAccount.getExternalReferenceCode(), objectDefinition.getObjectDefinitionId());
+
+		if(objectEntry == null){
+			return StringPool.BLANK;
+		}
+
+		Map<String, Serializable> values = objectEntry.getValues();
+
+		Long loyaltyPoints = (Long) values.get("points");
+
+		return String.valueOf(loyaltyPoints);
 	}
 
 	public CommerceChannel fetchCommerceChannel() {

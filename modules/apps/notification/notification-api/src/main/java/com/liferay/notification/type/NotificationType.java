@@ -15,20 +15,46 @@
 package com.liferay.notification.type;
 
 import com.liferay.notification.context.NotificationContext;
+import com.liferay.notification.model.NotificationQueueEntry;
+import com.liferay.notification.model.NotificationRecipientSetting;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.User;
+
+import java.util.List;
 
 /**
  * @author Feliphe Marinho
  */
 public interface NotificationType {
 
+	public List<NotificationRecipientSetting>
+		createNotificationRecipientSettings(
+			long notificationRecipientId, Object[] recipients, User user);
+
+	public default String getFromName(
+		NotificationQueueEntry notificationQueueEntry) {
+
+		return "-";
+	}
+
+	public default String getRecipientSummary(
+		NotificationQueueEntry notificationQueueEntry) {
+
+		return "-";
+	}
+
 	public String getType();
+
+	public String getTypeLanguageKey();
 
 	public void sendNotification(NotificationContext notificationContext)
 		throws PortalException;
 
 	public default void sendUnsentNotifications() {
 	}
+
+	public Object[] toRecipients(
+		List<NotificationRecipientSetting> notificationRecipientSettings);
 
 	public void validateNotificationTemplate(
 			NotificationContext notificationContext)

@@ -14,7 +14,7 @@
 
 package com.liferay.site.navigation.admin.web.internal.portlet.action;
 
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
@@ -55,7 +55,7 @@ public class DeleteSiteNavigationMenuItemMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -95,6 +95,9 @@ public class DeleteSiteNavigationMenuItemMVCActionCommand
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DeleteSiteNavigationMenuItemMVCActionCommand.class);
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private Language _language;

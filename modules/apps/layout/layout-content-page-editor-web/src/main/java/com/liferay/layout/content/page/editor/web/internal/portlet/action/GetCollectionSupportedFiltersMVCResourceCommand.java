@@ -17,10 +17,10 @@ package com.liferay.layout.content.page.editor.web.internal.portlet.action;
 import com.liferay.info.filter.InfoFilter;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
 import com.liferay.layout.list.retriever.LayoutListRetriever;
-import com.liferay.layout.list.retriever.LayoutListRetrieverTracker;
+import com.liferay.layout.list.retriever.LayoutListRetrieverRegistry;
 import com.liferay.layout.list.retriever.ListObjectReference;
 import com.liferay.layout.list.retriever.ListObjectReferenceFactory;
-import com.liferay.layout.list.retriever.ListObjectReferenceFactoryTracker;
+import com.liferay.layout.list.retriever.ListObjectReferenceFactoryRegistry;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -80,14 +80,15 @@ public class GetCollectionSupportedFiltersMVCResourceCommand
 
 			LayoutListRetriever<?, ListObjectReference> layoutListRetriever =
 				(LayoutListRetriever<?, ListObjectReference>)
-					_layoutListRetrieverTracker.getLayoutListRetriever(type);
+					_layoutListRetrieverRegistry.getLayoutListRetriever(type);
 
 			if (layoutListRetriever == null) {
 				continue;
 			}
 
 			ListObjectReferenceFactory<?> listObjectReferenceFactory =
-				_listObjectReferenceFactoryTracker.getListObjectReference(type);
+				_listObjectReferenceFactoryRegistry.getListObjectReference(
+					type);
 
 			if (listObjectReferenceFactory == null) {
 				continue;
@@ -109,10 +110,10 @@ public class GetCollectionSupportedFiltersMVCResourceCommand
 	private JSONFactory _jsonFactory;
 
 	@Reference
-	private LayoutListRetrieverTracker _layoutListRetrieverTracker;
+	private LayoutListRetrieverRegistry _layoutListRetrieverRegistry;
 
 	@Reference
-	private ListObjectReferenceFactoryTracker
-		_listObjectReferenceFactoryTracker;
+	private ListObjectReferenceFactoryRegistry
+		_listObjectReferenceFactoryRegistry;
 
 }

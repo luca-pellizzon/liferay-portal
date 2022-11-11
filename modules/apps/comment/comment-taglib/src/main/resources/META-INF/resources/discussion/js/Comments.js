@@ -164,6 +164,8 @@ export default function Comments({
 			}
 		}
 
+		refreshPage = true;
+
 		if (refreshPage) {
 			window.location.reload();
 		}

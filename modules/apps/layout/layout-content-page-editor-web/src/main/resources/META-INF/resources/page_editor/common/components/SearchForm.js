@@ -45,6 +45,7 @@ export default function SearchForm({className, label, onChange}) {
 						}}
 						placeholder={`${Liferay.Language.get('search')}...`}
 						sizing="sm"
+						spellcheck="false"
 						value={searchValue}
 					/>
 

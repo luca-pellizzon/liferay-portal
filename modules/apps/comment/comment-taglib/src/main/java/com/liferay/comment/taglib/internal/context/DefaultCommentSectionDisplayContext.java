@@ -47,6 +47,14 @@ public class DefaultCommentSectionDisplayContext
 			return false;
 		}
 
+		ThemeDisplay themeDisplay = getThemeDisplay();
+
+		if (isCommerceSiteLabel(themeDisplay) != null) {
+			if (themeDisplay.isSignedIn()) {
+				return true;
+			}
+		}
+
 		return _discussionPermission.hasAddPermission(
 			_discussionRequestHelper.getCompanyId(),
 			_discussionRequestHelper.getScopeGroupId(),

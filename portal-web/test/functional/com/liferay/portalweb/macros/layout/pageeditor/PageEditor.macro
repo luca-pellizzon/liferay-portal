@@ -366,12 +366,6 @@ definition {
 
 				PageEditor.waitForAutoSave();
 
-				if (("${fragmentName}" == "Grid") || ("${fragmentName}" == "Container")) {
-					PageEditor.viewFragment(
-						fragmentName = "${fragmentName}",
-						position = "${position}");
-				}
-
 				if (("${fragmentName}" == "Content Display") || ("${fragmentName}" == "Collection Display") || ("${fragmentName}" == "Display Page Content")) {
 					PageEditor.viewFragmentMessageInfo(fragmentName = "${fragmentName}");
 				}
@@ -809,12 +803,6 @@ definition {
 
 		PageEditor.waitForAutoSave();
 
-		if (("${fragmentName}" == "Grid") || ("${fragmentName}" == "Container")) {
-			PageEditor.viewFragment(
-				fragmentName = "${fragmentName}",
-				position = "${position}");
-		}
-
 		if (("${fragmentName}" == "Content Display") || ("${fragmentName}" == "Collection Display") || ("${fragmentName}" == "Display Page Content")) {
 			PageEditor.viewFragmentMessageInfo(fragmentName = "${fragmentName}");
 		}
@@ -952,6 +940,105 @@ definition {
 		PageEditor.waitForAutoSave();
 	}
 
+	macro addFragmentViaKeyboard {
+		PageEditor.assertFragmentSidebarLoaded();
+
+		PageEditor.gotoTab(tabName = "Fragments and Widgets");
+
+		if (!(isSet(displayStyle))) {
+			var displayStyle = "list";
+		}
+
+		if ("${displayStyle}" == "list") {
+			var switchTo = "card";
+		}
+		else {
+			var switchTo = "list";
+		}
+
+		if (!(isSet(index))) {
+			var index = "1";
+		}
+
+		if (IsElementNotPresent(key_switchTo = "${switchTo}", locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_DISPLAY_STYLE_BUTTON")) {
+			Click(
+				key_switchTo = "",
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_DISPLAY_STYLE_BUTTON");
+		}
+
+		AssertVisible(
+			key_switchTo = "${switchTo}",
+			locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_DISPLAY_STYLE_BUTTON");
+
+		Navigator.gotoNavTab(navTab = "Fragments");
+
+		PageEditor.expandFragmentCollection(collectionName = "${collectionName}");
+
+		if ("${displayStyle}" == "card") {
+			KeyPress(
+				ariaLabel = "Add ${fragmentName}",
+				key_collectionName = "${collectionName}",
+				key_fragmentName = "${fragmentName}",
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_CARD_ITEM_BUTTON_WITH_ARIA_LABEL",
+				value1 = "\ENTER");
+
+			if (isSet(upCount)) {
+				var i = "0";
+
+				while ("${i}" != "${upCount}") {
+					KeyPress(
+						ariaLabel = "Add ${fragmentName}",
+						key_collectionName = "${collectionName}",
+						key_fragmentName = "${fragmentName}",
+						locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_CARD_ITEM_BUTTON_WITH_ARIA_LABEL",
+						value1 = "\UP");
+
+					var i = ${i} + 1;
+				}
+			}
+
+			KeyPress(
+				ariaLabel = "Add ${fragmentName}",
+				key_collectionName = "${collectionName}",
+				key_fragmentName = "${fragmentName}",
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_CARD_ITEM_BUTTON_WITH_ARIA_LABEL",
+				value1 = "\ENTER");
+		}
+
+		if ("${displayStyle}" == "list") {
+			KeyPress(
+				ariaLabel = "Add ${fragmentName}",
+				key_collectionName = "${collectionName}",
+				key_fragmentName = "${fragmentName}",
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_BUTTON_WITH_ARIA_LABEL",
+				value1 = "\ENTER");
+
+			if (isSet(upCount)) {
+				var i = "0";
+
+				while ("${i}" != "${upCount}") {
+					KeyPress(
+						ariaLabel = "Add ${fragmentName}",
+						key_collectionName = "${collectionName}",
+						key_fragmentName = "${fragmentName}",
+						locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_BUTTON_WITH_ARIA_LABEL",
+						value1 = "\UP");
+
+					var i = ${i} + 1;
+				}
+			}
+
+			KeyPress(
+				ariaLabel = "Add ${fragmentName}",
+				key_collectionName = "${collectionName}",
+				key_fragmentName = "${fragmentName}",
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_BUTTON_WITH_ARIA_LABEL",
+				value1 = "\ENTER");
+		}
+
+		PageEditor.waitForAutoSave();
+	}
+
 	macro addVideoFragmentURL {
 		Type(
 			key_text = "URL",
@@ -1030,6 +1117,51 @@ definition {
 		PageEditor.viewFragment(
 			fragmentName = "${portletName}",
 			position = "${position}");
+
+		Click(locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_CLEAR_BUTTON");
+	}
+
+	macro addWidgetViaKeyboard {
+		PageEditor.assertFragmentSidebarLoaded();
+
+		PageEditor.gotoTab(tabName = "Fragments and Widgets");
+
+		Navigator.gotoNavTab(navTab = "Widgets");
+
+		Type.sendKeysApplicationSearch(
+			locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_FIELD",
+			value1 = "${widgetName}");
+
+		KeyPress(
+			ariaLabel = "Add ${widgetName}",
+			key_collectionName = "${categoryName}",
+			key_fragmentName = "${widgetName}",
+			locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_BUTTON_WITH_ARIA_LABEL",
+			value1 = "\ENTER");
+
+		if (isSet(upCount)) {
+			var i = "0";
+
+			while ("${i}" != "${upCount}") {
+				KeyPress(
+					ariaLabel = "Add ${widgetName}",
+					key_collectionName = "${categoryName}",
+					key_fragmentName = "${widgetName}",
+					locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_BUTTON_WITH_ARIA_LABEL",
+					value1 = "\UP");
+
+				var i = ${i} + 1;
+			}
+		}
+
+		KeyPress(
+			ariaLabel = "Add ${widgetName}",
+			key_collectionName = "${categoryName}",
+			key_fragmentName = "${widgetName}",
+			locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_BUTTON_WITH_ARIA_LABEL",
+			value1 = "\ENTER");
+
+		PageEditor.waitForAutoSave();
 
 		Click(locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_CLEAR_BUTTON");
 	}
@@ -4062,14 +4194,14 @@ return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}
 				ariaLabel = "Mark Favorite",
 				key_collectionName = "${collectionName}",
 				key_fragmentName = "${fragmentName}",
-				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_CARD_ITEM_FAVORITE");
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_CARD_ITEM_BUTTON_WITH_ARIA_LABEL");
 		}
 		else {
 			Click.clickAtNotVisible(
 				ariaLabel = "Mark Favorite",
 				key_collectionName = "${collectionName}",
 				key_fragmentName = "${fragmentName}",
-				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_FAVORITE");
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_BUTTON_WITH_ARIA_LABEL");
 		}
 
 		PageEditor.waitForAutoSave();
@@ -4079,9 +4211,7 @@ return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}
 
 	macro openExperienceMenu {
 		if (IsElementNotPresent(locator1 = "PageEditor#EXPERIENCE_MENU")) {
-			Click(
-				ariaLabel = "Experience",
-				locator1 = "Button#ANY_WITH_ARIA_LABEL");
+			Click(locator1 = "PageEditor#EXPERIENCE_SELECTOR");
 		}
 	}
 
@@ -4176,6 +4306,58 @@ return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}
 		Click.clickNoMouseOver(locator1 = "Button#REOPEN");
 
 		AssertElementPresent(locator1 = "PageEditor#FRAGMENT_SIDEBAR_SHOW_RESOLVED_COMMENTS_CHECKBOX_DISABLED");
+	}
+
+	macro reorderElementViaKeyboard {
+		if (!(isSet(index))) {
+			var index = "1";
+		}
+
+		KeyPress(
+			ariaLabel = "Move ${elementName}",
+			key_index = "${index}",
+			key_nodeName = "${elementName}",
+			locator1 = "Treeview#PAGE_STRUCTURE_TREE_NODE_BUTTON_WITH_ARIA_LABEL_INDEX",
+			value1 = "\ENTER");
+
+		if (isSet(upCount)) {
+			var i = "0";
+
+			while ("${i}" != "${upCount}") {
+				KeyPress(
+					ariaLabel = "Move ${elementName}",
+					key_index = "${index}",
+					key_nodeName = "${elementName}",
+					locator1 = "Treeview#PAGE_STRUCTURE_TREE_NODE_BUTTON_WITH_ARIA_LABEL_INDEX",
+					value1 = "\UP");
+
+				var i = ${i} + 1;
+			}
+		}
+
+		if (isSet(downCount)) {
+			var i = "0";
+
+			while ("${i}" != "${downCount}") {
+				KeyPress(
+					ariaLabel = "Move ${elementName}",
+					key_index = "${index}",
+					key_nodeName = "${elementName}",
+					locator1 = "Treeview#PAGE_STRUCTURE_TREE_NODE_BUTTON_WITH_ARIA_LABEL_INDEX",
+					value1 = "\DOWN");
+
+				var i = ${i} + 1;
+			}
+		}
+
+		KeyPress(
+			ariaLabel = "Move ${elementName}",
+			key_index = "${index}",
+			key_nodeName = "${elementName}",
+			locator1 = "Treeview#PAGE_STRUCTURE_TREE_NODE_BUTTON_WITH_ARIA_LABEL_INDEX",
+			value1 = "\ENTER");
+
+		PageEditor.waitForAutoSave();
 	}
 
 	macro reorderSets {
@@ -4415,14 +4597,14 @@ return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}
 				ariaLabel = "Unmark Favorite",
 				key_collectionName = "${collectionName}",
 				key_fragmentName = "${fragmentName}",
-				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_CARD_ITEM_FAVORITE");
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_CARD_ITEM_BUTTON_WITH_ARIA_LABEL");
 		}
 		else {
 			Click.clickAtNotVisible(
 				ariaLabel = "Unmark Favorite",
 				key_collectionName = "${collectionName}",
 				key_fragmentName = "${fragmentName}",
-				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_FAVORITE");
+				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT_BUTTON_WITH_ARIA_LABEL");
 		}
 
 		PageEditor.waitForAutoSave();

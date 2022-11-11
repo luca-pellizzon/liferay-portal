@@ -19,9 +19,11 @@ import PRMFormikPageProps from '../../../../common/components/PRMFormik/interfac
 import {LiferayPicklistName} from '../../../../common/enums/liferayPicklistName';
 import useCompanyOptions from '../../../../common/hooks/useCompanyOptions';
 import DealRegistration from '../../../../common/interfaces/dealRegistration';
+import useGetMDFActivity from '../../../../common/services/liferay/object/activity/useGetMDFActivity';
 import getPicklistOptions from '../../../../common/utils/getPicklistOptions';
 import {StepType} from '../../enums/stepType';
 import useDynamicFieldEntries from '../../hooks/useDynamicFieldEntries';
+import useMDFActivityOptions from '../../hooks/useMDFActivityOptions';
 import DealRegistrationStepProps from '../../interfaces/dealRegistrationStepProps';
 
 const General = ({
@@ -38,11 +40,27 @@ const General = ({
 
 	const {companiesEntries, fieldEntries} = useDynamicFieldEntries();
 
+	const {data: mdfActivities} = useGetMDFActivity(values.partnerAccount.id);
+
 	const {companyOptions, onCompanySelected} = useCompanyOptions(
 		companiesEntries,
 		useCallback(
-			(country, company) => {
+			(country, company, accountExternalReferenceCodeSF) => {
 				setFieldValue('partnerAccount', company);
+				setFieldValue(
+					'accountExternalReferenceCodeSF',
+					accountExternalReferenceCodeSF
+				);
+			},
+			[setFieldValue]
+		)
+	);
+
+	const {mdfActivitiesOptions, onMDFActivitySelected} = useMDFActivityOptions(
+		mdfActivities?.items,
+		useCallback(
+			(selectedActivity) => {
+				setFieldValue('mdfActivityAssociated', selectedActivity);
 			},
 			[setFieldValue]
 		)
@@ -52,7 +70,7 @@ const General = ({
 		onSelected: onCountrySelected,
 		options: countryOptions,
 	} = getPicklistOptions(
-		fieldEntries[LiferayPicklistName.REGIONS],
+		fieldEntries[LiferayPicklistName.COUNTRIES],
 		(selected) => setFieldValue('prospect.country', selected)
 	);
 
@@ -105,6 +123,8 @@ const General = ({
 						component={PRMForm.Select}
 						label="MDF Activity Associated"
 						name="mdfActivityAssociated"
+						onChange={onMDFActivitySelected}
+						options={mdfActivitiesOptions}
 					/>
 				</PRMForm.Group>
 			</PRMForm.Section>
@@ -159,7 +179,7 @@ const General = ({
 						required
 					/>
 
-					{values.prospect?.country.name === 'US' && (
+					{values.prospect?.country.key === 'US' && (
 						<PRMFormik.Field
 							component={PRMForm.Select}
 							label="State"

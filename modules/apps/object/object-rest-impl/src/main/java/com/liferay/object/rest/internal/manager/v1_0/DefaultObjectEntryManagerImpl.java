@@ -17,13 +17,13 @@ package com.liferay.object.rest.internal.manager.v1_0;
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
-import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.object.constants.ObjectConstants;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.exception.NoSuchObjectEntryException;
+import com.liferay.object.field.business.type.ObjectFieldBusinessTypeTracker;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectRelationship;
@@ -53,6 +53,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.GroupedModel;
+import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -63,6 +65,8 @@ import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.PersistedModelLocalServiceRegistry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -699,14 +703,21 @@ public class DefaultObjectEntryManagerImpl
 			_systemObjectDefinitionMetadataTracker.
 				getSystemObjectDefinitionMetadata(objectDefinition.getName());
 
-		AssetEntry assetEntry = _assetEntryLocalService.getEntry(
-			systemObjectDefinitionMetadata.getModelClassName(), objectEntryId);
+		PersistedModelLocalService persistedModelLocalService =
+			_persistedModelLocalServiceRegistry.getPersistedModelLocalService(
+				systemObjectDefinitionMetadata.getModelClassName());
+
+		PersistedModel persistedModel =
+			persistedModelLocalService.getPersistedModel(objectEntryId);
 
 		if (Objects.equals(
 				systemObjectDefinitionMetadata.getScope(),
-				ObjectDefinitionConstants.SCOPE_SITE)) {
+				ObjectDefinitionConstants.SCOPE_SITE) &&
+			(persistedModel instanceof GroupedModel)) {
 
-			groupId = assetEntry.getGroupId();
+			GroupedModel groupedModel = (GroupedModel)persistedModel;
+
+			groupId = groupedModel.getGroupId();
 		}
 
 		return Page.of(
@@ -715,7 +726,7 @@ public class DefaultObjectEntryManagerImpl
 				dtoConverterContext,
 				objectRelatedModelsProvider.getRelatedModels(
 					groupId, objectRelationship.getObjectRelationshipId(),
-					assetEntry.getClassPK(), pagination.getStartPosition(),
+					objectEntryId, pagination.getStartPosition(),
 					pagination.getEndPosition())));
 	}
 
@@ -962,8 +973,8 @@ public class DefaultObjectEntryManagerImpl
 
 			Object value = ObjectEntryValuesUtil.getValue(
 				_objectDefinitionLocalService, _objectEntryLocalService,
-				objectField, _objectRelationshipLocalService,
-				_systemObjectDefinitionMetadataTracker, userId, properties);
+				objectField, _objectFieldBusinessTypeTracker, userId,
+				properties);
 
 			if ((value == null) && !objectField.isRequired()) {
 				continue;
@@ -1038,6 +1049,9 @@ public class DefaultObjectEntryManagerImpl
 	private ObjectEntryService _objectEntryService;
 
 	@Reference
+	private ObjectFieldBusinessTypeTracker _objectFieldBusinessTypeTracker;
+
+	@Reference
 	private ObjectFieldLocalService _objectFieldLocalService;
 
 	@Reference
@@ -1049,6 +1063,10 @@ public class DefaultObjectEntryManagerImpl
 
 	@Reference
 	private ObjectRelationshipService _objectRelationshipService;
+
+	@Reference
+	private PersistedModelLocalServiceRegistry
+		_persistedModelLocalServiceRegistry;
 
 	@Reference
 	private Queries _queries;

@@ -397,3 +397,18 @@ dcb036130cbd0f9ba50da701923fff4a736d6c63^..572558ac27b3ddfedf5feba2ce4e8cdfb1a50
 # Bundle Version 6.0.60
 #
 c7762a648f02fbf8d78e69119241c15fa45d48a2^..565841b78c6954f492eebd90cfdb6bf0301e7c50=LPS-151556
+
+#
+# Bundle Version 6.0.61
+#
+565841b78c6954f492eebd90cfdb6bf0301e7c50^..14ef65b317539ed3df96c72abc71dec97135ef9b=LPS-166983
+
+#
+# Bundle Version 6.0.62
+#
+14ef65b317539ed3df96c72abc71dec97135ef9b^..003ecb15409bdba891f5eddbbb2203545ac3d8dc=LPS-164393 LPS-164647 LPS-165177
+
+#
+# Bundle Version 6.0.63
+#
+003ecb15409bdba891f5eddbbb2203545ac3d8dc^..9efb05f056e25ac57b58cc0dbdf5ecb1e53ea9bc=LPS-167624

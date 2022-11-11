@@ -21,6 +21,7 @@
 <%@ taglib uri="http://liferay.com/tld/adaptive-media-image" prefix="liferay-adaptive-media" %><%@
 taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
 taglib uri="http://liferay.com/tld/clay" prefix="clay" %><%@
+taglib uri="http://liferay.com/tld/comment" prefix="liferay-comment" %><%@
 taglib uri="http://liferay.com/tld/commerce" prefix="liferay-commerce" %><%@
 taglib uri="http://liferay.com/tld/commerce-product" prefix="liferay-commerce-product" %><%@
 taglib uri="http://liferay.com/tld/commerce-ui" prefix="commerce-ui" %><%@
@@ -28,6 +29,7 @@ taglib uri="http://liferay.com/tld/ddm" prefix="liferay-ddm" %><%@
 taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/frontend-data-set" prefix="frontend-data-set" %><%@
 taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
+taglib uri="http://liferay.com/tld/ratings" prefix="liferay-ratings" %><%@
 taglib uri="http://liferay.com/tld/react" prefix="react" %><%@
 taglib uri="http://liferay.com/tld/soy" prefix="soy" %><%@
 taglib uri="http://liferay.com/tld/template" prefix="liferay-template" %><%@
@@ -67,6 +69,7 @@ page import="com.liferay.commerce.product.content.web.internal.portlet.CPContent
 page import="com.liferay.commerce.product.content.web.internal.portlet.CPPublisherPortlet" %><%@
 page import="com.liferay.commerce.product.data.source.CPDataSource" %><%@
 page import="com.liferay.commerce.product.data.source.CPDataSourceResult" %><%@
+page import="com.liferay.commerce.product.model.CPDefinition" %><%@
 page import="com.liferay.commerce.product.model.CPDefinitionSpecificationOptionValue" %><%@
 page import="com.liferay.commerce.product.model.CPInstance" %><%@
 page import="com.liferay.commerce.product.model.CPOptionCategory" %><%@

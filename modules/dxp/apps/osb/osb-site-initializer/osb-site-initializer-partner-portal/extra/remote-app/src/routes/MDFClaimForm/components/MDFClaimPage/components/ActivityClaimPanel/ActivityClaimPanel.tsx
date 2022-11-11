@@ -11,19 +11,18 @@
 
 import ClayIcon from '@clayui/icon';
 import Link from '@clayui/link';
-import {useModal} from '@clayui/modal';
 import ClayPanel from '@clayui/panel';
 import {FormikContextType} from 'formik';
 import {useCallback, useState} from 'react';
 
 import PRMForm from '../../../../../../common/components/PRMForm';
+import InputMultipleFilesListing from '../../../../../../common/components/PRMForm/components/fields/InputMultipleFilesListing';
 import PRMFormik from '../../../../../../common/components/PRMFormik';
 import {useWebDAV} from '../../../../../../common/context/WebDAV';
 import MDFClaim from '../../../../../../common/interfaces/mdfClaim';
 import MDFClaimActivity from '../../../../../../common/interfaces/mdfClaimActivity';
 import getIntlNumberFormat from '../../../../../../common/utils/getIntlNumberFormat';
-import BudgetCard from './components/BudgetCard/BudgetCard';
-import BudgetModal from './components/BudgetModal';
+import BudgetClaimPanel from './components/BudgetClaimPanel';
 import PanelBody from './components/PanelBody';
 import PanelHeader from './components/PanelHeader';
 import useBudgetsAmount from './hooks/useBudgetsAmount';
@@ -40,8 +39,8 @@ const ActivityClaimPanel = ({
 	overallCampaignDescription,
 	setFieldValue,
 }: IProps & Pick<FormikContextType<MDFClaim>, 'setFieldValue'>) => {
-	const [currentBudgetIndex, setCurrentBudgetIndex] = useState<number>();
-	const {observer, onOpenChange, open} = useModal();
+	const [expanded, setExpanded] = useState<boolean>(!activity.selected);
+	const webDAV = useWebDAV();
 
 	useBudgetsAmount(
 		activity.budgets,
@@ -55,45 +54,23 @@ const ActivityClaimPanel = ({
 		)
 	);
 
-	const webDAV = useWebDAV();
-
-	const currentBudgetFieldName = `activities[${activityIndex}].budgets[${currentBudgetIndex}]`;
-
-	const getCurrentBudget = () => {
-		if (currentBudgetIndex !== undefined && activity.budgets) {
-			return activity.budgets[currentBudgetIndex];
-		}
-	};
-
 	return (
 		<>
-			{open && (
-				<BudgetModal
-					{...getCurrentBudget()}
-					name={currentBudgetFieldName}
-					observer={observer}
-					onCancel={() => onOpenChange(false)}
-					onConfirm={(claimAmount, invoice) => {
-						setFieldValue(
-							`${currentBudgetFieldName}.claimAmount`,
-							claimAmount
-						);
-						setFieldValue(
-							`${currentBudgetFieldName}.invoice`,
-							invoice
-						);
-
-						onOpenChange(false);
-					}}
-				/>
-			)}
-
 			<ClayPanel
-				className="bg-brand-primary-lighten-6 border-brand-primary-lighten-5 mb-4 text-neutral-7"
+				className="border-brand-primary-lighten-2 mb-4 text-neutral-7"
 				displayType="secondary"
-				expanded={activity.selected}
+				expanded={activity.selected && expanded}
 			>
-				<PanelHeader expanded={activity.selected}>
+				<PanelHeader
+					expanded={activity.selected && expanded}
+					onClick={() => {
+						if (activity.selected) {
+							setExpanded(
+								(previousExpanded) => !previousExpanded
+							);
+						}
+					}}
+				>
 					<PRMFormik.Field
 						component={PRMForm.Checkbox}
 						name={`activities[${activityIndex}].selected`}
@@ -118,16 +95,15 @@ const ActivityClaimPanel = ({
 					</div>
 				</PanelHeader>
 
-				<PanelBody expanded={activity.selected}>
-					<>
+				<PanelBody expanded={activity.selected && expanded}>
+					<ClayPanel.Body className="mx-2 pt-4 px-5">
 						{activity.budgets?.map((budget, index) => (
-							<BudgetCard
+							<BudgetClaimPanel
+								activityIndex={activityIndex}
 								budget={budget}
+								budgetIndex={index}
 								key={`${budget.id}-${index}`}
-								onClick={() => {
-									setCurrentBudgetIndex(index);
-									onOpenChange(true);
-								}}
+								setFieldValue={setFieldValue}
 							/>
 						))}
 
@@ -172,18 +148,21 @@ const ActivityClaimPanel = ({
 							</div>
 						</div>
 
-						<PRMFormik.Field
-							component={PRMForm.DragAndDrop}
+						<InputMultipleFilesListing
 							description="Drag and drop your files here to upload."
 							label="All Contents"
+							name={`activities[${activityIndex}].documents`}
 							onAccept={(value: File[]) =>
 								setFieldValue(
 									`activities[${activityIndex}].documents`,
-									value
+									activity.documents
+										? activity.documents.concat(value)
+										: value
 								)
 							}
+							value={activity.documents}
 						/>
-					</>
+					</ClayPanel.Body>
 				</PanelBody>
 			</ClayPanel>
 		</>

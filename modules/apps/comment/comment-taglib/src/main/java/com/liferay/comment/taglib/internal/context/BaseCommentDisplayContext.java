@@ -15,7 +15,10 @@
 package com.liferay.comment.taglib.internal.context;
 
 import com.liferay.portal.kernel.comment.display.context.CommentDisplayContext;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.role.RoleConstants;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.security.sso.SSOUtil;
 
@@ -42,6 +45,44 @@ public abstract class BaseCommentDisplayContext
 		}
 
 		return false;
+	}
+
+	protected static boolean hasPermission(ThemeDisplay themeDisplay) {
+		try {
+			if (themeDisplay.isSignedIn() &&
+				RoleLocalServiceUtil.hasUserRole(
+					themeDisplay.getUserId(), themeDisplay.getCompanyId(),
+					RoleConstants.ADMINISTRATOR, true)) {
+
+				return true;
+			}
+
+			return false;
+		}
+		catch (PortalException portalException) {
+			String hello1 = "I am just here";
+		}
+
+		return false;
+	}
+
+	protected static String isCommerceSiteLabel(ThemeDisplay themeDisplay) {
+		int siteType = themeDisplay.getScopeGroup(
+		).getType();
+
+		String siteLabel = null;
+
+		if (siteType == 0) {
+			siteLabel = "b2c";
+		}
+		else if (siteType == 1) {
+			siteLabel = "b2b";
+		}
+		else if (siteType == 2) {
+			siteLabel = "b2x";
+		}
+
+		return siteLabel;
 	}
 
 	protected abstract ThemeDisplay getThemeDisplay();

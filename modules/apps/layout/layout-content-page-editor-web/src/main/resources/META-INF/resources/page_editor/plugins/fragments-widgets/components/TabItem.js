@@ -144,7 +144,7 @@ const ListItem = React.forwardRef(
 					<div className="text-truncate title">{item.label}</div>
 				</div>
 
-				<AddButton item={item} />
+				{!disabled && <AddButton item={item} />}
 
 				<HighlightButton
 					item={item}
@@ -210,9 +210,11 @@ const CardItem = React.forwardRef(
 								</section>
 							</div>
 
-							<div className="autofit-col">
-								<AddButton item={item} />
-							</div>
+							{!disabled && (
+								<div className="autofit-col">
+									<AddButton item={item} />
+								</div>
+							)}
 
 							<div className="autofit-col">
 								<HighlightButton
@@ -250,7 +252,7 @@ const HighlightButton = ({item, onToggleHighlighted}) => {
 			}
 			borderless
 			className={classNames(
-				'page-editor__fragments-widgets__tab-fragment-button',
+				'page-editor__fragments-widgets__tab__highlight-button',
 				{highlighted}
 			)}
 			displayType="secondary"
@@ -282,7 +284,7 @@ const AddButton = ({item}) => {
 		<ClayButtonWithIcon
 			aria-label={sub(Liferay.Language.get('add-x'), item.label)}
 			borderless
-			className="mr-2 my-0 page-editor__fragments-widgets__tab-fragment-button sr-only sr-only-focusable"
+			className="mr-2 my-0 page-editor__fragments-widgets__tab__add-button"
 			displayType="secondary"
 			onClick={() =>
 				setMovementSource({
@@ -296,6 +298,7 @@ const AddButton = ({item}) => {
 			}
 			ref={buttonRef}
 			symbol="plus"
+			title={sub(Liferay.Language.get('add-x'), item.label)}
 		/>
 	);
 };

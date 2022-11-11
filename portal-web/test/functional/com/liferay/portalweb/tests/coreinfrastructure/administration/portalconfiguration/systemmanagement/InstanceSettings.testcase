@@ -690,6 +690,8 @@ definition {
 	@description = "This test asserts that a user can update the general informations. Including update the default site name, default mail domain and so."
 	@priority = "4"
 	test CanUpdateGeneralInfos {
+		property portal.acceptance = "true";
+
 		PortalSettings.gotoConfiguration(
 			configurationCategory = "Instance Configuration",
 			configurationName = "General",
@@ -703,9 +705,19 @@ definition {
 			fieldName = "mx",
 			fieldValue = "newliferay.com");
 
+		FormFields.editText(
+			fieldName = "virtualHostname",
+			fieldValue = "www.able.com");
+
 		PortletEntry.save();
 
 		ApplicationsMenu.gotoSite(site = "EditedLiferay");
+
+		Navigator.openSpecificURL(url = "http://www.able.com:8080");
+
+		AssertElementPresent(
+			key_pageName = "Home",
+			locator1 = "Home#PAGE");
 
 		User.logoutPG();
 
@@ -843,14 +855,7 @@ definition {
 
 	@priority = "5"
 	test EditDefaultUserAssociationsOrganizationSites {
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		Organization.addCP(
-			orgName = "Organization Name",
-			orgType = "Organization");
+		JSONOrganization.addOrganization(organizationName = "Organization Name");
 
 		Organization.openOrganizationsAdmin();
 

@@ -111,51 +111,15 @@ definition {
 	}
 
 	macro addCP {
-		AssertClick(
-			locator1 = "NavBar#ORGANIZATIONS",
-			value1 = "Organizations");
-
-		var key_navItem = "Organizations";
-
-		AssertElementPresent(locator1 = "NavBar#ACTIVE_NAV_ITEM_LINK");
-
 		LexiconEntry.gotoAdd();
-
-		if ("${orgType}" == "Location") {
-			MenuItem.click(menuItem = "Location");
-		}
-		else if (IsElementPresent(key_menuItem = "Organization", locator1 = "MenuItem#ANY_MENU_ITEM")) {
-			MenuItem.click(menuItem = "Organization");
-		}
 
 		Type(
 			locator1 = "TextInput#NAME",
 			value1 = "${orgName}");
 
-		ScrollWebElementIntoView(locator1 = "Button#SAVE");
-
 		Button.clickSave();
 
-		if ("${organizationName}" == "Duplicate") {
-			Alert.viewRequestFailedToComplete();
-
-			AssertTextEquals.assertPartialText(
-				locator1 = "Message#ERROR_1",
-				value1 = "The organization name is already taken.");
-		}
-		else {
-			var key_orgType = "${orgType}";
-
-			Alert.viewSuccessMessage();
-
-			AssertTextEquals(
-				locator1 = "TextInput#NAME",
-				value1 = "${orgName}");
-
-			AssertTextEquals.assertValue(
-				locator1 = "UsersAndOrganizationsEditOrganization#DETAILS_TYPE",
-				value1 = "${orgType}");
-		}
+		Alert.viewSuccessMessage();
 	}
 
 	macro addSecurityQuestionsCP {
@@ -353,9 +317,7 @@ definition {
 	}
 
 	macro assignUser {
-		Organization.gotoCP(
-			orgName = "${orgName}",
-			searchToken = "${orgName}");
+		Organization.gotoCP(orgName = "${orgName}");
 
 		LexiconEntry.gotoAdd();
 
@@ -406,19 +368,7 @@ definition {
 	}
 
 	macro gotoCP {
-		Search.searchCP(searchTerm = "${searchToken}");
-
-		var key_orgName = "${orgName}";
-
-		AssertTextEquals(
-			locator1 = "UsersAndOrganizations#ORGANIZATION_TABLE_NAME",
-			value1 = "${orgName}");
-
-		AssertClick(
-			locator1 = "UsersAndOrganizations#ORGANIZATION_TABLE_NAME",
-			value1 = "${orgName}");
-
-		Breadcrumb.viewActiveEntry(breadcrumbName = "${orgName}");
+		LexiconEntry.gotoEntry(rowEntry = "${orgName}");
 	}
 
 	macro gotoEdit {
@@ -509,23 +459,6 @@ definition {
 		}
 	}
 
-	macro viewAssignMemberCP {
-		if (isSet(userMiddleName)) {
-			var key_userName = "${userFirstName} ${userMiddleName} ${userLastName}";
-
-			AssertTextEquals(
-				locator1 = "UsersAndOrganizationsOrganization#USER_TABLE_NAME",
-				value1 = "${userFirstName} ${userMiddleName} ${userLastName}");
-		}
-		else {
-			var key_userName = "${userName}";
-
-			AssertTextEquals(
-				locator1 = "UsersAndOrganizationsOrganization#USER_TABLE_NAME",
-				value1 = "${userName}");
-		}
-	}
-
 	macro viewCP {
 		AssertTextEquals(
 			key_columnName = "name",
@@ -537,24 +470,6 @@ definition {
 			key_columnName = "type",
 			key_tableEntry = "${orgType}",
 			locator1 = "LexiconTable#TABLE_ENTRY_INFO",
-			value1 = "${orgType}");
-
-		LexiconEntry.openEntryMenu(rowEntry = "${orgName}");
-
-		MenuItem.click(menuItem = "Edit");
-
-		var key_orgType = "${orgType}";
-
-		AssertTextEquals(
-			locator1 = "Portlet#HEADER",
-			value1 = "Edit ${orgName}");
-
-		AssertTextEquals(
-			locator1 = "TextInput#NAME",
-			value1 = "${orgName}");
-
-		AssertTextEquals.assertValue(
-			locator1 = "UsersAndOrganizationsEditOrganization#DETAILS_TYPE",
 			value1 = "${orgType}");
 	}
 
@@ -577,52 +492,33 @@ definition {
 	macro viewParentOrganizationCP {
 		Organization.gotoEdit(orgName = "${orgName}");
 
-		if (isSet(parentOrgName)) {
-			var key_orgName = "${subOrgName}";
+		var key_orgName = "${subOrgName}";
 
-			AssertClick(
-				locator1 = "UsersAndOrganizationsEditOrganization#PARENT_ORGANIZATION_SELECT_BUTTON",
-				value1 = "Change");
+		AssertClick(
+			locator1 = "UsersAndOrganizationsEditOrganization#PARENT_ORGANIZATION_SELECT_BUTTON",
+			value1 = "Change");
 
-			SelectFrame(
-				key_title = "Select Parent Organization",
-				locator1 = "IFrame#MODAL_ANY");
+		SelectFrame(
+			key_title = "Select Parent Organization",
+			locator1 = "IFrame#MODAL_ANY");
 
-			AssertTextEquals(
-				key_columnName = "name",
-				key_rowEntry = "${subOrgName}",
-				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER_TD",
-				value1 = "${subOrgName}");
+		AssertTextEquals(
+			key_columnName = "name",
+			key_rowEntry = "${subOrgName}",
+			locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER_TD",
+			value1 = "${subOrgName}");
 
-			AssertTextEquals(
-				key_columnName = "parent-organization",
-				key_rowEntry = "${subOrgName}",
-				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER_TD",
-				value1 = "${parentOrgName}");
-		}
-		else {
-			AssertClick(
-				locator1 = "UsersAndOrganizationsEditOrganization#PARENT_ORGANIZATION_SELECT_BUTTON",
-				value1 = "Select");
-
-			SelectFrame(
-				key_title = "Select Parent Organization",
-				locator1 = "IFrame#MODAL_ANY");
-
-			AssertTextEquals(
-				key_columnName = "name",
-				key_rowEntry = "${subOrgName}",
-				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER_TD",
-				value1 = "${subOrgName}");
-
-			AssertTextEquals(
-				key_columnName = "parent-organization",
-				key_rowEntry = "${subOrgName}",
-				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER_TD",
-				value1 = "");
-		}
+		AssertTextEquals(
+			key_columnName = "parent-organization",
+			key_rowEntry = "${subOrgName}",
+			locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER_TD",
+			value1 = "${parentOrgName}");
 
 		IFrame.closeFrame();
+	}
+
+	macro viewUser {
+		LexiconEntry.viewEntryName(rowEntry = "${userName}");
 	}
 
 }

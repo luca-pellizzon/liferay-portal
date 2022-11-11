@@ -154,7 +154,7 @@ const NotificationsInfo = ({
 
 	if (
 		selectedItem.data.notifications?.recipients?.[notificationIndex]
-			.length !== 0
+			?.length !== 0
 	) {
 		recipientTypeHolder = getRecipientType(
 			selectedItem.data.notifications?.recipients?.[notificationIndex]
@@ -179,7 +179,7 @@ const NotificationsInfo = ({
 	);
 
 	const [scriptLanguage, setScriptLanguage] = useState(
-		selectedItem.data.notifications?.recipients[notificationIndex]
+		selectedItem?.data.notifications?.recipients?.[notificationIndex]
 			?.scriptLanguage || DEFAULT_LANGUAGE
 	);
 

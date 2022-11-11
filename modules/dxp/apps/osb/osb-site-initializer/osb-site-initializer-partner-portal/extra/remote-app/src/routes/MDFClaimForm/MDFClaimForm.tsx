@@ -13,6 +13,7 @@ import ClayLoadingIndicator from '@clayui/loading-indicator';
 
 import PRMFormik from '../../common/components/PRMFormik';
 import {PRMPageRoute} from '../../common/enums/prmPageRoute';
+import {RequestStatus} from '../../common/enums/requestStatus';
 import useLiferayNavigate from '../../common/hooks/useLiferayNavigate';
 import MDFRequestActivityDTO from '../../common/interfaces/dto/mdfRequestActivityDTO';
 import MDFClaim from '../../common/interfaces/mdfClaim';
@@ -31,9 +32,11 @@ const getInitialFormValues = (
 ): MDFClaim => ({
 	activities: activitiesDTO?.map((activity) => ({
 		budgets: activity.activityToBudgets?.map((budget) => ({
-			claimAmount: budget.cost,
 			expenseName: budget.expense.name,
 			id: budget.id,
+			invoiceAmount: budget.cost,
+			requestAmount: budget.cost,
+			selected: false,
 		})),
 		id: activity.id,
 		metrics: '',
@@ -41,6 +44,7 @@ const getInitialFormValues = (
 		selected: false,
 		totalCost: 0,
 	})),
+	claimStatus: RequestStatus.PENDING,
 	r_mdfRequestToMdfClaims_c_mdfRequestId: mdfRequestId,
 	totalClaimAmount: 0,
 	totalrequestedAmount,
@@ -83,14 +87,27 @@ const MDFClaimForm = () => {
 				mdfRequest.totalMDFRequestAmount
 			)}
 			onSubmit={(values, formikHelpers) =>
-				submitForm(values, formikHelpers, claimParentFolderId)
+				submitForm(
+					values,
+					formikHelpers,
+					mdfRequest,
+					claimParentFolderId,
+					siteURL
+				)
 			}
 		>
 			<MDFClaimPage
 				mdfRequest={mdfRequest}
 				onCancel={onCancel}
 				onSaveAsDraft={(values, formikHelpers) =>
-					submitForm(values, formikHelpers, claimParentFolderId)
+					submitForm(
+						values,
+						formikHelpers,
+						mdfRequest,
+						claimParentFolderId,
+						siteURL,
+						RequestStatus.PENDING
+					)
 				}
 				validationSchema={claimSchema}
 			/>

@@ -5279,21 +5279,45 @@ tell application "Safari" to quit
 
 	<macrodef name="print-search-indices">
 		<sequential>
-			<get-testcase-property property.name="remote.elasticsearch.enabled" />
+			<get-testcase-property property.name="solr.enabled" />
+			<propertycopy from="search.engine[${env.CI_TEST_SUITE}]" name="suite.search.engine" silent="true" />
 
-			<condition else="9201" property="elasticsearch.port" value="9200">
-				<equals arg1="${remote.elasticsearch.enabled}" arg2="true" />
-			</condition>
+			<if>
+				<or>
+					<equals arg1="${solr.enabled}" arg2="true" />
+					<equals arg1="${suite.search.engine}" arg2="solr" />
+				</or>
+				<then>
+					<ant antfile="build-test-solr.xml" target="print-solr-indices" />
+				</then>
+				<else>
+					<get-testcase-property property.name="remote.elasticsearch.enabled" />
 
-			<ant antfile="build-test-elasticsearch7.xml" target="print-elasticsearch-indices">
-				<property name="elasticsearch.port" value="${elasticsearch.port}" />
-			</ant>
+					<if>
+						<istrue value="${remote.elasticsearch.enabled}" />
+						<then>
+							<var name="elasticsearch.ports" value="9200" />
+						</then>
+						<else>
+							<var name="elasticsearch.ports" value="9201" />
+						</else>
+					</if>
 
-			<get-testcase-property property.name="elasticsearch.ccr.enabled" />
+					<get-testcase-property property.name="elasticsearch.ccr.enabled" />
+					<get-testcase-property property.name="elasticsearch.cluster.size" />
 
-			<ant antfile="build-test-elasticsearch7.xml" if:true="${elasticsearch.ccr.enabled}" target="print-elasticsearch-indices">
-				<property name="elasticsearch.port" value="9202" />
-			</ant>
+					<var if:set="elasticsearch.ccr.enabled" name="elasticsearch.ports" value="${elasticsearch.ports},9202" />
+					<var if:set="elasticsearch.cluster.size" name="elasticsearch.ports" value="${elasticsearch.ports},9201" />
+
+					<for list="${elasticsearch.ports}" param="elasticsearch.port">
+						<sequential>
+							<ant antfile="build-test-elasticsearch7.xml" target="print-elasticsearch-indices">
+								<property name="elasticsearch.port" value="@{elasticsearch.port}" />
+							</ant>
+						</sequential>
+					</for>
+				</else>
+			</if>
 		</sequential>
 	</macrodef>
 
@@ -6485,7 +6509,9 @@ go</echo>
 				</elseif>
 				<elseif>
 					<or>
+						<equals arg1="@{liferay.portal.bundle}" arg2="7.1.10.8" />
 						<equals arg1="@{liferay.portal.bundle}" arg2="7.2.10.7" />
+						<equals arg1="@{liferay.portal.bundle}" arg2="7.2.10.8" />
 						<equals arg1="@{liferay.portal.bundle}" arg2="7.4.3.21" />
 						<equals arg1="@{liferay.portal.bundle}" arg2="7.4.13.u1" />
 						<equals arg1="@{liferay.portal.bundle}" arg2="7.4.13.u33" />
@@ -6557,6 +6583,18 @@ go</echo>
 				</or>
 				<then>
 					<ant antfile="build-test-elasticsearch7.xml" target="start-elasticsearch" />
+				</then>
+			</if>
+
+			<get-testcase-property property.name="solr.enabled" />
+
+			<if>
+				<or>
+					<equals arg1="${solr.enabled}" arg2="true" />
+					<equals arg1="${suite.search.engine}" arg2="solr" />
+				</or>
+				<then>
+					<ant antfile="build-test-solr.xml" target="start-solr" />
 				</then>
 			</if>
 
@@ -7682,6 +7720,18 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 							<ant antfile="build-test-elasticsearch7.xml" target="stop-kibana" />
 						</then>
 					</if>
+				</then>
+			</if>
+
+			<get-testcase-property property.name="solr.enabled" />
+
+			<if>
+				<or>
+					<equals arg1="${solr.enabled}" arg2="true" />
+					<equals arg1="${suite.search.engine}" arg2="solr" />
+				</or>
+				<then>
+					<ant antfile="build-test-solr.xml" target="stop-solr-core" />
 				</then>
 			</if>
 		</sequential>
@@ -8910,7 +8960,7 @@ org.apache.catalina.tribes.level = FINE]]>
 				<copy
 					file="@{log.file}"
 					overwrite="true"
-					tofile="log"
+					tofile="${liferay.home}/liferay.log"
 				/>
 			</sequential>
 		</for>
@@ -13176,6 +13226,13 @@ database.partition.enabled=true</echo>
 		</if>
 
 		<get-test-app-server-lib-portal-dir />
+
+		<if>
+			<contains string="${portal.version}" substring="6.2" />
+			<then>
+				<delete dir="${liferay.home}/data/license" />
+			</then>
+		</if>
 
 		<get-database-property property.name="database.docker.image" />
 

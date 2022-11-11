@@ -34,10 +34,10 @@ import com.liferay.layout.display.page.LayoutDisplayPageProviderTracker;
 import com.liferay.layout.helper.CollectionPaginationHelper;
 import com.liferay.layout.list.retriever.DefaultLayoutListRetrieverContext;
 import com.liferay.layout.list.retriever.LayoutListRetriever;
-import com.liferay.layout.list.retriever.LayoutListRetrieverTracker;
+import com.liferay.layout.list.retriever.LayoutListRetrieverRegistry;
 import com.liferay.layout.list.retriever.ListObjectReference;
 import com.liferay.layout.list.retriever.ListObjectReferenceFactory;
-import com.liferay.layout.list.retriever.ListObjectReferenceFactoryTracker;
+import com.liferay.layout.list.retriever.ListObjectReferenceFactoryRegistry;
 import com.liferay.layout.taglib.internal.info.search.InfoSearchClassMapperTrackerUtil;
 import com.liferay.layout.taglib.internal.servlet.ServletContextUtil;
 import com.liferay.layout.util.structure.CollectionStyledLayoutStructureItem;
@@ -509,12 +509,12 @@ public class RenderCollectionLayoutStructureItemDisplayContext {
 			return null;
 		}
 
-		LayoutListRetrieverTracker layoutListRetrieverTracker =
-			ServletContextUtil.getLayoutListRetrieverTracker();
+		LayoutListRetrieverRegistry layoutListRetrieverRegistry =
+			ServletContextUtil.getLayoutListRetrieverRegistry();
 
 		LayoutListRetriever<?, ListObjectReference> layoutListRetriever =
 			(LayoutListRetriever<?, ListObjectReference>)
-				layoutListRetrieverTracker.getLayoutListRetriever(
+				layoutListRetrieverRegistry.getLayoutListRetriever(
 					collectionJSONObject.getString("type"));
 
 		if (layoutListRetriever == null) {
@@ -534,23 +534,23 @@ public class RenderCollectionLayoutStructureItemDisplayContext {
 			return null;
 		}
 
-		LayoutListRetrieverTracker layoutListRetrieverTracker =
-			ServletContextUtil.getLayoutListRetrieverTracker();
+		LayoutListRetrieverRegistry layoutListRetrieverRegistry =
+			ServletContextUtil.getLayoutListRetrieverRegistry();
 
 		String type = collectionJSONObject.getString("type");
 
 		LayoutListRetriever<?, ?> layoutListRetriever =
-			layoutListRetrieverTracker.getLayoutListRetriever(type);
+			layoutListRetrieverRegistry.getLayoutListRetriever(type);
 
 		if (layoutListRetriever == null) {
 			return null;
 		}
 
-		ListObjectReferenceFactoryTracker listObjectReferenceFactoryTracker =
-			ServletContextUtil.getListObjectReferenceFactoryTracker();
+		ListObjectReferenceFactoryRegistry listObjectReferenceFactoryRegistry =
+			ServletContextUtil.getListObjectReferenceFactoryRegistry();
 
 		ListObjectReferenceFactory<?> listObjectReferenceFactory =
-			listObjectReferenceFactoryTracker.getListObjectReference(type);
+			listObjectReferenceFactoryRegistry.getListObjectReference(type);
 
 		if (listObjectReferenceFactory == null) {
 			return null;

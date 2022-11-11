@@ -311,7 +311,7 @@ public class MBCommentManagerImpl implements CommentManager {
 		MBMessageDisplay messageDisplay =
 			_mbMessageLocalService.getDiscussionMessageDisplay(
 				userId, groupId, className, classPK,
-				WorkflowConstants.STATUS_ANY, new MessageThreadComparator());
+				WorkflowConstants.STATUS_ANY, new MessageThreadComparator(false));
 
 		DiscussionComment rootDiscussionComment = _getDiscussionComment(
 			userId, messageDisplay);

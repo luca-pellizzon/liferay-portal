@@ -13,8 +13,10 @@
  */
 
 import {useEventListener} from '@liferay/frontend-js-react-web';
+import {openToast, sub} from 'frontend-js-web';
 import {useEffect, useRef} from 'react';
 
+import {FRAGMENT_ENTRY_TYPES} from '../config/constants/fragmentEntryTypes';
 import {
 	ARROW_DOWN_KEYCODE,
 	ARROW_UP_KEYCODE,
@@ -30,8 +32,10 @@ import {
 	useMovementSource,
 	useMovementTarget,
 	useSetMovementTarget,
+	useSetMovementText,
 } from '../contexts/KeyboardMovementContext';
 import {useDispatch, useSelectorRef} from '../contexts/StoreContext';
+import selectLayoutDataItemLabel from '../selectors/selectLayoutDataItemLabel';
 import addFragment from '../thunks/addFragment';
 import addItem from '../thunks/addItem';
 import addWidget from '../thunks/addWidget';
@@ -56,17 +60,24 @@ export default function KeyboardMovementManager() {
 	const source = useMovementSource();
 	const target = useMovementTarget();
 
+	const fragmentEntryLinksRef = useSelectorRef(
+		(state) => state.fragmentEntryLinks
+	);
 	const layoutDataRef = useSelectorRef((state) => state.layoutData);
 	const keymapRef = useRef({});
 
 	const disableMovement = useDisableKeyboardMovement();
 	const setTarget = useSetMovementTarget();
+	const setText = useSetMovementText();
 	const selectItem = useSelectItem();
 	const dispatch = useDispatch();
 
 	keymapRef.current = {
 		disableMovement: {
-			action: () => disableMovement(),
+			action: () => {
+				setText(null);
+				disableMovement();
+			},
 			keyCode: ESCAPE_KEYCODE,
 		},
 		executeAction: {
@@ -86,6 +97,14 @@ export default function KeyboardMovementManager() {
 				let thunk;
 
 				if (actionType === ACTION_TYPES.move) {
+					if (source.itemId === target.itemId) {
+						setText(null);
+
+						disableMovement();
+
+						return;
+					}
+
 					thunk = moveItem({
 						itemId: source.itemId,
 						parentItemId: dropItemId,
@@ -122,6 +141,17 @@ export default function KeyboardMovementManager() {
 				}
 
 				dispatch(thunk);
+
+				setText(
+					sub(Liferay.Language.get('x-placed-on-x-of-x'), [
+						source.name,
+						target.position,
+						target.name,
+					])
+				);
+
+				setTimeout(() => setText(null), 1000);
+
 				disableMovement();
 
 				if (actionType === ACTION_TYPES.move) {
@@ -135,19 +165,40 @@ export default function KeyboardMovementManager() {
 				const nextTarget = getNextTarget(
 					source,
 					target,
+					fragmentEntryLinksRef.current,
 					layoutDataRef,
 					DIRECTIONS.down
 				);
 
 				if (nextTarget) {
 					setTarget(nextTarget);
+
+					setText(
+						sub(Liferay.Language.get('targeting-x-of-x'), [
+							nextTarget.position,
+							nextTarget.name,
+						])
+					);
 				}
 			},
 			keyCode: ARROW_DOWN_KEYCODE,
 		},
 		moveToEnd: {
 			action: () => {
-				setTarget(getInitialTarget(source, layoutDataRef));
+				const nextTarget = getInitialTarget(
+					source,
+					layoutDataRef,
+					fragmentEntryLinksRef
+				);
+
+				setTarget(nextTarget);
+
+				setText(
+					sub(Liferay.Language.get('targeting-x-of-x'), [
+						nextTarget.position,
+						nextTarget.name,
+					])
+				);
 			},
 			keyCode: END_KEYCODE,
 		},
@@ -164,12 +215,20 @@ export default function KeyboardMovementManager() {
 						itemId: root.itemId,
 						position: TARGET_POSITIONS.TOP,
 					},
+					fragmentEntryLinksRef,
 					layoutDataRef,
 					DIRECTIONS.down
 				);
 
 				if (nextTarget) {
 					setTarget(nextTarget);
+
+					setText(
+						sub(Liferay.Language.get('targeting-x-of-x'), [
+							nextTarget.position,
+							nextTarget.name,
+						])
+					);
 				}
 			},
 			keyCode: HOME_KEYCODE,
@@ -179,12 +238,20 @@ export default function KeyboardMovementManager() {
 				const nextTarget = getNextTarget(
 					source,
 					target,
+					fragmentEntryLinksRef,
 					layoutDataRef,
 					DIRECTIONS.up
 				);
 
 				if (nextTarget) {
 					setTarget(nextTarget);
+
+					setText(
+						sub(Liferay.Language.get('targeting-x-of-x'), [
+							nextTarget.position,
+							nextTarget.name,
+						])
+					);
 				}
 			},
 			keyCode: ARROW_UP_KEYCODE,
@@ -212,22 +279,47 @@ export default function KeyboardMovementManager() {
 	);
 
 	useEffect(() => {
-		const initialTarget = getInitialTarget(source, layoutDataRef);
+		const initialTarget = getInitialTarget(
+			source,
+			layoutDataRef,
+			fragmentEntryLinksRef
+		);
 
 		if (initialTarget) {
 			setTarget(initialTarget);
+
+			setText(
+				sub(
+					Liferay.Language.get(
+						'use-up-and-down-arrows-to-move-the-fragment-and-press-enter-to-place-it-in-desired-position.-currently-targeting-x-of-x'
+					),
+					[initialTarget.position, initialTarget.name]
+				)
+			);
+
 			selectItem(null);
 		}
 		else {
 			disableMovement();
+
+			showErrorToast(source);
 		}
-	}, [disableMovement, layoutDataRef, selectItem, setTarget, source]);
+	}, [
+		disableMovement,
+		fragmentEntryLinksRef,
+		layoutDataRef,
+		selectItem,
+		setTarget,
+		setText,
+		source,
+	]);
 
 	return null;
 }
 
-function getInitialTarget(source, layoutDataRef) {
+function getInitialTarget(source, layoutDataRef, fragmentEntryLinksRef) {
 	const layoutData = layoutDataRef.current;
+	const fragmentEntryLinks = fragmentEntryLinksRef.current;
 
 	const actionType = source.itemId ? ACTION_TYPES.move : ACTION_TYPES.add;
 
@@ -245,8 +337,14 @@ function getInitialTarget(source, layoutDataRef) {
 			const child = layoutData.items[childId];
 
 			if (!isHidden(child)) {
+				const childName = selectLayoutDataItemLabel(
+					{fragmentEntryLinks},
+					child
+				);
+
 				return {
 					itemId: child.itemId,
+					name: childName,
 					position: TARGET_POSITIONS.BOTTOM,
 				};
 			}
@@ -256,23 +354,26 @@ function getInitialTarget(source, layoutDataRef) {
 
 		return {
 			itemId: root.itemId,
+			name: root.type,
 			position: TARGET_POSITIONS.MIDDLE,
 		};
 	}
 	else if (actionType === ACTION_TYPES.move) {
-		const target = {
+		return {
 			itemId: source.itemId,
-			position: TARGET_POSITIONS.MIDDLE,
+			name: source.name,
+			position: TARGET_POSITIONS.BOTTOM,
 		};
-
-		return (
-			getNextTarget(source, target, layoutDataRef, DIRECTIONS.up) ||
-			getNextTarget(source, target, layoutDataRef, DIRECTIONS.down)
-		);
 	}
 }
 
-function getNextTarget(source, target, layoutDataRef, direction) {
+function getNextTarget(
+	source,
+	target,
+	fragmentEntryLinks,
+	layoutDataRef,
+	direction
+) {
 	const layoutData = layoutDataRef.current;
 
 	const checkValidTarget = (nextTarget) => {
@@ -280,11 +381,24 @@ function getNextTarget(source, target, layoutDataRef, direction) {
 		const sourceItem = layoutData.items[source.itemId];
 
 		if (
+			source.itemId === nextTarget.itemId &&
+			nextTarget.position === TARGET_POSITIONS.BOTTOM
+		) {
+			return {...nextTarget, name: source.name};
+		}
+
+		if (
 			itemIsAncestor(sourceItem, nextTargetItem, layoutDataRef) ||
 			hasUnmappedCollectionAncestor(nextTargetItem, layoutData) ||
 			isHidden(nextTargetItem)
 		) {
-			return getNextTarget(source, nextTarget, layoutDataRef, direction);
+			return getNextTarget(
+				source,
+				nextTarget,
+				fragmentEntryLinks,
+				layoutDataRef,
+				direction
+			);
 		}
 
 		const nextTargetParent = layoutData.items[nextTargetItem.parentId];
@@ -298,12 +412,11 @@ function getNextTarget(source, target, layoutDataRef, direction) {
 				return getNextTarget(
 					source,
 					nextTarget,
+					fragmentEntryLinks,
 					layoutDataRef,
 					direction
 				);
 			}
-
-			return nextTarget;
 		}
 
 		if (nextTarget.position === TARGET_POSITIONS.TOP) {
@@ -314,12 +427,11 @@ function getNextTarget(source, target, layoutDataRef, direction) {
 				return getNextTarget(
 					source,
 					nextTarget,
+					fragmentEntryLinks,
 					layoutDataRef,
 					direction
 				);
 			}
-
-			return nextTarget;
 		}
 
 		if (nextTarget.position === TARGET_POSITIONS.MIDDLE) {
@@ -330,13 +442,19 @@ function getNextTarget(source, target, layoutDataRef, direction) {
 				return getNextTarget(
 					source,
 					nextTarget,
+					fragmentEntryLinks,
 					layoutDataRef,
 					direction
 				);
 			}
-
-			return nextTarget;
 		}
+
+		const name = selectLayoutDataItemLabel(
+			{fragmentEntryLinks},
+			nextTargetItem
+		);
+
+		return {...nextTarget, name};
 	};
 
 	const {itemId: targetId, position: targetPosition} = target;
@@ -459,4 +577,24 @@ function hasUnmappedCollectionAncestor(item, layoutData) {
 	}
 
 	return hasUnmappedCollectionAncestor(parent, layoutData);
+}
+
+function showErrorToast(source) {
+	let error = sub(
+		Liferay.Language.get(
+			'x-fragment-cannot-be-added-to-the-page-because-it-does-not-have-any-possible-drop-position'
+		),
+		source.name
+	);
+
+	if (source.fragmentEntryType === FRAGMENT_ENTRY_TYPES.input) {
+		error = Liferay.Language.get(
+			'form-components-can-only-be-placed-inside-a-mapped-form-container'
+		);
+	}
+
+	openToast({
+		message: error,
+		type: 'danger',
+	});
 }

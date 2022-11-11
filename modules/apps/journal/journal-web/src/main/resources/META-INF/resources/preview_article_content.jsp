@@ -20,10 +20,26 @@
 JournalArticleDisplay articleDisplay = journalDisplayContext.getArticleDisplay();
 %>
 
-<clay:container-fluid
-	cssClass="mt-2"
->
-	<%= articleDisplay.getContent() %>
+<c:if test="<%= renderRequest.getWindowState() != LiferayWindowState.POP_UP %>">
+	<clay:container-fluid
+		cssClass="mt-3"
+	>
+		<clay:row>
+			<clay:col>
+				<h3 class="m-0"><%= articleDisplay.getTitle() %></h3>
+			</clay:col>
+		</clay:row>
+	</clay:container-fluid>
+
+	<hr class="mb-4 separator" />
+</c:if>
+
+<clay:container-fluid>
+	<clay:row>
+		<clay:col>
+			<%= articleDisplay.getContent() %>
+		</clay:col>
+	</clay:row>
 </clay:container-fluid>
 
 <c:if test="<%= articleDisplay.isPaginate() %>">

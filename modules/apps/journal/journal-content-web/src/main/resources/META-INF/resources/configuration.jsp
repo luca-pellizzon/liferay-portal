@@ -45,7 +45,7 @@
 
 	<liferay-frontend:edit-form-footer>
 		<liferay-frontend:edit-form-buttons
-			redirect='<%= ParamUtil.getString(request, "redirect") %>'
+
 		/>
 	</liferay-frontend:edit-form-footer>
 </liferay-frontend:edit-form>
@@ -64,9 +64,10 @@
 		event.preventDefault();
 
 		Liferay.Util.openSelectionModal({
-			onSelect: function (selectedItem) {
-				if (selectedItem) {
-					retrieveWebContent(selectedItem.assetclasspk);
+			onSelect: function (data) {
+				if (data.value && data.value.length) {
+					const selectedItem = JSON.parse(data.value);
+					retrieveWebContent(selectedItem.classPK);
 				}
 			},
 			selectEventName: '<portlet:namespace />selectedItem',

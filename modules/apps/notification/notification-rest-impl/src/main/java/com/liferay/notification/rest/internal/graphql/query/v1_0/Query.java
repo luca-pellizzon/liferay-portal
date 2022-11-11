@@ -98,7 +98,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {notificationQueueEntry(notificationQueueEntryId: ___){actions, bcc, body, cc, from, fromName, id, priority, sentDate, status, subject, to, toName, triggerBy, type}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {notificationQueueEntry(notificationQueueEntryId: ___){actions, body, fromName, id, priority, recipientsSummary, sentDate, status, subject, triggerBy, type, typeLabel}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public NotificationQueueEntry notificationQueueEntry(
@@ -147,7 +147,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {notificationTemplate(notificationTemplateId: ___){actions, attachmentObjectFieldIds, bcc, body, cc, dateCreated, dateModified, description, from, fromName, id, name, name_i18n, objectDefinitionId, recipientType, subject, to, type}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {notificationTemplate(notificationTemplateId: ___){actions, attachmentObjectFieldIds, body, dateCreated, dateModified, description, id, name, name_i18n, objectDefinitionId, recipientType, recipients, subject, type, typeLabel}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public NotificationTemplate notificationTemplate(

@@ -566,14 +566,7 @@ definition {
 				userLastName = "userln",
 				userScreenName = "usersn");
 
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
-
-			Organization.addCP(
-				orgName = "Organization Name 1",
-				orgType = "Organization");
+			JSONOrganization.addOrganization(organizationName = "Organization Name 1");
 
 			JSONOrganization.assignUserToOrganization(
 				organizationName = "Organization Name 1",
@@ -586,11 +579,9 @@ definition {
 
 			UsersAndOrganizationsNavigator.gotoOrganizations();
 
-			Organization.gotoCP(
-				orgName = "Organization Name 1",
-				searchToken = "Organization Name 1");
+			Organization.gotoCP(orgName = "Organization Name 1");
 
-			Organization.viewAssignMemberCP(userName = "userfn userln");
+			Organization.viewUser(userName = "userfn userln");
 		}
 
 		task ("Connect to AC") {
@@ -612,14 +603,7 @@ definition {
 		}
 
 		task ("Create a new organization and assign the organization for the created user") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
-
-			Organization.addCP(
-				orgName = "Organization Name 2",
-				orgType = "Organization");
+			JSONOrganization.addOrganization(organizationName = "Organization Name 2");
 
 			JSONOrganization.assignUserToOrganization(
 				organizationName = "Organization Name 2",
@@ -632,11 +616,9 @@ definition {
 
 			UsersAndOrganizationsNavigator.gotoOrganizations();
 
-			Organization.gotoCP(
-				orgName = "Organization Name 2",
-				searchToken = "Organization Name 2");
+			Organization.gotoCP(orgName = "Organization Name 2");
 
-			Organization.viewAssignMemberCP(userName = "userfn userln");
+			Organization.viewUser(userName = "userfn userln");
 		}
 
 		task ("Connect to AC") {
@@ -741,14 +723,7 @@ definition {
 				userLastName = "userln",
 				userScreenName = "usersn");
 
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
-
-			Organization.addCP(
-				orgName = "Organization Name",
-				orgType = "Organization");
+			JSONOrganization.addOrganization(organizationName = "Organization Name");
 
 			JSONOrganization.assignUserToOrganization(
 				organizationName = "Organization Name",
@@ -761,11 +736,9 @@ definition {
 
 			UsersAndOrganizationsNavigator.gotoOrganizations();
 
-			Organization.gotoCP(
-				orgName = "Organization Name",
-				searchToken = "Organization Name");
+			Organization.gotoCP(orgName = "Organization Name");
 
-			Organization.viewAssignMemberCP(userName = "userfn userln");
+			Organization.viewUser(userName = "userfn userln");
 		}
 
 		task ("Connect to AC") {

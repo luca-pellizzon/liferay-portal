@@ -1,8 +1,4 @@
 {
-	"dependencies": {
-		"gulp": "*",
-		"liferay-theme-tasks": "*"
-	},
 	"keywords": [
 		"liferay-theme"
 	],
@@ -23,5 +19,5 @@
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "4.0.45"
+	"version": "4.0.46"
 }

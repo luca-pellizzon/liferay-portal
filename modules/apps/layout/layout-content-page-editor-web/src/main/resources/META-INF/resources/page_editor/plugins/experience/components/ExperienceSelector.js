@@ -318,18 +318,13 @@ const ExperienceSelector = ({experiences, segments, selectedExperience}) => {
 				selectorRef.current
 			);
 
-			if (
-				event.shiftKey &&
-				focusableElements.indexOf(event.target) === 0
-			) {
-				event.preventDefault();
-
-				buttonRef.current?.focus();
-
-				return;
+			if (event.shiftKey) {
+				if (focusableElements.indexOf(event.target) === 0) {
+					event.preventDefault();
+					buttonRef.current?.focus();
+				}
 			}
-
-			if (
+			else if (
 				focusableElements.indexOf(event.target) ===
 				focusableElements.length - 1
 			) {
@@ -421,7 +416,9 @@ const ExperienceSelector = ({experiences, segments, selectedExperience}) => {
 				aria-controls={experienceSelectorContentId}
 				aria-expanded={open}
 				aria-haspopup="true"
-				aria-label={Liferay.Language.get('experience')}
+				aria-label={`${Liferay.Language.get('experience')}: ${
+					selectedExperience.name
+				}`}
 				className="form-control-select pr-4 text-left text-truncate"
 				disabled={!canUpdateExperiences}
 				displayType="secondary"

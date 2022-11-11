@@ -532,6 +532,19 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
+	macro assertDisabledCurrencyIsNotAvailable {
+		Click.javaScriptClick(
+			key_title = "Add Default Currency",
+			locator1 = "Button#ANY_TITLE");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		AssertElementNotPresent(
+			key_selectFieldId = "AccountEntriesAdmin",
+			locator1 = "Select#SELECT_VALUE_ID",
+			option = "${disabledCurrency}");
+	}
+
 	macro assignExistingUserToPersonAccount {
 		AssertElementPresent(locator1 = "Account#USER_SELECT_BUTTON");
 
@@ -1319,6 +1332,10 @@ definition {
 	}
 
 	macro setDefaultCurrency {
+		WaitForElementPresent(
+			key_title = "Add Default Currency",
+			locator1 = "Button#ANY_TITLE");
+
 		Click.javaScriptClick(
 			key_title = "Add Default Currency",
 			locator1 = "Button#ANY_TITLE");
@@ -1330,6 +1347,17 @@ definition {
 				key_fieldLabel = "Channel",
 				locator1 = "CommerceEntry#LABEL_GENERIC_SELECT",
 				value1 = "${channelEntry}");
+		}
+
+		if (isSet(allOtherChannels) && ("${channelEntry}" == "true")) {
+			AssertTextPresent(
+				locator1 = "CommerceEntry#LABEL_GENERIC_SELECT",
+				value1 = "All Other Channels");
+
+			Select(
+				key_fieldLabel = "Channel",
+				locator1 = "CommerceEntry#LABEL_GENERIC_SELECT",
+				value1 = "All Other Channels");
 		}
 
 		Select(

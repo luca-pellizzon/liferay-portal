@@ -62,18 +62,44 @@ const SubscriptionStatusDropdown = ({disabled, loading, onClick}) => {
 		setItems([...items]);
 	};
 
-	const getDropdownItems = () =>
-		items.map((item, index) => (
+	const handleClickAll = () => {
+		setItems((previousItems) => [
+			...previousItems.map((item) => ({...item, active: true})),
+		]);
+
+		onClick(items.map((item) => item.label));
+	};
+
+	const getDropdownItems = () => (
+		<>
+			{items.map((item, index) => (
+				<DropDown.Item
+					className="pr-6"
+					disabled={
+						(item.active && activeItems.length < 2) || disabled
+					}
+					key={`${item.label}-${index}`}
+					onClick={() => handleOnClick(index)}
+					symbolRight={item.active && 'check'}
+				>
+					{i18n.translate(getKebabCase(item.label))}
+				</DropDown.Item>
+			))}
+
 			<DropDown.Item
 				className="pr-6"
-				disabled={(item.active && activeItems.length < 2) || disabled}
-				key={`${item.label}-${index}`}
-				onClick={() => handleOnClick(index)}
-				symbolRight={item.active && 'check'}
+				disabled={
+					activeItems.length === MAX_SUBSCRIPTION_STATUS || disabled
+				}
+				onClick={() => handleClickAll()}
+				symbolRight={
+					activeItems.length === MAX_SUBSCRIPTION_STATUS && 'check'
+				}
 			>
-				{i18n.translate(getKebabCase(item.label))}
+				{i18n.translate('all')}
 			</DropDown.Item>
-		));
+		</>
+	);
 
 	return (
 		<div className="align-items-center d-flex ml-2 mt-2">

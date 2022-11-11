@@ -28,6 +28,7 @@
 	entries="<%= commerceOrderSearchContainer.getResults() %>"
 >
 	<div class="container-fluid container-fluid-max-xl" id="<portlet:namespace />ordersContainer">
+		LoyaltyPoints: xxxxxxxxxxxxxxxx
 		<div class="commerce-orders-container" id="<portlet:namespace />entriesContainer">
 			<frontend-data-set:classic-display
 				dataProviderKey="<%= CommerceOrderFDSNames.PLACED_ORDERS %>"

@@ -21,5 +21,6 @@ export default interface MDFRequestActivityDTO
 	externalReferenceCodeSF?: string;
 	leadFollowUpStrategies?: string;
 	mdfRequestExternalReferenceCodeSF?: string;
+	r_accountToActivities_accountEntryId?: number;
 	r_mdfRequestToActivities_c_mdfRequestId?: number;
 }

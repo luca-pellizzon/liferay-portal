@@ -619,11 +619,11 @@ definition {
 			DepotNavigator.openDepotWebContentAdmin(depotName = "Test Depot Name");
 
 			WebContentNavigator.gotoAddCP();
-
-			AssertVisible(locator1 = "WCEditWebContent#SIDEBAR");
 		}
 
 		task ("Then the site designer could preview the web content through display page") {
+			WebContent.addCP(webContentTitle = "Web Content Title");
+
 			Panel.expandPanel(panel = "Display Page Preview");
 
 			WebContent.selectPreviewSite(siteName = "Test Site Name");

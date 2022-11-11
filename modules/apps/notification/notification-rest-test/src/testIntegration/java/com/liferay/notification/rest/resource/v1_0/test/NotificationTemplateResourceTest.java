@@ -16,6 +16,7 @@ package com.liferay.notification.rest.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.notification.constants.NotificationConstants;
+import com.liferay.notification.constants.NotificationRecipientConstants;
 import com.liferay.notification.rest.client.dto.v1_0.NotificationTemplate;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -81,23 +82,20 @@ public class NotificationTemplateResourceTest
 
 		return new NotificationTemplate() {
 			{
-				bcc = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				body = LocalizedMapUtil.getI18nMap(
 					RandomTestUtil.randomLocaleStringMap());
-				cc = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				dateCreated = RandomTestUtil.nextDate();
 				dateModified = RandomTestUtil.nextDate();
 				description = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
-				from = StringUtil.toLowerCase(RandomTestUtil.randomString());
-				fromName = LocalizedMapUtil.getI18nMap(
-					RandomTestUtil.randomLocaleStringMap());
 				id = RandomTestUtil.randomLong();
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				objectDefinitionId = 0L;
+				recipients = new Object[0];
+				recipientType = NotificationRecipientConstants.TYPE_USER;
 				subject = LocalizedMapUtil.getI18nMap(
 					RandomTestUtil.randomLocaleStringMap());
-				type = NotificationConstants.TYPE_EMAIL;
+				type = NotificationConstants.TYPE_USER_NOTIFICATION;
 			}
 		};
 	}

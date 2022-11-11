@@ -101,7 +101,7 @@ public class ApplyToCategoriesCommerceDiscountTargetImpl
 
 	@Override
 	public Type getType() {
-		return Type.APPLY_TO_PRODUCT;
+		return Type.APPLY_TO_CATEGORY;
 	}
 
 	@Override

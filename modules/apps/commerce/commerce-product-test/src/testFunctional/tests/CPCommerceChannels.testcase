@@ -536,7 +536,7 @@ definition {
 
 		var wrongChannelType = "Site";
 		var correctChannelType = "site";
-		var channelTabsList = "General,Type,Notification Queue,Notification Templates,Payment Restrictions,Shipping Restrictions,Punch Out";
+		var channelTabsList = "General,Type,Notification Queue,Notification Templates,Payment Restrictions,Shipping Restrictions";
 		var createChannelResponseWithError = CommerceJSONChannelsAPI._addChannel(
 			channelName = "Test Channel New",
 			channelType = "${wrongChannelType}",

@@ -17,6 +17,7 @@ package com.liferay.portal.tools;
 import com.liferay.document.library.kernel.service.DLFileEntryTypeLocalServiceUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.dao.orm.common.SQLTransformer;
+import com.liferay.portal.db.index.IndexUpdaterUtil;
 import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.cache.PortalCacheHelperUtil;
@@ -231,7 +232,7 @@ public class DBUpgrader {
 			}
 		}
 
-		StartupHelperUtil.updateIndexes(true);
+		IndexUpdaterUtil.updatePortalIndexes();
 
 		_updateReleaseBuildInfo();
 

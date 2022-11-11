@@ -21,6 +21,8 @@ import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
 
+import com.liferay.portal.kernel.security.RandomUtil;
+import com.liferay.portal.kernel.service.AddressLocalService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -30,6 +32,18 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(immediate = true, service = ModelListener.class)
 public class AddressModelListener extends BaseModelListener<Address> {
+
+	@Override
+	public void onAfterCreate(Address model) throws ModelListenerException {
+
+		// In a perfect world we would call an expensive service that will
+		// calculate latitude and longitude based on the address itself
+
+		model.setLatitude(RandomUtil.nextInt(5));
+		model.setLongitude(RandomUtil.nextInt(5));
+
+		_addressLocalService.updateAddress(model);
+	}
 
 	@Override
 	public void onAfterUpdate(Address originalAddress, Address address)
@@ -57,5 +71,8 @@ public class AddressModelListener extends BaseModelListener<Address> {
 
 	@Reference
 	private CommerceOrderLocalService _commerceOrderLocalService;
+
+	@Reference
+	private AddressLocalService _addressLocalService;
 
 }

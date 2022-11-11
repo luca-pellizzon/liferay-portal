@@ -15,20 +15,27 @@
 package com.liferay.redirect.web.internal.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
+import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.redirect.configuration.RedirectConfiguration;
 import com.liferay.redirect.configuration.RedirectPatternConfigurationProvider;
+import com.liferay.redirect.constants.RedirectConstants;
+import com.liferay.redirect.model.RedirectEntry;
 import com.liferay.redirect.service.RedirectEntryLocalService;
 import com.liferay.redirect.service.RedirectEntryService;
 import com.liferay.redirect.service.RedirectNotFoundEntryLocalService;
 import com.liferay.redirect.web.internal.constants.RedirectPortletKeys;
 import com.liferay.redirect.web.internal.display.context.RedirectDisplayContext;
 import com.liferay.redirect.web.internal.display.context.RedirectEntriesDisplayContext;
+import com.liferay.redirect.web.internal.display.context.RedirectEntryInfoPanelDisplayContext;
 import com.liferay.redirect.web.internal.display.context.RedirectNotFoundEntriesDisplayContext;
 import com.liferay.redirect.web.internal.display.context.RedirectPatternConfigurationDisplayContext;
 import com.liferay.staging.StagingGroupHelper;
 
 import java.io.IOException;
+
+import java.util.Collections;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
@@ -82,6 +89,7 @@ public class RedirectPortlet extends MVCPortlet {
 					_portal.getHttpServletRequest(renderRequest),
 					_portal.getLiferayPortletRequest(renderRequest),
 					_portal.getLiferayPortletResponse(renderResponse),
+					_portletResourcePermission,
 					_redirectNotFoundEntryLocalService));
 		}
 		else if (redirectDisplayContext.isShowRedirectEntries()) {
@@ -91,8 +99,14 @@ public class RedirectPortlet extends MVCPortlet {
 					_portal.getHttpServletRequest(renderRequest),
 					_portal.getLiferayPortletRequest(renderRequest),
 					_portal.getLiferayPortletResponse(renderResponse),
+					_modelResourcePermission, _portletResourcePermission,
 					_redirectEntryLocalService, _redirectEntryService,
 					_stagingGroupHelper));
+			renderRequest.setAttribute(
+				RedirectEntryInfoPanelDisplayContext.class.getName(),
+				new RedirectEntryInfoPanelDisplayContext(
+					_portal.getLiferayPortletRequest(renderRequest),
+					Collections.emptyList()));
 		}
 		else {
 			renderRequest.setAttribute(
@@ -106,8 +120,18 @@ public class RedirectPortlet extends MVCPortlet {
 		super.render(renderRequest, renderResponse);
 	}
 
+	@Reference(
+		target = "(model.class.name=com.liferay.redirect.model.RedirectEntry)"
+	)
+	private ModelResourcePermission<RedirectEntry> _modelResourcePermission;
+
 	@Reference
 	private Portal _portal;
+
+	@Reference(
+		target = "(resource.name=" + RedirectConstants.RESOURCE_NAME + ")"
+	)
+	private PortletResourcePermission _portletResourcePermission;
 
 	@Reference
 	private RedirectConfiguration _redirectConfiguration;

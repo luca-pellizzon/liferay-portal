@@ -32,9 +32,23 @@ export declare type TNotificationTemplate = {
 	name: string;
 	objectDefinitionId: number | null;
 	recipientType: string;
+	recipients:
+		| Partial<TEmailRecipients>[]
+		| Partial<TUserNotificationRecipients>[]
+		| [];
 	subject: LocalizedValue<string>;
 	to: LocalizedValue<string>;
 	type: string;
+};
+declare type TUserNotificationRecipients = {
+	[key in 'term' | 'userScreenName' | 'roleName']?: string;
+};
+declare type TEmailRecipients = {
+	bcc: string;
+	cc: string;
+	from: string;
+	fromName: LocalizedValue<string>;
+	to: LocalizedValue<string>;
 };
 export default function EditNotificationTemplate({
 	baseResourceURL,

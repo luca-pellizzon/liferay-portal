@@ -1,15 +1,20 @@
 definition {
 
 	macro _gotoChildArticle {
+		var key_kbChildArticleContent = "${kbChildArticleContent}";
 		var key_kbChildArticleTitle = "${kbChildArticleTitle}";
 
 		AssertTextEquals.assertPartialText(
 			locator1 = "KnowledgeBase#CHILD_PAGE_HEADER",
 			value1 = "Child Article");
 
-		AssertTextEquals(
+		AssertTextEquals.assertPartialText(
 			locator1 = "KnowledgeBase#CHILD_PAGE_TITLE",
 			value1 = "${kbChildArticleTitle}");
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "KnowledgeBase#CHILD_PAGE_CONTENT",
+			value1 = "${kbChildArticleContent}");
 
 		AssertClick(
 			locator1 = "KnowledgeBase#CHILD_PAGE_TITLE",
@@ -1120,7 +1125,7 @@ definition {
 
 		var resourceClassNameId = JSONClassname._getClassNameId(value = "com.liferay.knowledge.base.model.KBArticle");
 
-		Open(locator1 = "${baseURL}/group/${siteURLKey}/~/control_panel/manage?p_p_id=com_liferay_knowledge_base_web_portlet_AdminPortlet&_com_liferay_knowledge_base_web_portlet_AdminPortlet_mvcRenderCommandName=%2Fknowledge_base%2Fview_article&_com_liferay_knowledge_base_web_portlet_AdminPortlet_resourceClassNameId=${resourceClassNameId}&_com_liferay_knowledge_base_web_portlet_AdminPortlet_resourcePrimKey=${resourcePrimKey}&_com_liferay_knowledge_base_web_portlet_AdminPortlet_redirect=com_liferay_knowledge_base_web_portlet_AdminPortlet");
+		Open(locator1 = "${baseURL}/group/${siteURLKey}/~/control_panel/manage?p_p_id=com_liferay_knowledge_base_web_portlet_AdminPortlet&_com_liferay_knowledge_base_web_portlet_AdminPortlet_mvcRenderCommandName=%2Fknowledge_base%2Fview_kb_article&_com_liferay_knowledge_base_web_portlet_AdminPortlet_resourceClassNameId=${resourceClassNameId}&_com_liferay_knowledge_base_web_portlet_AdminPortlet_resourcePrimKey=${resourcePrimKey}&_com_liferay_knowledge_base_web_portlet_AdminPortlet_redirect=com_liferay_knowledge_base_web_portlet_AdminPortlet");
 	}
 
 	macro removeAttachment {
@@ -1375,7 +1380,9 @@ definition {
 				locator1 = "KnowledgeBase#PAGE_TREE_ITEM_NAME");
 		}
 		else {
-			KBArticle._gotoChildArticle(kbChildArticleTitle = "${kbChildArticleTitle}");
+			KBArticle._gotoChildArticle(
+				kbChildArticleContent = "${kbChildArticleContent}",
+				kbChildArticleTitle = "${kbChildArticleTitle}");
 		}
 
 		AssertTextEquals(
@@ -1446,21 +1453,28 @@ definition {
 				locator1 = "KnowledgeBase#DESCRIPTIVE_VIEW_ARTICLE_TITLE",
 				value1 = "${kbArticleTitle}");
 
-			if ("${kbWorkflowStatus}" == "Pending") {
+			if (isSet(kbStatus)) {
 				AssertTextEquals(
 					locator1 = "KnowledgeBase#ARTICLE_TABLE_ARTICLE_STATUS",
-					value1 = "Pending");
-			}
-
-			if ("${kbStatus}" == "Draft") {
-				AssertTextEquals(
-					locator1 = "KnowledgeBase#ARTICLE_TABLE_ARTICLE_STATUS",
-					value1 = "Draft");
+					value1 = "${kbStatus}");
 			}
 
 			AssertClick(
 				locator1 = "KnowledgeBase#DESCRIPTIVE_VIEW_ARTICLE_TITLE",
 				value1 = "${kbArticleTitle}");
+
+			if (isSet(kbStatus)) {
+				AssertTextEquals(
+					key_kbArticleStatus = "${kbStatus}",
+					locator1 = "WorkflowKnowledgeBaseArticle#ARTICLE_PREVIEW_ARTICLE_STATUS",
+					value1 = "${kbStatus}");
+			}
+
+			if (isSet(versionNumber)) {
+				AssertTextEquals(
+					locator1 = "KnowledgeBase#ARTICLE_PREVIEW_VERSION_NUMBER",
+					value1 = "${versionNumber}");
+			}
 
 			if (isSet(highlight)) {
 				AssertVisible(
@@ -1662,7 +1676,7 @@ definition {
 			locator1 = "KnowledgeBaseArticle#INFO_VERSION_TITLE",
 			value1 = "${entryVersion}");
 
-		var modifiedDate = DateUtil.getFormattedCurrentDate("MMMM dd, yyyy");
+		var modifiedDate = DateUtil.getFormattedCurrentDate("MMMM d, yyyy");
 
 		AssertTextEquals.assertPartialText(
 			key_entryVersion = "${entryVersion}",

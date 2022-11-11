@@ -251,8 +251,10 @@ boolean hasCPMedia = !cpMedias.isEmpty();
 boolean hasDescription = !Validator.isBlank(description);
 boolean hasDirectReplacement = cpContentHelper.hasDirectReplacement(cpSku);
 
+String navCommentsId = liferayPortletResponse.getNamespace() + "navComments";
 String navCPMediaId = liferayPortletResponse.getNamespace() + "navCPMedia";
 String navDescriptionId = liferayPortletResponse.getNamespace() + "navDescription";
+String navRatingsId = liferayPortletResponse.getNamespace() + "navRatings";
 String navReplacementsId = liferayPortletResponse.getNamespace() + "navReplacements";
 String navSpecificationsId = liferayPortletResponse.getNamespace() + "navSpecifications";
 %>
@@ -272,9 +274,13 @@ String navSpecificationsId = liferayPortletResponse.getNamespace() + "navSpecifi
 			).put(
 				"namespace", liferayPortletResponse.getNamespace()
 			).put(
+				"navCommentsId", navCommentsId
+			).put(
 				"navCPMediaId", navCPMediaId
 			).put(
 				"navDescriptionId", navDescriptionId
+			).put(
+				"navRatingsId", navRatingsId
 			).put(
 				"navReplacementsId", navReplacementsId
 			).put(
@@ -419,4 +425,23 @@ String navSpecificationsId = liferayPortletResponse.getNamespace() + "navSpecifi
 			/>
 		</div>
 	</c:if>
+
+	<div aria-labelledby="navCommentsTab" class="fade <portlet:namespace />tab-element tab-pane" id="<%= navCommentsId %>" role="tabpanel">
+		<liferay-comment:discussion
+			className="<%= CPDefinition.class.getName() %>"
+			classPK="<%= cpCatalogEntry.getCPDefinitionId() %>"
+			formName="fm"
+			redirect="<%= cpContentHelper.getFriendlyURL(cpCatalogEntry, themeDisplay) %>"
+			userId="<%= themeDisplay.getUserId() %>"
+		/>
+	</div>
+
+	<div aria-labelledby="navRatingsTab" class="fade <portlet:namespace />tab-element tab-pane" id="<%= navRatingsId %>" role="tabpanel">
+		<liferay-ratings:ratings
+			className="<%= CPDefinition.class.getName() %>"
+			classPK="<%= cpCatalogEntry.getCPDefinitionId() %>"
+			type="stars"
+			numberOfStars="<%= 5 %>"
+		/>
+	</div>
 </div>

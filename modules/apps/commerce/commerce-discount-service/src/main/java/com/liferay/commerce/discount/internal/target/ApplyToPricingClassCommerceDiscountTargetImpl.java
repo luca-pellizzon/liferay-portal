@@ -94,7 +94,7 @@ public class ApplyToPricingClassCommerceDiscountTargetImpl
 
 	@Override
 	public Type getType() {
-		return Type.APPLY_TO_PRODUCT;
+		return Type.APPLY_TO_PRODUCT_GROUP;
 	}
 
 	@Override

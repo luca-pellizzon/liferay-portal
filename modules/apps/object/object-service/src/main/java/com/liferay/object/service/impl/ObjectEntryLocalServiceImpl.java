@@ -96,7 +96,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -218,6 +218,10 @@ public class ObjectEntryLocalServiceImpl
 		_validateValues(
 			user.isDefaultUser(), objectDefinitionId,
 			objectDefinition.getPortletId(), serviceContext, userId, values);
+
+		_fillBusinessTypePicklistDefaultValue(
+			_objectFieldLocalService.getObjectFields(objectDefinitionId),
+			values);
 
 		long objectEntryId = counterLocalService.increment();
 
@@ -655,6 +659,19 @@ public class ObjectEntryLocalServiceImpl
 
 	@Override
 	public ObjectEntry getObjectEntry(
+			String externalReferenceCode, long objectDefinitionId)
+		throws PortalException {
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId);
+
+		return objectEntryPersistence.findByERC_C_ODI(
+			externalReferenceCode, objectDefinition.getCompanyId(),
+			objectDefinitionId);
+	}
+
+	@Override
+	public ObjectEntry getObjectEntry(
 			String externalReferenceCode, long companyId, long groupId)
 		throws PortalException {
 
@@ -810,7 +827,7 @@ public class ObjectEntryLocalServiceImpl
 			_persistedModelLocalServiceRegistry.getPersistedModelLocalService(
 				objectDefinition.getClassName());
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+		JSONObject jsonObject = _jsonFactory.createJSONObject(
 			String.valueOf(
 				persistedModelLocalService.getPersistedModel(primaryKey)));
 
@@ -1497,6 +1514,21 @@ public class ObjectEntryLocalServiceImpl
 			objectField.getDBColumnName());
 
 		return column.in(ArrayUtil.toLongArray(accountEntryIds));
+	}
+
+	private void _fillBusinessTypePicklistDefaultValue(
+		List<ObjectField> objectFields, Map<String, Serializable> values) {
+
+		for (ObjectField objectField : objectFields) {
+			if (Objects.equals(
+					objectField.getBusinessType(),
+					ObjectFieldConstants.BUSINESS_TYPE_PICKLIST) &&
+				!values.containsKey(objectField.getName())) {
+
+				values.put(
+					objectField.getName(), objectField.getDefaultValue());
+			}
+		}
 	}
 
 	private Predicate _fillPredicate(
@@ -2295,7 +2327,7 @@ public class ObjectEntryLocalServiceImpl
 
 	private String _getValue(String valueString) {
 		try {
-			JSONArray jsonArray = JSONFactoryUtil.createJSONArray(valueString);
+			JSONArray jsonArray = _jsonFactory.createJSONArray(valueString);
 
 			return GetterUtil.getString(jsonArray.get(0));
 		}
@@ -3322,6 +3354,9 @@ public class ObjectEntryLocalServiceImpl
 
 	@Reference
 	private InlineSQLHelper _inlineSQLHelper;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private ListTypeEntryLocalService _listTypeEntryLocalService;

@@ -67,8 +67,6 @@ public class SentenceTransformerValidationResultResourceImpl
 			"embeddingVectorDimensions",
 			jsonObject.getInt("embeddingVectorDimensions")
 		).put(
-			"enabled", jsonObject.getBoolean("enabled")
-		).put(
 			"enableGPU", jsonObject.getBoolean("enableGPU")
 		).put(
 			"huggingFaceAccessToken",
@@ -83,6 +81,9 @@ public class SentenceTransformerValidationResultResourceImpl
 		).put(
 			"modelTimeout", jsonObject.getInt("modelTimeout")
 		).put(
+			"sentenceTransformerEnabled",
+			jsonObject.getBoolean("sentenceTransformerEnabled")
+		).put(
 			"sentenceTransformProvider",
 			jsonObject.getString("sentenceTransformProvider")
 		).put(
@@ -90,6 +91,10 @@ public class SentenceTransformerValidationResultResourceImpl
 			jsonObject.getString("textTruncationStrategy")
 		).put(
 			"txtaiHostAddress", jsonObject.getString("txtaiHostAddress")
+		).put(
+			"txtaiPassword", jsonObject.getString("txtaiPassword")
+		).put(
+			"txtaiUsername", jsonObject.getString("txtaiUsername")
 		).build();
 	}
 

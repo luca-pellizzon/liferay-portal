@@ -78,6 +78,12 @@ public class DefaultCommentTreeDisplayContext
 			return false;
 		}
 
+		ThemeDisplay themeDisplay = getThemeDisplay();
+
+		if (isCommerceSiteLabel(themeDisplay) != null) {
+			return hasPermission(themeDisplay);
+		}
+
 		return !_discussionComment.isInTrash();
 	}
 
@@ -85,6 +91,12 @@ public class DefaultCommentTreeDisplayContext
 	public boolean isDeleteActionControlVisible() throws PortalException {
 		if ((_discussionPermission == null) || _isStagingGroup()) {
 			return false;
+		}
+
+		ThemeDisplay themeDisplay = getThemeDisplay();
+
+		if (isCommerceSiteLabel(themeDisplay) != null) {
+			return hasPermission(themeDisplay);
 		}
 
 		return _discussionPermission.hasPermission(
@@ -108,6 +120,12 @@ public class DefaultCommentTreeDisplayContext
 			return false;
 		}
 
+		ThemeDisplay themeDisplay = getThemeDisplay();
+
+		if (isCommerceSiteLabel(themeDisplay) != null) {
+			return hasPermission(themeDisplay);
+		}
+
 		return true;
 	}
 
@@ -115,6 +133,12 @@ public class DefaultCommentTreeDisplayContext
 	public boolean isEditControlsVisible() throws PortalException {
 		if (_discussionTaglibHelper.isHideControls() || _isStagingGroup()) {
 			return false;
+		}
+
+		ThemeDisplay themeDisplay = getThemeDisplay();
+
+		if (isCommerceSiteLabel(themeDisplay) != null) {
+			return hasPermission(themeDisplay);
 		}
 
 		return _hasUpdatePermission();
@@ -135,6 +159,12 @@ public class DefaultCommentTreeDisplayContext
 	public boolean isReplyActionControlVisible() throws PortalException {
 		if ((_discussionPermission == null) || _isStagingGroup()) {
 			return false;
+		}
+
+		ThemeDisplay themeDisplay = getThemeDisplay();
+
+		if (isCommerceSiteLabel(themeDisplay) != null) {
+			return hasPermission(themeDisplay);
 		}
 
 		return _discussionPermission.hasAddPermission(

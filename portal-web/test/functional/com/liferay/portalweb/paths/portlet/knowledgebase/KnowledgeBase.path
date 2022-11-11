@@ -11,6 +11,11 @@
 
 <tbody>
 <tr>
+	<td>ARTICLE_PREVIEW_VERSION_NUMBER</td>
+	<td>//span[contains(@class,'workflow-version')]/span[contains(@class,'workflow-value')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>KB_TOOLS</td>
 	<td>//div[@class='kb-tools']//span[.='${key_kbTool}']</td>
 	<td></td>
@@ -105,6 +110,11 @@
 
 <!--CHILD_ARTICLES-->
 
+<tr>
+	<td>CHILD_PAGE_CONTENT</td>
+	<td>//p[@class='list-group-subtext']//span[contains(.,'${key_kbChildArticleContent}')]</td>
+	<td></td>
+</tr>
 <tr>
 	<td>CHILD_PAGE_HEADER</td>
 	<td>//div[contains(@class,'container-fluid')]//span[contains(.,'Child Articles')]</td>

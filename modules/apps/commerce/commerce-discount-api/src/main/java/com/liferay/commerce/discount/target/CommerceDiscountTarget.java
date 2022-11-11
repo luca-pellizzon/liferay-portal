@@ -14,6 +14,12 @@
 
 package com.liferay.commerce.discount.target;
 
+import com.liferay.commerce.context.CommerceContext;
+import com.liferay.commerce.discount.model.CommerceDiscount;
+import com.liferay.commerce.product.model.CPInstance;
+import com.liferay.petra.sql.dsl.expression.Predicate;
+import com.liferay.portal.kernel.exception.PortalException;
+
 import java.util.Locale;
 
 /**
@@ -28,9 +34,25 @@ public interface CommerceDiscountTarget {
 
 	public Type getType();
 
+	public default boolean isApplicable(
+			CommerceContext commerceContext, CommerceDiscount commerceDiscount,
+			CPInstance cpInstance)
+		throws PortalException {
+
+		return true;
+	}
+
+	public default Predicate targetPredicateContributor(
+		long cpDefinitionId, long cpInstanceId) {
+
+		return null;
+	}
+
 	public enum Type {
 
+		APPLY_TO_CATEGORY("APPLY_TO_CATEGORY"),
 		APPLY_TO_PRODUCT("APPLY_TO_PRODUCT"),
+		APPLY_TO_PRODUCT_GROUP("APPLY_TO_PRODUCT_GROUP"),
 		APPLY_TO_SHIPPING("APPLY_TO_SHIPPING"), APPLY_TO_SKU("APPLY_TO_SKU"),
 		APPLY_TO_SUBTOTAL("APPLY_TO_SUBTOTAL"),
 		APPLY_TO_TOTAL("APPLY_TO_TOTAL");

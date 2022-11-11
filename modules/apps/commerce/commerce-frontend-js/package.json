@@ -5,9 +5,7 @@
 		"@liferay/frontend-js-react-web": "*",
 		"@liferay/frontend-js-state-web": "*",
 		"frontend-js-web": "*",
-		"html-webpack-plugin": "5.5.0",
-		"react": "16.12.0",
-		"webpack": "5.70.0"
+		"react": "16.12.0"
 	},
 	"devDependencies": {
 		"clay-css": "^2.16.2",
@@ -38,5 +36,5 @@
 		"test": "liferay-npm-scripts test",
 		"watch": "liferay-npm-scripts webpack --watch"
 	},
-	"version": "4.0.64"
+	"version": "4.0.65"
 }

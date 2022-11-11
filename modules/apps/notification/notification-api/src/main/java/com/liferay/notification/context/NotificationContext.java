@@ -14,8 +14,12 @@
 
 package com.liferay.notification.context;
 
-import java.io.Serializable;
+import com.liferay.notification.model.NotificationQueueEntry;
+import com.liferay.notification.model.NotificationRecipient;
+import com.liferay.notification.model.NotificationRecipientSetting;
+import com.liferay.notification.model.NotificationTemplate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -25,15 +29,11 @@ import java.util.Map;
 public class NotificationContext {
 
 	public List<Long> getAttachmentObjectFieldIds() {
+		if (_attachmentObjectFieldIds == null) {
+			return Collections.emptyList();
+		}
+
 		return _attachmentObjectFieldIds;
-	}
-
-	public Map<String, Serializable> getAttributes() {
-		return _attributes;
-	}
-
-	public Serializable getAttributeValue(String name) {
-		return _attributes.get(name);
 	}
 
 	public String getClassName() {
@@ -44,20 +44,46 @@ public class NotificationContext {
 		return _classPK;
 	}
 
-	public long getNotificationTemplateId() {
-		return _notificationTemplateId;
+	public String getExternalReferenceCode() {
+		return _externalReferenceCode;
 	}
 
-	public String getNotificationTemplateName() {
-		return _notificationTemplateName;
+	public List<Long> getFileEntryIds() {
+		if (_fileEntryIds == null) {
+			return Collections.emptyList();
+		}
+
+		return _fileEntryIds;
 	}
 
-	public long getObjectDefinitionId() {
-		return _objectDefinitionId;
+	public NotificationQueueEntry getNotificationQueueEntry() {
+		return _notificationQueueEntry;
+	}
+
+	public NotificationRecipient getNotificationRecipient() {
+		return _notificationRecipient;
+	}
+
+	public List<NotificationRecipientSetting>
+		getNotificationRecipientSettings() {
+
+		return _notificationRecipientSettings;
+	}
+
+	public NotificationTemplate getNotificationTemplate() {
+		return _notificationTemplate;
+	}
+
+	public String getPortletId() {
+		return _portletId;
 	}
 
 	public Map<String, Object> getTermValues() {
 		return _termValues;
+	}
+
+	public String getType() {
+		return _type;
 	}
 
 	public long getUserId() {
@@ -70,10 +96,6 @@ public class NotificationContext {
 		_attachmentObjectFieldIds = attachmentObjectFieldIds;
 	}
 
-	public void setAttributes(Map<String, Serializable> attributes) {
-		_attributes = attributes;
-	}
-
 	public void setClassName(String className) {
 		_className = className;
 	}
@@ -82,20 +104,48 @@ public class NotificationContext {
 		_classPK = classPK;
 	}
 
-	public void setNotificationTemplateId(long notificationTemplateId) {
-		_notificationTemplateId = notificationTemplateId;
+	public void setExternalReferenceCode(String externalReferenceCode) {
+		_externalReferenceCode = externalReferenceCode;
 	}
 
-	public void setNotificationTemplateName(String notificationTemplateName) {
-		_notificationTemplateName = notificationTemplateName;
+	public void setFileEntryIds(List<Long> fileEntryIds) {
+		_fileEntryIds = fileEntryIds;
 	}
 
-	public void setObjectDefinitionId(long objectDefinitionId) {
-		_objectDefinitionId = objectDefinitionId;
+	public void setNotificationQueueEntry(
+		NotificationQueueEntry notificationQueueEntry) {
+
+		_notificationQueueEntry = notificationQueueEntry;
+	}
+
+	public void setNotificationRecipient(
+		NotificationRecipient notificationRecipient) {
+
+		_notificationRecipient = notificationRecipient;
+	}
+
+	public void setNotificationRecipientSettings(
+		List<NotificationRecipientSetting> notificationRecipientSettings) {
+
+		_notificationRecipientSettings = notificationRecipientSettings;
+	}
+
+	public void setNotificationTemplate(
+		NotificationTemplate notificationTemplate) {
+
+		_notificationTemplate = notificationTemplate;
+	}
+
+	public void setPortletId(String portletId) {
+		_portletId = portletId;
 	}
 
 	public void setTermValues(Map<String, Object> termValues) {
 		_termValues = termValues;
+	}
+
+	public void setType(String type) {
+		_type = type;
 	}
 
 	public void setUserId(long userId) {
@@ -103,13 +153,17 @@ public class NotificationContext {
 	}
 
 	private List<Long> _attachmentObjectFieldIds;
-	private Map<String, Serializable> _attributes;
 	private String _className;
 	private long _classPK;
-	private long _notificationTemplateId;
-	private String _notificationTemplateName;
-	private long _objectDefinitionId;
+	private String _externalReferenceCode;
+	private List<Long> _fileEntryIds;
+	private NotificationQueueEntry _notificationQueueEntry;
+	private NotificationRecipient _notificationRecipient;
+	private List<NotificationRecipientSetting> _notificationRecipientSettings;
+	private NotificationTemplate _notificationTemplate;
+	private String _portletId;
 	private Map<String, Object> _termValues;
+	private String _type;
 	private long _userId;
 
 }

@@ -214,6 +214,15 @@ public class CommerceDiscountDisplayContext extends BasePricingDisplayContext {
 		return _commerceDiscountTargetRegistry.getCommerceDiscountTargets();
 	}
 
+	public CommerceDiscountTarget.Type getCommerceDiscountTargetType(
+		String target) {
+
+		CommerceDiscountTarget commerceDiscountTarget =
+			_commerceDiscountTargetRegistry.getCommerceDiscountTarget(target);
+
+		return commerceDiscountTarget.getType();
+	}
+
 	public String getDefaultCommerceCurrencyCode() {
 		CommerceCurrency commerceCurrency =
 			_commerceCurrencyLocalService.fetchPrimaryCommerceCurrency(

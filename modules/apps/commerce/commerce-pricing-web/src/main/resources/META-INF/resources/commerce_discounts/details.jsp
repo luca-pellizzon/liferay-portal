@@ -36,6 +36,8 @@ if (Validator.isBlank(target)) {
 	target = commerceDiscount.getTarget();
 }
 
+CommerceDiscountTarget.Type commerceDiscountTargetType = commerceDiscountDisplayContext.getCommerceDiscountTargetType(target);
+
 String colCssClass = "col-12 col-md-6";
 String amountSuffix = HtmlUtil.escape(commerceDiscountDisplayContext.getDefaultCommerceCurrencyCode());
 
@@ -185,19 +187,19 @@ boolean hasPermission = commerceDiscountDisplayContext.hasPermission(ActionKeys.
 
 	<%@ include file="/commerce_discounts/coupon_code.jspf" %>
 
-	<c:if test="<%= Objects.equals(target, CommerceDiscountConstants.TARGET_PRODUCT) %>">
+	<c:if test="<%= Objects.equals(commerceDiscountTargetType, CommerceDiscountTarget.Type.APPLY_TO_PRODUCT) %>">
 		<%@ include file="/commerce_discounts/target/products.jspf" %>
 	</c:if>
 
-	<c:if test="<%= Objects.equals(target, CommerceDiscountConstants.TARGET_SKUS) %>">
+	<c:if test="<%= Objects.equals(commerceDiscountTargetType, CommerceDiscountTarget.Type.APPLY_TO_SKU) %>">
 		<%@ include file="/commerce_discounts/target/skus.jspf" %>
 	</c:if>
 
-	<c:if test="<%= Objects.equals(target, CommerceDiscountConstants.TARGET_CATEGORIES) %>">
+	<c:if test="<%= Objects.equals(commerceDiscountTargetType, CommerceDiscountTarget.Type.APPLY_TO_CATEGORY) %>">
 		<%@ include file="/commerce_discounts/target/categories.jspf" %>
 	</c:if>
 
-	<c:if test="<%= Objects.equals(target, CommerceDiscountConstants.TARGET_PRICING_CLASS) %>">
+	<c:if test="<%= Objects.equals(commerceDiscountTargetType, CommerceDiscountTarget.Type.APPLY_TO_PRODUCT_GROUP) %>">
 		<%@ include file="/commerce_discounts/target/pricing_classes.jspf" %>
 	</c:if>
 

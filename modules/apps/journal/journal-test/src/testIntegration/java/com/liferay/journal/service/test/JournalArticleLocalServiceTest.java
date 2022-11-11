@@ -81,7 +81,7 @@ import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.Constants;
-import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
+import com.liferay.portal.kernel.util.FriendlyURLNormalizer;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -160,8 +160,15 @@ public class JournalArticleLocalServiceTest {
 
 		Locale locale = _portal.getSiteDefaultLocale(_group.getGroupId());
 
-		String friendlyURL = FriendlyURLNormalizerUtil.normalize(
-			RandomTestUtil.randomString());
+		String friendlyURL = _friendlyURLNormalizer.normalizeWithPeriods(
+			StringBundler.concat(
+				RandomTestUtil.randomString(5), StringPool.PERIOD,
+				RandomTestUtil.randomString(5), StringPool.SLASH,
+				RandomTestUtil.randomString(5)));
+
+		Assert.assertTrue(friendlyURL.contains(StringPool.DASH));
+		Assert.assertFalse(friendlyURL.contains(StringPool.PERIOD));
+		Assert.assertTrue(friendlyURL.contains(StringPool.SLASH));
 
 		Map<Locale, String> friendlyURLMap = journalArticle.getFriendlyURLMap();
 
@@ -836,6 +843,9 @@ public class JournalArticleLocalServiceTest {
 
 	@Inject
 	private DDMTemplateLinkLocalService _ddmTemplateLinkLocalService;
+
+	@Inject
+	private FriendlyURLNormalizer _friendlyURLNormalizer;
 
 	@DeleteAfterTestRun
 	private Group _group;
