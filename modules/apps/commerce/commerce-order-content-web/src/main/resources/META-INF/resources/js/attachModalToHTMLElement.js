@@ -12,17 +12,23 @@
  * details.
  */
 
-package com.liferay.commerce.term.constants;
+import {openModal} from 'frontend-js-web';
 
-/**
- * @author Alessio Antonio Rendina
- */
-public class CommerceTermEntryActionKeys {
+export default function ({HTMLElementId, modalContent, modalTitle}) {
+	document
+		.getElementById(HTMLElementId)
+		.addEventListener('click', (event) => {
+			event.preventDefault();
 
-	public static final String ADD_COMMERCE_TERM_ENTRY =
-		"ADD_COMMERCE_TERM_ENTRY";
-
-	public static final String VIEW_COMMERCE_TERM_ENTRY =
-		"VIEW_COMMERCE_TERM_ENTRY";
-
+			openModal({
+				bodyHTML: modalContent,
+				center: true,
+				containerProps: {
+					center: true,
+					className: 'modal-height-full',
+				},
+				size: 'xl',
+				title: modalTitle,
+			});
+		});
 }

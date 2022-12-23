@@ -12,17 +12,22 @@
  * details.
  */
 
-package com.liferay.commerce.term.constants;
+export default function ({selectId, terms}) {
+	const descriptionContainer = document.getElementById(
+		'description-container'
+	);
+	const descriptionLabel = document.getElementById('description-label');
 
-/**
- * @author Alessio Antonio Rendina
- */
-public class CommerceTermEntryActionKeys {
+	document.getElementById(selectId).addEventListener('change', ({target}) => {
+		if (target.value) {
+			descriptionContainer.innerHTML = terms[target.value];
 
-	public static final String ADD_COMMERCE_TERM_ENTRY =
-		"ADD_COMMERCE_TERM_ENTRY";
+			descriptionLabel.classList.remove('d-none');
+		}
+		else {
+			descriptionContainer.innerHTML = '';
 
-	public static final String VIEW_COMMERCE_TERM_ENTRY =
-		"VIEW_COMMERCE_TERM_ENTRY";
-
+			descriptionLabel.classList.add('d-none');
+		}
+	});
 }
