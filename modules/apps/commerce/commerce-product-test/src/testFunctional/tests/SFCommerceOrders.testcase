@@ -793,8 +793,16 @@ definition {
 	test CanSearchOrderIdInAccountSelector {
 		property portal.acceptance = "true";
 
-		task ("Given a Minium site is created") {
-			ApplicationsMenu.gotoSite(site = "Minium");
+		task ("Given Money Order is enbaled") {
+			CommerceChannels.openChannelsAdmin();
+
+			CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
+
+			CommerceChannels.activatePaymentMethod(paymentMethod = "Money Order");
+		}
+
+		task ("And admin navigates to the Minium catalog page") {
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/catalog");
 		}
 
 		var orderIds = ListUtil.newList();
