@@ -60,6 +60,7 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.PortalRunMode;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -71,6 +72,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.liferay.portal.util.PortalInstances;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -210,7 +212,10 @@ public class CommerceChannelLocalServiceImpl
 			commerceChannel.getCommerceChannelId());
 
 		if (group != null) {
-			_groupLocalService.deleteGroup(group);
+			if (!PortalInstances.isCurrentCompanyInDeletionProcess() &&
+				!PortalRunMode.isTestMode()) {
+				_groupLocalService.deleteGroup(group);
+			}
 			_repositoryLocalService.deleteRepositories(group.getGroupId());
 		}
 

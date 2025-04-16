@@ -50,6 +50,7 @@ import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PortalRunMode;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -59,6 +60,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.liferay.portal.util.PortalInstances;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -273,7 +275,10 @@ public class CommerceCatalogLocalServiceImpl
 					cpConfigurationList);
 			}
 
-			_groupLocalService.deleteGroup(group);
+			if (!PortalInstances.isCurrentCompanyInDeletionProcess() &&
+				!PortalRunMode.isTestMode()) {
+				_groupLocalService.deleteGroup(group);
+			}
 		}
 
 		return commerceCatalog;
