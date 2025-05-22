@@ -7,6 +7,7 @@ package com.liferay.site.cms.site.initializer.internal.display.context;
 
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.constants.ObjectFolderConstants;
 import com.liferay.object.model.ObjectEntryFolder;
@@ -25,6 +26,7 @@ import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.site.cms.site.initializer.internal.util.ActionUtil;
@@ -96,6 +98,15 @@ public class ViewFolderSectionDisplayContext extends BaseSectionDisplayContext {
 		return HashMapBuilder.<String, Object>put(
 			"breadcrumbItems", jsonArray
 		).build();
+	}
+
+	@Override
+	public List<DropdownItem> getBulkActionDropdownItems() {
+		return ListUtil.fromArray(
+			new FDSActionDropdownItem(
+				"#", "trash", "remove",
+				LanguageUtil.get(httpServletRequest, "remove"), null, null,
+				null));
 	}
 
 	@Override
