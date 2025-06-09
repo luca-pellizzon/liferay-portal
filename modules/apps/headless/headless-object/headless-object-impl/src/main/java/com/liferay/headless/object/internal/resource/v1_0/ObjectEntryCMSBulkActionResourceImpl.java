@@ -5,37 +5,31 @@
 
 package com.liferay.headless.object.internal.resource.v1_0;
 
+import com.liferay.headless.batch.engine.dto.v1_0.ImportTask;
+import com.liferay.headless.batch.engine.resource.v1_0.ImportTaskResource;
 import com.liferay.headless.object.dto.v1_0.ObjectEntryCMSBulkAction;
 import com.liferay.headless.object.resource.v1_0.ObjectEntryCMSBulkActionResource;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
-import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.search.filter.Filter;
-import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.Http;
-import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
-import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
-
-import jakarta.annotation.Resource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 
 /**
- * @author Alicia García
+ * @author Luca Pellizzon
  */
 @Component(
 	properties = "OSGI-INF/liferay/rest/v1_0/object-entry-cms-bulk-action.properties",
@@ -70,7 +64,7 @@ public class ObjectEntryCMSBulkActionResourceImpl
 			List<Long> idList = entriesIdByObjectDefinition.get(
 				objectEntry.getObjectDefinitionId());
 
-			if (ListUtil.isEmpty(idList)) {
+			if ((idList == null) || ListUtil.isEmpty(idList)) {
 				idList = new ArrayList<>();
 
 				entriesIdByObjectDefinition.put(
@@ -86,7 +80,7 @@ public class ObjectEntryCMSBulkActionResourceImpl
 
 		switch (bulkActionName) {
 			case "remove":
-				_removeEntries(batchIds, entriesIdByObjectDefinition);
+				batchIds.addAll(_removeEntries(entriesIdByObjectDefinition));
 		}
 
 		// Return batch IDs to caller
@@ -99,69 +93,56 @@ public class ObjectEntryCMSBulkActionResourceImpl
 		return objectEntryCMSBulkAction;
 	}
 
-	private String _getAPIURL(ObjectDefinition objectDefinition)
-		throws Exception {
-
-		Company company = _companyLocalService.getCompany(
-			objectDefinition.getCompanyId());
-
-		boolean secure = _isHttpsEnabled();
-
-		String apiURL = _portal.getPortalURL(
-			company.getVirtualHostname(), _portal.getPortalServerPort(secure),
-			secure);
-
-		if (objectDefinition == null) {
-			return apiURL;
-		}
-
-		return apiURL + _portal.getPathContext() +
-			objectDefinition.getRESTContextPath();
-	}
-
-	private boolean _isHttpsEnabled() {
-		if (Objects.equals(
-				Http.HTTPS,
-				PropsUtil.get(PropsKeys.PORTAL_INSTANCE_PROTOCOL)) ||
-			Objects.equals(
-				Http.HTTPS, PropsUtil.get(PropsKeys.WEB_SERVER_PROTOCOL))) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	private void _removeEntries(
-			List<Long> batchIds,
+	private List<Long> _removeEntries(
 			Map<Long, List<Long>> entriesIdByObjectDefinition)
 		throws Exception {
 
-		for (Long objectDefinitionId : entriesIdByObjectDefinition.keySet()) {
+		List<Long> batchIds = new ArrayList<>();
+		ImportTaskResource importTaskResource = _factory.create(
+		).httpServletRequest(
+			contextHttpServletRequest
+		).httpServletResponse(
+			contextHttpServletResponse
+		).uriInfo(
+			contextUriInfo
+		).user(
+			contextUser
+		).build();
+
+		for (Map.Entry<Long, List<Long>> entries :
+				entriesIdByObjectDefinition.entrySet()) {
+
 			ObjectDefinition objectDefinition =
 				_objectDefinitionLocalService.getObjectDefinition(
-					objectDefinitionId);
+					entries.getKey());
 
-			// Get URL to objectDefinition specific endpoint
+			List<Map<String, Long>> list = new ArrayList<>();
 
-			String apiURL = _getAPIURL(objectDefinition);
+			for (Long id : entries.getValue()) {
+				list.add(
+					HashMapBuilder.put(
+						"id", id
+					).build());
+			}
 
-			// Call batch endpoint and send back the job ID
+			ImportTask importTask = importTaskResource.deleteImportTaskObject(
+				"com.liferay.object.rest.dto.v1_0.ObjectEntry", null, null,
+				ImportTask.ImportStrategy.ON_ERROR_CONTINUE.getValue(),
+				objectDefinition.getName(), list);
 
-			String results = HttpUtil.URLtoString(apiURL);
+			batchIds.add(importTask.getId());
 		}
+
+		return batchIds;
 	}
 
-	@Resource
-	private CompanyLocalService _companyLocalService;
+	@Reference
+	private ImportTaskResource.Factory _factory;
 
-	@Resource
+	@Reference
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
-	@Resource
+	@Reference
 	private ObjectEntryLocalService _objectEntryLocalService;
-
-	@Resource
-	private Portal _portal;
 
 }
