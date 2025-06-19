@@ -3,21 +3,24 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {LiferayEditorConfig, TEditor} from 'frontend-editor-ckeditor-web';
+import {
+	EEditorConfigPreset,
+	LiferayEditorConfig,
+	TEditor,
+} from 'frontend-editor-ckeditor-web';
 import {openSelectionModal} from 'frontend-js-components-web';
 
+import BlockButtonCustomization from './plugins/BlockButtonCustomization';
 import EmptyAltImagePlugin from './plugins/EmptyAltImagePlugin';
 
 export type EditorConfig = LiferayEditorConfig & {
-	documentBrowseLinkCallback: (
+	documentBrowseLinkCallback?: (
 		editor: TEditor,
 		url: string,
 		changeLinkCallback: () => void
 	) => void;
-	documentBrowseLinkUrl: string;
-	editorTransformerURLs: string;
-	filebrowserImageBrowseLinkUrl: string;
-	filebrowserImageBrowseUrl: string;
+	documentBrowseLinkUrl?: string;
+	filebrowserImageBrowseLinkUrl?: string;
 };
 
 export default function getCKEditorConfig({
@@ -27,16 +30,27 @@ export default function getCKEditorConfig({
 	itemSelectorEventName,
 }: {
 	editorConfig: EditorConfig;
-	editorName: string;
+	editorName?: string;
 	initialData: string;
-	itemSelectorEventName: string;
+	itemSelectorEventName?: string;
 }) {
 	let config = initialConfig;
-	const toolbarItems = Array.isArray(config.toolbar)
-		? config.toolbar
-		: config.toolbar?.items;
 
-	if (config.preset === 'advanced') {
+	const blockToolbarItems = Array.isArray(config.blockToolbar)
+		? config.blockToolbar
+		: config.blockToolbar?.items;
+
+	const extraPlugins = [];
+
+	if (blockToolbarItems) {
+		extraPlugins.push(BlockButtonCustomization);
+	}
+
+	if (blockToolbarItems?.includes('imageSelector')) {
+		extraPlugins.push(EmptyAltImagePlugin);
+	}
+
+	if (editorName && config.preset === EEditorConfigPreset.ADVANCED) {
 		config = {
 			...config,
 			documentBrowseLinkCallback: (editor, url, changeLinkCallback) => {
@@ -47,31 +61,28 @@ export default function getCKEditorConfig({
 					url,
 				});
 			},
-			documentBrowseLinkUrl: config.documentBrowseLinkUrl.replaceAll(
+			documentBrowseLinkUrl: config.documentBrowseLinkUrl?.replaceAll(
 				'_EDITOR_NAME_',
 				editorName
 			),
 			filebrowserImageBrowseLinkUrl:
-				config.filebrowserImageBrowseLinkUrl.replaceAll(
+				config.filebrowserImageBrowseLinkUrl?.replaceAll(
 					'_EDITOR_NAME_',
 					editorName
 				),
 			filebrowserImageBrowseUrl:
-				config.filebrowserImageBrowseUrl.replaceAll(
+				config.filebrowserImageBrowseUrl?.replaceAll(
 					'_EDITOR_NAME_',
 					editorName
 				),
-
 			itemSelectorEventName,
 		};
 	}
 
 	return {
 		...config,
-		...(toolbarItems?.includes('imageSelector') && {
-			extraPlugins: [EmptyAltImagePlugin],
-		}),
+		...(editorName && {name: editorName}),
+		extraPlugins,
 		initialData,
-		name: editorName,
-	};
+	} as LiferayEditorConfig;
 }

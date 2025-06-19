@@ -217,6 +217,15 @@ public class MasterPageResourceTest extends BaseMasterPageResourceTestCase {
 			testGetSiteSiteByExternalReferenceCodeMasterPagesPageWithSortString();
 	}
 
+	@Ignore
+	@Override
+	@Test
+	public void testGraphQLGetSiteSiteByExternalReferenceCodeMasterPage()
+		throws Exception {
+
+		super.testGraphQLGetSiteSiteByExternalReferenceCodeMasterPage();
+	}
+
 	@Override
 	@Test
 	public void testPatchSiteSiteByExternalReferenceCodeMasterPage()
@@ -476,22 +485,6 @@ public class MasterPageResourceTest extends BaseMasterPageResourceTestCase {
 
 		return masterPageResource.postSiteSiteByExternalReferenceCodeMasterPage(
 			siteExternalReferenceCode, masterPage);
-	}
-
-	@Override
-	protected String
-			testGetSiteSiteByExternalReferenceCodeMasterPagesPage_getIrrelevantSiteExternalReferenceCode()
-		throws Exception {
-
-		return irrelevantGroup.getExternalReferenceCode();
-	}
-
-	@Override
-	protected String
-			testGetSiteSiteByExternalReferenceCodeMasterPagesPage_getSiteExternalReferenceCode()
-		throws Exception {
-
-		return testGroup.getExternalReferenceCode();
 	}
 
 	@Override

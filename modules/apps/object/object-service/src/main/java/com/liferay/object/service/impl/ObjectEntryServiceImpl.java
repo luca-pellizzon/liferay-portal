@@ -87,8 +87,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Marco Leo
@@ -119,7 +117,7 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 		_validateSubmissionLimit(objectDefinitionId, getUser());
 
 		return objectEntryLocalService.addObjectEntry(
-			getUserId(), groupId, objectDefinitionId, objectEntryFolderId,
+			groupId, getUserId(), objectDefinitionId, objectEntryFolderId,
 			defaultLanguageId, values, serviceContext);
 	}
 
@@ -145,7 +143,7 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 		}
 
 		return objectEntryLocalService.addOrUpdateObjectEntry(
-			externalReferenceCode, getUserId(), groupId, objectDefinitionId,
+			externalReferenceCode, groupId, getUserId(), objectDefinitionId,
 			objectEntryFolderId, values, serviceContext);
 	}
 
@@ -496,7 +494,7 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT)) {
 
 			ModelResourcePermissionUtil.check(
-				_objectEntryFoldermodelResourcePermission,
+				_objectEntryFolderModelResourcePermission,
 				getPermissionChecker(), groupId, objectEntryFolderId,
 				ActionKeys.ADD_ENTRY);
 		}
@@ -912,12 +910,10 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 	private ObjectDefinitionPersistence _objectDefinitionPersistence;
 
 	@Reference(
-		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY,
 		target = "(model.class.name=com.liferay.object.model.ObjectEntryFolder)"
 	)
-	private volatile ModelResourcePermission<ObjectEntryFolder>
-		_objectEntryFoldermodelResourcePermission;
+	private ModelResourcePermission<ObjectEntryFolder>
+		_objectEntryFolderModelResourcePermission;
 
 	@Reference
 	private ObjectFieldLocalService _objectFieldLocalService;

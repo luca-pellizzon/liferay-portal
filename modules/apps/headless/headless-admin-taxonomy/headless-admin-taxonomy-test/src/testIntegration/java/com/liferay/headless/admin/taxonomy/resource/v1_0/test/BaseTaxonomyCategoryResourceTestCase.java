@@ -21,6 +21,7 @@ import com.liferay.headless.admin.taxonomy.client.permission.Permission;
 import com.liferay.headless.admin.taxonomy.client.resource.v1_0.TaxonomyCategoryResource;
 import com.liferay.headless.admin.taxonomy.client.serdes.v1_0.TaxonomyCategorySerDes;
 import com.liferay.headless.batch.engine.client.dto.v1_0.ImportTask;
+import com.liferay.headless.batch.engine.client.http.HttpInvoker.HttpResponse;
 import com.liferay.headless.batch.engine.client.resource.v1_0.ImportTaskResource;
 import com.liferay.petra.function.UnsafeTriConsumer;
 import com.liferay.petra.function.transform.TransformUtil;
@@ -240,8 +241,8 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 	protected TaxonomyCategory testDeleteTaxonomyCategory_addTaxonomyCategory()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		return testPostTaxonomyCategoryTaxonomyCategory_addTaxonomyCategory(
+			randomTaxonomyCategory());
 	}
 
 	@Test
@@ -337,7 +338,7 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 			testDeleteTaxonomyCategoryBatch_addTaxonomyCategory();
 
 		testDeleteTaxonomyCategoryBatch_deleteTaxonomyCategory(
-			"COMPLETED", null, taxonomyCategory1.getId());
+			202, null, taxonomyCategory1.getId());
 
 		assertHttpResponseStatusCode(
 			404,
@@ -353,8 +354,7 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 	}
 
 	protected void testDeleteTaxonomyCategoryBatch_deleteTaxonomyCategory(
-			String expectedExecuteStatus, String externalReferenceCode,
-			String id)
+			int expectedStatusCode, String externalReferenceCode, String id)
 		throws Exception {
 
 		HttpInvoker.HttpResponse httpResponse =
@@ -367,10 +367,10 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 						"id", () -> id
 					)));
 
-		Assert.assertEquals(202, httpResponse.getStatusCode());
+		Assert.assertEquals(expectedStatusCode, httpResponse.getStatusCode());
 
 		waitForFinish(
-			expectedExecuteStatus,
+			"COMPLETED",
 			JSONFactoryUtil.createJSONObject(httpResponse.getContent()));
 	}
 
@@ -406,16 +406,17 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 					"-"));
 	}
 
+	protected TaxonomyCategory
+			testDeleteTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode_addTaxonomyCategory()
+		throws Exception {
+
+		return testPostTaxonomyVocabularyTaxonomyCategory_addTaxonomyCategory(
+			randomTaxonomyCategory());
+	}
+
 	protected Long
 			testDeleteTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode_getTaxonomyVocabularyId(
 				TaxonomyCategory taxonomyCategory)
-		throws Exception {
-
-		return taxonomyCategory.getTaxonomyVocabularyId();
-	}
-
-	protected TaxonomyCategory
-			testDeleteTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode_addTaxonomyCategory()
 		throws Exception {
 
 		throw new UnsupportedOperationException(
@@ -596,8 +597,8 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 	protected TaxonomyCategory testGetTaxonomyCategory_addTaxonomyCategory()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		return testPostTaxonomyCategoryTaxonomyCategory_addTaxonomyCategory(
+			randomTaxonomyCategory());
 	}
 
 	@Test
@@ -708,6 +709,7 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 
 	@Test
 	public void testGetTaxonomyCategoryPermissionsPage() throws Exception {
+		@SuppressWarnings("PMD.UnusedLocalVariable")
 		TaxonomyCategory postTaxonomyCategory =
 			testGetTaxonomyCategoryPermissionsPage_addTaxonomyCategory();
 
@@ -1739,16 +1741,17 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 		Assert.assertNotNull(getTaxonomyCategory.getPermissions());
 	}
 
+	protected TaxonomyCategory
+			testGetTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode_addTaxonomyCategory()
+		throws Exception {
+
+		return testPostTaxonomyVocabularyTaxonomyCategory_addTaxonomyCategory(
+			randomTaxonomyCategory());
+	}
+
 	protected Long
 			testGetTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode_getTaxonomyVocabularyId(
 				TaxonomyCategory taxonomyCategory)
-		throws Exception {
-
-		return taxonomyCategory.getTaxonomyVocabularyId();
-	}
-
-	protected TaxonomyCategory
-			testGetTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode_addTaxonomyCategory()
 		throws Exception {
 
 		throw new UnsupportedOperationException(
@@ -1778,7 +1781,6 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 											"taxonomyVocabularyId",
 											testGraphQLGetTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode_getTaxonomyVocabularyId(
 												taxonomyCategory));
-
 										put(
 											"externalReferenceCode",
 											"\"" +
@@ -1809,7 +1811,6 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 												"taxonomyVocabularyId",
 												testGraphQLGetTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode_getTaxonomyVocabularyId(
 													taxonomyCategory));
-
 											put(
 												"externalReferenceCode",
 												"\"" +
@@ -1829,7 +1830,8 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 				TaxonomyCategory taxonomyCategory)
 		throws Exception {
 
-		return taxonomyCategory.getTaxonomyVocabularyId();
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
 	}
 
 	@Test
@@ -1924,8 +1926,8 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 	protected TaxonomyCategory testPatchTaxonomyCategory_addTaxonomyCategory()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		return testPostTaxonomyCategoryTaxonomyCategory_addTaxonomyCategory(
+			randomTaxonomyCategory());
 	}
 
 	@Test
@@ -2046,8 +2048,8 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 	protected TaxonomyCategory testPutTaxonomyCategory_addTaxonomyCategory()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		return testPostTaxonomyCategoryTaxonomyCategory_addTaxonomyCategory(
+			randomTaxonomyCategory());
 	}
 
 	@Test
@@ -2093,8 +2095,8 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 			testPutTaxonomyCategoryPermissionsPage_addTaxonomyCategory()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		return testPostTaxonomyCategoryTaxonomyCategory_addTaxonomyCategory(
+			randomTaxonomyCategory());
 	}
 
 	@Test
@@ -2183,12 +2185,21 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 			putTaxonomyCategory.getExternalReferenceCode());
 	}
 
+	protected TaxonomyCategory
+			testPutTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode_addTaxonomyCategory()
+		throws Exception {
+
+		return testPostTaxonomyVocabularyTaxonomyCategory_addTaxonomyCategory(
+			randomTaxonomyCategory());
+	}
+
 	protected Long
 			testPutTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode_getTaxonomyVocabularyId(
 				TaxonomyCategory taxonomyCategory)
 		throws Exception {
 
-		return taxonomyCategory.getTaxonomyVocabularyId();
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
 	}
 
 	protected TaxonomyCategory
@@ -2198,12 +2209,60 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 		return randomTaxonomyCategory();
 	}
 
+	@Test
+	public void testBatchEngineDeleteImportTask() throws Exception {
+		TaxonomyCategory taxonomyCategory1 =
+			testBatchEngineDeleteImportTask_addTaxonomyCategory();
+
+		testBatchEngineDeleteImportTask_deleteTaxonomyCategory(
+			200, null, taxonomyCategory1.getId());
+
+		assertHttpResponseStatusCode(
+			404,
+			taxonomyCategoryResource.getTaxonomyCategoryHttpResponse(
+				taxonomyCategory1.getId()));
+	}
+
 	protected TaxonomyCategory
-			testPutTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode_addTaxonomyCategory()
+			testBatchEngineDeleteImportTask_addTaxonomyCategory()
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		return testDeleteTaxonomyCategory_addTaxonomyCategory();
+	}
+
+	protected void testBatchEngineDeleteImportTask_deleteTaxonomyCategory(
+			int expectedStatusCode, String externalReferenceCode, String id,
+			String... parameters)
+		throws Exception {
+
+		ImportTaskResource importTaskResource = ImportTaskResource.builder(
+		).authentication(
+			_testCompanyAdminUser.getEmailAddress(),
+			PropsValues.DEFAULT_ADMIN_PASSWORD
+		).endpoint(
+			testCompany.getVirtualHostname(), 8080, "http"
+		).parameters(
+			parameters
+		).build();
+
+		HttpResponse httpResponse =
+			importTaskResource.deleteImportTaskHttpResponse(
+				"com.liferay.headless.admin.taxonomy.dto.v1_0.TaxonomyCategory",
+				null, null, null, null,
+				JSONUtil.putAll(
+					JSONUtil.put(
+						"externalReferenceCode", () -> externalReferenceCode
+					).put(
+						"id", () -> id
+					)));
+
+		Assert.assertEquals(expectedStatusCode, httpResponse.getStatusCode());
+
+		if (expectedStatusCode == 200) {
+			waitForFinish(
+				"COMPLETED",
+				JSONFactoryUtil.createJSONObject(httpResponse.getContent()));
+		}
 	}
 
 	@Rule
@@ -3363,8 +3422,8 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 				id = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				numberOfTaxonomyCategories = RandomTestUtil.randomInt();
-				siteExternalReferenceCode = StringUtil.toLowerCase(
-					RandomTestUtil.randomString());
+				siteExternalReferenceCode =
+					testGroup.getExternalReferenceCode();
 				siteId = testGroup.getGroupId();
 				taxonomyCategoryUsageCount = RandomTestUtil.randomInt();
 				taxonomyVocabularyId = RandomTestUtil.randomLong();
@@ -3377,6 +3436,9 @@ public abstract class BaseTaxonomyCategoryResourceTestCase {
 
 		TaxonomyCategory randomIrrelevantTaxonomyCategory =
 			randomTaxonomyCategory();
+
+		randomIrrelevantTaxonomyCategory.setSiteExternalReferenceCode(
+			irrelevantGroup.getExternalReferenceCode());
 
 		randomIrrelevantTaxonomyCategory.setSiteId(
 			irrelevantGroup.getGroupId());

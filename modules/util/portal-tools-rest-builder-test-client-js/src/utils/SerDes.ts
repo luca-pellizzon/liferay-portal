@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+	import {AssetLibraryTestEntity} from '../models/AssetLibraryTestEntity';
 	import {ChildTestEntity1} from '../models/ChildTestEntity1';
 	import {ChildTestEntity2} from '../models/ChildTestEntity2';
 	import {ChildTestEntity3} from '../models/ChildTestEntity3';
@@ -11,6 +12,7 @@
 	import {EntityModelResourceTestEntity2} from '../models/EntityModelResourceTestEntity2';
 	import {EnumTestEntity} from '../models/EnumTestEntity';
 	import {ERCAssetLibraryTestEntity} from '../models/ERCAssetLibraryTestEntity';
+	import {ERCScopedTestEntity} from '../models/ERCScopedTestEntity';
 	import {ERCSiteTestEntity} from '../models/ERCSiteTestEntity';
 	import {Facet} from '../models/Facet';
 	import {FacetValue} from '../models/FacetValue';
@@ -19,9 +21,11 @@
 	import {MultipartTestEntity} from '../models/MultipartTestEntity';
 	import {NestedArrayItemsTestEntity} from '../models/NestedArrayItemsTestEntity';
 	import {NestedTestEntity} from '../models/NestedTestEntity';
+	import {PageAssetLibraryTestEntity} from '../models/PageAssetLibraryTestEntity';
 	import {PageCompanyTestEntity} from '../models/PageCompanyTestEntity';
 	import {PageEntityModelResourceTestEntity1} from '../models/PageEntityModelResourceTestEntity1';
 	import {PageERCAssetLibraryTestEntity} from '../models/PageERCAssetLibraryTestEntity';
+	import {PageERCScopedTestEntity} from '../models/PageERCScopedTestEntity';
 	import {PageERCSiteTestEntity} from '../models/PageERCSiteTestEntity';
 	import {PageFilter} from '../models/PageFilter';
 	import {PagePermission} from '../models/PagePermission';
@@ -71,6 +75,7 @@ const primitives = new Set([
 	"any",
 ]);
 const typeMap: {[index: string]: any} = {
+	AssetLibraryTestEntity,
 	ChildTestEntity1,
 	ChildTestEntity2,
 	ChildTestEntity3,
@@ -79,6 +84,7 @@ const typeMap: {[index: string]: any} = {
 	EntityModelResourceTestEntity2,
 	EnumTestEntity,
 	ERCAssetLibraryTestEntity,
+	ERCScopedTestEntity,
 	ERCSiteTestEntity,
 	Facet,
 	FacetValue,
@@ -87,9 +93,11 @@ const typeMap: {[index: string]: any} = {
 	MultipartTestEntity,
 	NestedArrayItemsTestEntity,
 	NestedTestEntity,
+	PageAssetLibraryTestEntity,
 	PageCompanyTestEntity,
 	PageEntityModelResourceTestEntity1,
 	PageERCAssetLibraryTestEntity,
+	PageERCScopedTestEntity,
 	PageERCSiteTestEntity,
 	PageFilter,
 	PagePermission,

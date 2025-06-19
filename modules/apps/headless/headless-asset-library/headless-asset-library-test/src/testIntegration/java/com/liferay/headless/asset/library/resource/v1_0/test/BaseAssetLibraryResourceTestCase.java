@@ -102,16 +102,28 @@ public abstract class BaseAssetLibraryResourceTestCase {
 		testCompany = CompanyLocalServiceUtil.getCompany(
 			testGroup.getCompanyId());
 
+		irrelevantDepotEntry = DepotEntryLocalServiceUtil.addDepotEntry(
+			Collections.singletonMap(
+				LocaleUtil.getDefault(), RandomTestUtil.randomString()),
+			null,
+			new ServiceContext() {
+				{
+					setCompanyId(testCompany.getCompanyId());
+					setUserId(TestPropsValues.getUserId());
+				}
+			});
+		irrelevantDepotEntryGroup = irrelevantDepotEntry.getGroup();
 		testDepotEntry = DepotEntryLocalServiceUtil.addDepotEntry(
 			Collections.singletonMap(
 				LocaleUtil.getDefault(), RandomTestUtil.randomString()),
 			null,
 			new ServiceContext() {
 				{
-					setCompanyId(testGroup.getCompanyId());
+					setCompanyId(testCompany.getCompanyId());
 					setUserId(TestPropsValues.getUserId());
 				}
 			});
+		testDepotEntryGroup = testDepotEntry.getGroup();
 
 		_assetLibraryResource.setContextCompany(testCompany);
 
@@ -270,16 +282,7 @@ public abstract class BaseAssetLibraryResourceTestCase {
 			204,
 			assetLibraryResource.
 				deleteAssetLibraryByExternalReferenceCodePinHttpResponse(
-					testDeleteAssetLibraryByExternalReferenceCodePin_getExternalReferenceCode(
-						assetLibrary)));
-	}
-
-	protected String
-			testDeleteAssetLibraryByExternalReferenceCodePin_getExternalReferenceCode(
-				AssetLibrary assetLibrary)
-		throws Exception {
-
-		return assetLibrary.getExternalReferenceCode();
+					assetLibrary.getExternalReferenceCode()));
 	}
 
 	protected AssetLibrary
@@ -973,18 +976,18 @@ public abstract class BaseAssetLibraryResourceTestCase {
 	}
 
 	protected AssetLibrary
-			testPutAssetLibraryByExternalReferenceCode_createAssetLibrary()
-		throws Exception {
-
-		return randomAssetLibrary();
-	}
-
-	protected AssetLibrary
 			testPutAssetLibraryByExternalReferenceCode_addAssetLibrary()
 		throws Exception {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
+	}
+
+	protected AssetLibrary
+			testPutAssetLibraryByExternalReferenceCode_createAssetLibrary()
+		throws Exception {
+
+		return randomAssetLibrary();
 	}
 
 	@Test
@@ -998,8 +1001,7 @@ public abstract class BaseAssetLibraryResourceTestCase {
 
 		AssetLibrary putAssetLibrary =
 			assetLibraryResource.putAssetLibraryByExternalReferenceCodePin(
-				testPutAssetLibraryByExternalReferenceCodePin_getExternalReferenceCode(
-					postAssetLibrary));
+				postAssetLibrary.getExternalReferenceCode());
 
 		assertEquals(randomAssetLibrary, putAssetLibrary);
 		assertValid(putAssetLibrary);
@@ -1018,14 +1020,6 @@ public abstract class BaseAssetLibraryResourceTestCase {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
-	}
-
-	protected String
-			testPutAssetLibraryByExternalReferenceCodePin_getExternalReferenceCode(
-				AssetLibrary assetLibrary)
-		throws Exception {
-
-		return assetLibrary.getExternalReferenceCode();
 	}
 
 	protected AssetLibrary
@@ -1072,13 +1066,6 @@ public abstract class BaseAssetLibraryResourceTestCase {
 
 	@Rule
 	public SearchTestRule searchTestRule = new SearchTestRule();
-
-	protected AssetLibrary testGraphQLAssetLibrary_addAssetLibrary()
-		throws Exception {
-
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
-	}
 
 	protected void assertContains(
 		AssetLibrary assetLibrary, List<AssetLibrary> assetLibraries) {
@@ -2010,7 +1997,10 @@ public abstract class BaseAssetLibraryResourceTestCase {
 	protected AssetLibraryResource assetLibraryResource;
 	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
 	protected com.liferay.portal.kernel.model.Company testCompany;
+	protected DepotEntry irrelevantDepotEntry;
+	protected com.liferay.portal.kernel.model.Group irrelevantDepotEntryGroup;
 	protected DepotEntry testDepotEntry;
+	protected com.liferay.portal.kernel.model.Group testDepotEntryGroup;
 	protected com.liferay.portal.kernel.model.Group testGroup;
 
 	protected static class BeanTestUtil {

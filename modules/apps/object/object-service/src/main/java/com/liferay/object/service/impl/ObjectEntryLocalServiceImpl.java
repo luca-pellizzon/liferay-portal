@@ -313,7 +313,7 @@ public class ObjectEntryLocalServiceImpl
 
 	@Override
 	public ObjectEntry addObjectEntry(
-			long userId, long groupId, long objectDefinitionId,
+			long groupId, long userId, long objectDefinitionId,
 			long objectEntryFolderId, String defaultLanguageId,
 			Map<String, Serializable> values, ServiceContext serviceContext)
 		throws PortalException {
@@ -470,12 +470,12 @@ public class ObjectEntryLocalServiceImpl
 
 	@Override
 	public ObjectEntry addObjectEntry(
-			String externalReferenceCode, long userId,
+			String externalReferenceCode, long groupId, long userId,
 			ObjectDefinition objectDefinition, long objectEntryFolderId)
 		throws PortalException {
 
 		return _addObjectEntry(
-			externalReferenceCode, userId,
+			externalReferenceCode, groupId, userId,
 			objectDefinition.getObjectDefinitionId(), objectEntryFolderId,
 			WorkflowConstants.STATUS_DRAFT);
 	}
@@ -537,7 +537,7 @@ public class ObjectEntryLocalServiceImpl
 
 	@Override
 	public ObjectEntry addOrUpdateObjectEntry(
-			String externalReferenceCode, long userId, long groupId,
+			String externalReferenceCode, long groupId, long userId,
 			long objectDefinitionId, long objectEntryFolderId,
 			Map<String, Serializable> values, ServiceContext serviceContext)
 		throws PortalException {
@@ -566,7 +566,7 @@ public class ObjectEntryLocalServiceImpl
 		}
 
 		objectEntry = objectEntryLocalService.addObjectEntry(
-			userId, groupId, objectDefinitionId, objectEntryFolderId, null,
+			groupId, userId, objectDefinitionId, objectEntryFolderId, null,
 			values, serviceContext);
 
 		if (Validator.isNotNull(externalReferenceCode)) {
@@ -1250,7 +1250,8 @@ public class ObjectEntryLocalServiceImpl
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public ObjectEntry getOrAddIncompleteObjectEntry(
-			String externalReferenceCode, long userId, long objectDefinitionId)
+			String externalReferenceCode, long groupId, long userId,
+			long objectDefinitionId)
 		throws PortalException {
 
 		ObjectEntry objectEntry = fetchObjectEntry(
@@ -1273,7 +1274,7 @@ public class ObjectEntryLocalServiceImpl
 		}
 
 		objectEntry = _addObjectEntry(
-			externalReferenceCode, userId, objectDefinitionId,
+			externalReferenceCode, groupId, userId, objectDefinitionId,
 			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 			WorkflowConstants.STATUS_INCOMPLETE);
 
@@ -2367,14 +2368,15 @@ public class ObjectEntryLocalServiceImpl
 	}
 
 	private ObjectEntry _addObjectEntry(
-			String externalReferenceCode, long userId, long objectDefinitionId,
-			long objectEntryFolderId, int status)
+			String externalReferenceCode, long groupId, long userId,
+			long objectDefinitionId, long objectEntryFolderId, int status)
 		throws PortalException {
 
 		ObjectEntry objectEntry = objectEntryPersistence.create(
 			counterLocalService.increment());
 
 		objectEntry.setExternalReferenceCode(externalReferenceCode);
+		objectEntry.setGroupId(groupId);
 
 		User user = _userLocalService.getUser(userId);
 
@@ -6080,6 +6082,10 @@ public class ObjectEntryLocalServiceImpl
 			String listTypeEntryKey, ObjectField objectField,
 			List<ValidationError> validationErrors)
 		throws PortalException {
+
+		if (Validator.isNull(listTypeEntryKey)) {
+			return;
+		}
 
 		try {
 			_listTypeEntryLocalService.getOrAddIncompleteListTypeEntry(
