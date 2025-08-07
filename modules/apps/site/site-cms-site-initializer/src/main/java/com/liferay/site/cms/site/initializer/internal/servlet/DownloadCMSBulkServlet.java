@@ -6,16 +6,24 @@
 package com.liferay.site.cms.site.initializer.internal.servlet;
 
 import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectEntryFolder;
+import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectEntryFolderService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.events.EventsProcessorUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.events.ActionException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.servlet.ServletResponseUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -28,7 +36,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.zip.ZipWriter;
 import com.liferay.portal.kernel.zip.ZipWriterFactory;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.site.cms.site.initializer.internal.util.ZipUtil;
 
 import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletException;
@@ -40,22 +47,26 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
+
+import java.util.List;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Roberto Díaz
+ * @author Luca Pellizzon
  */
 @Component(
 	property = {
-		"osgi.http.whiteboard.servlet.name=com.liferay.site.cms.site.initializer.internal.servlet.DownloadObjectEntryFolderServlet",
-		"osgi.http.whiteboard.servlet.pattern=/cms/download-folder/*",
+		"osgi.http.whiteboard.servlet.name=com.liferay.site.cms.site.initializer.internal.servlet.DownloadCMSBulkServlet",
+		"osgi.http.whiteboard.servlet.pattern=/cms/download-bulk/*",
 		"servlet.init.httpMethods=GET"
 	},
 	service = Servlet.class
 )
-public class DownloadObjectEntryFolderServlet extends HttpServlet {
+public class DownloadCMSBulkServlet extends HttpServlet {
 
 	@Override
 	public void service(
@@ -75,7 +86,7 @@ public class DownloadObjectEntryFolderServlet extends HttpServlet {
 		throws IOException, ServletException {
 
 		try {
-			_downloadObjectEntryFolder(httpServletRequest, httpServletResponse);
+			_downloadBulk(httpServletRequest, httpServletResponse);
 		}
 		catch (PortalException portalException) {
 			throw new ServletException(portalException);
@@ -99,75 +110,8 @@ public class DownloadObjectEntryFolderServlet extends HttpServlet {
 		}
 	}
 
-	private void _downloadObjectEntryFolder(
-			HttpServletRequest httpServletRequest,
-			HttpServletResponse httpServletResponse)
-		throws IOException, PortalException {
-
-		String[] pathArray = StringUtil.split(
-			_getObjectEntryFolderPath(httpServletRequest), StringPool.SLASH);
-
-		long classNameId = _portal.getClassNameId(ObjectEntryFolder.class);
-
-		if (classNameId != GetterUtil.getLong(pathArray[0])) {
-			throw new RuntimeException();
-		}
-
-		long objectEntryFolderId = GetterUtil.getLong(pathArray[1]);
-
-		ZipWriter zipWriter = _zipWriterFactory.getZipWriter();
-
-		try {
-			ObjectEntryFolder objectEntryFolder =
-				_objectEntryFolderService.getObjectEntryFolder(
-					objectEntryFolderId);
-
-			String zipFileName = objectEntryFolder.getName() + ".zip";
-
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)httpServletRequest.getAttribute(
-					WebKeys.THEME_DISPLAY);
-
-			ZipUtil.zipObjectEntryFolder(
-				objectEntryFolder.getGroupId(), objectEntryFolderId,
-				_dlAppLocalService, _objectFieldLocalService,
-				_objectEntryFolderService, _objectEntryLocalService,
-				objectEntryFolder.getName(), themeDisplay, zipWriter);
-
-			try (InputStream inputStream = new FileInputStream(
-					zipWriter.getFile())) {
-
-				httpServletResponse.addHeader(
-					HttpHeaders.CACHE_CONTROL,
-					HttpHeaders.CACHE_CONTROL_NO_CACHE_VALUE);
-
-				ServletResponseUtil.sendFile(
-					httpServletRequest, httpServletResponse, zipFileName,
-					inputStream, 0, ContentTypes.APPLICATION_ZIP,
-					HttpHeaders.CONTENT_DISPOSITION_ATTACHMENT);
-			}
-		}
-		finally {
-			File file = zipWriter.getFile();
-
-			file.delete();
-		}
-	}
-
-	private String _getObjectEntryFolderPath(
-		HttpServletRequest httpServletRequest) {
-
-		String requestURI = httpServletRequest.getRequestURI();
-
-		String path =
-			httpServletRequest.getContextPath() +
-				httpServletRequest.getServletPath();
-
-		return requestURI.substring(path.length() + 1);
-	}
-
 	private static final Log _log = LogFactoryUtil.getLog(
-		DownloadObjectEntryFolderServlet.class);
+		DownloadCMSBulkServlet.class);
 
 	@Reference
 	private DLAppLocalService _dlAppLocalService;
